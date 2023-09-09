@@ -1,0 +1,87 @@
+{
+// AR No., integer
+AR: 1,
+// Natural Gas Cost $/MMBtu, float
+NGC: 6.95,
+// Electricity Cost $/kWh, float
+EC: 0.057,
+// Demand Cost $/kW, float
+DC: 11.28,
+// Labor Rate $/hour, integer
+LR: 40,
+// Rebate Rate /kWh, float
+RR: 0.075,
+// Number of motion sensors, integer
+MSN: 0,
+// Part + labor per motion serson $, float
+MSPL: 25,
+// Labor per bulb $, integer
+BL: 20,
+
+// Area 1 name, string
+AREA1: 'production area 1',
+// Previous bulb type, string
+PREV1: 'T-8 bulbs',
+// Number of current bulbs, integer
+CN1: 12,
+// Power rating of current bulbs W, float
+CFW1: 250,
+// Opearating hours of current bulbs hrs/yr, float
+COH1: 2912,
+// Number of proposed bulbs, integer
+PN1: 12,
+// Power rating of proposed bulbs W, float
+PFW1: 100,
+// Opearating hours of proposed bulbs hrs/yr, float
+POH1: 2912,
+// Unit price of proposed bulbs $, float
+BP1: 180,
+// Coincidence Factor, float, default 1.0
+CF1: 1.0,
+
+// Second area switch
+FLAG2: false,
+// Area 2 name, string
+AREA2: 'production area 2',
+// Previous bulb type, string
+PREV2: 'T-8 bulbs',
+// Number of current bulbs, integer
+CN2: 0,
+// Power rating of current bulbs W, float
+CFW2: 0,
+// Opearating hours of current bulbs hrs/yr, float
+COH2: 0,
+// Number of proposed bulbs, integer
+PN2: 0,
+// Power rating of proposed bulbs W, float
+PFW2: 0,
+// Opearating hours of proposed bulbs hrs/yr, float
+POH2: 0,
+// Unit price of proposed bulbs $, float
+BP2: 0,
+// Coincidence Factor, float, default 1.0
+CF2: 1.0,
+
+// Third area switch
+FLAG3: false,
+// Area 3 name, string
+AREA3: 'production area 3',
+// Previous bulb type, string
+PREV3: 'T-8 bulbs',
+// Number of current bulbs, integer
+CN3: 0,
+// Power rating of current bulbs W, float
+CFW3: 0,
+// Opearating hours of current bulbs hrs/yr, float
+COH3: 0,
+// Number of proposed bulbs, integer
+PN3: 0,
+// Power rating of proposed bulbs W, float
+PFW3: 0,
+// Opearating hours of proposed bulbs hrs/yr, float
+POH3: 0,
+// Unit price of proposed bulbs $, float
+BP3: 0,
+// Coincidence Factor, float, default 1.0
+CF3: 1.0,
+}

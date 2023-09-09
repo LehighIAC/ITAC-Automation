@@ -1,0 +1,80 @@
+{
+// AR No., integer
+AR: 1,
+// Natural Gas Cost $/MMBtu, float
+NGC: 6.95,
+// Electricity Cost $/kWh, float
+EC: 0.057,
+// Demand Cost $/kW, float
+DC: 11.28,
+// Labor Rate $/hour, integer
+LR: 40,
+// Ultrasonic leak detector cost $, integer
+USLD: 1000,
+
+// Single stage reciprocating 0.88
+// Multi stage reciprocating  0.75
+// Rotary screw               0.82
+// Sliding vane               0.72
+// Single stage centrifugal   0.80
+// Multi stage centrifugal    0.70
+// Turbo blowers              0.70
+// Roots blowers              0.62
+
+// Compressor Type, string
+CT: "Screw",
+// Adiabatic efficienty of compressor, float
+EA: 0.82,
+// Number of stages, integer
+N: 1,
+// Leak location, string
+LL: "Production",
+
+// Inlet temperature degF, integer
+T0: 75,
+// Leak point temperature degF, interger
+T1: 70,
+// Compressor operating temperature psig, integer
+P0: 110,
+// Line pressure at point of nozzle psig, integer
+P1: 80,
+// Compressor horsepower HP, integer
+HP: 250,
+// Motor efficienty, float
+EM: 0.9,
+// Operating hours, integer
+OH: 8736,
+// Coincidence factor, float
+CF: 1.0,
+
+// Number of 1/64 in leaks, integer
+NL1: 0,
+// Number of 1/32 in leaks, integer
+NL2: 0,
+// Number of 1/16 in leaks, integer
+NL3: 6,
+// Number of 1/8 in leaks, integer
+NL4: 6,
+// Number of 3/16 in leaks, integer
+NL5: 3,
+// Number of 1/4 in leaks, integer
+NL6: 0,
+
+// Constants, DO NOT CHANGE
+// Atmosphere psia
+PA: 14.7,
+// Isentropic sonic volumetric flow constant
+C1: 28.37,
+// Conversion constant; sec/min
+C2: 60.0,
+// Coefficient of discharge for square edged orifice
+CD: 0.8,
+// Conversion constant; in2/ft2
+C3: 144.0,
+// Specific heat ratio of air
+k: 1.4,
+// Conversion constant; HP.min/ft.lb
+C4: 3.03e-5,
+// Conversion factor; kW/HP
+C5: 0.746,
+}
