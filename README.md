@@ -7,8 +7,11 @@ pip3 install numpy lxml latex2mathml json5 python_docx python_docx_replace num2w
 ```
 ## Supported ARs
 
-### Lighting
-Switch to LED lighting
+### Boiler
+Recover Exhaust Gas Heat
 
 ### Compressor
 Repair Leaks in Compressed Air Lines
+
+### Lighting
+Switch to LED lighting
