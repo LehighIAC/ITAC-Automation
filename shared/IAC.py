@@ -2,24 +2,24 @@
 (Purpose) IAC.py is a module that contains functions used in the IAC report
 """
 
-
-import math
+import math, os, locale
 from lxml import etree
 import latex2mathml.converter
 
-def add_thousand_sep(dic):
+def grouping_num(dic):
     """
     Add thousand separator to numbers in a dictionary and format it to string
     :param dic: Dictionary
     :return: Dictionary with keys in thousand separator
     """
+    # set locale to US
+    locale.setlocale(locale.LC_ALL, 'en_US')
     for key in dic.keys():
-        if type(dic[key]) == int or type(dic[key]) == float:
-            dic[key] = f'{dic[key]:,}'
+        if type(dic[key]) == int or type(dic[key]) == float:# set locale to US
+            dic[key] = locale.format('%g', dic[key], grouping=True)
         else:
             pass
     return dic
-
 
 # Add equations
 def add_eqn(doc, eqn, eqn_input):
@@ -33,12 +33,11 @@ def add_eqn(doc, eqn, eqn_input):
     for p in doc.paragraphs:
         if eqn in p.text:
             p.text = p.text.replace(eqn, '')
-            word_math = latex_to_word(eqn_input)
+            word_math = latex2word(eqn_input)
             p._element.append(word_math)
 
-
 # Function to create Word equation from LaTeX
-def latex_to_word(latex_input):
+def latex2word(latex_input):
     """
     Convert LaTeX equation to Word equation
     :param latex_input: LaTeX equation
@@ -46,7 +45,8 @@ def latex_to_word(latex_input):
     """
     mathml = latex2mathml.converter.convert(latex_input)
     tree = etree.fromstring(mathml)
-    xslt = etree.parse('../shared/MML2OMML.XSL')
+    script_path = os.path.dirname(os.path.abspath(__file__))
+    xslt = etree.parse(os.path.join(script_path,'..','shared','MML2OMML.XSL'))
     transform = etree.XSLT(xslt)
     new_dom = transform(tree)
     return new_dom.getroot()

@@ -9,11 +9,11 @@ EC: 0.057,
 DC: 11.28,
 // Labor Rate $/hour, integer
 LR: 40,
-// Rebate Rate /kWh, float
+// Rebate Rate $/kWh, float
 RR: 0.075,
 // Number of motion sensors, integer
 MSN: 0,
-// Part + labor per motion serson $, float
+// Part + labor per motion serson $, integer
 MSPL: 25,
 // Labor per bulb $, integer
 BL: 20,

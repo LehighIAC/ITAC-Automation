@@ -2,17 +2,18 @@
 This script is used to generate the IAC recommendation for Switch to LED lighting.
 """
 
-import json5, sys, os
+import json5, sys, os, locale
 from docx import Document
 from python_docx_replace import docx_replace, docx_blocks
-shared_path=os.path.join(os.path.dirname(os.path.abspath(__file__)),'../shared')
-sys.path.append(shared_path)
+# Get the path of the current script
+script_path = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.join(script_path, '..', 'shared'))
 from IAC import *
 
 # Import docx template
-doc = Document("Switch to LED lighting.docx")
+doc = Document(os.path.join(script_path, 'Switch to LED lighting.docx'))
 # Load config file and convert everything to local variables
-iacDict = json5.load(open("Lighting.json5"))
+iacDict = json5.load(open(os.path.join(script_path, 'Lighting.json5')))
 locals().update(iacDict)
 
 # Remove empty blocks
@@ -46,16 +47,34 @@ LC = BL * CN
 IC = MSC + BC + LC
 # Rebate
 RB = round(ES * RR)
-MRB = min(RB, IC/2.0)
+MRB = min(RB, IC/2)
 MIC = IC - MRB
-PB = payback(ACS, MIC)
+iacDict['PB'] = payback(ACS, MIC)
 
-# Add alll calculated numbers in local variables to iacDict
+# Formatting
+# Add all numbers in local variables to iacDict
 iacDict.update({key: value for (key, value) in locals().items() if type(value) == int or type(value) == float})
+
 # Format numbers to string with thousand separator
-iacDict = add_thousand_sep(iacDict)
-# Append payback period (string) to iacDict
-iacDict['PB'] = PB
+iacDict = grouping_num(iacDict)
+
+# set locale to US
+locale.setlocale(locale.LC_ALL, 'en_US')
+
+# set 3 digits accuracy for electricity cost
+locale._override_localeconv={'frac_digits':3}
+iacDict['EC'] = locale.currency(EC, grouping=True)
+iacDict['RR'] = locale.currency(RR, grouping=True)
+
+# set the natural gas and demand to 2 digits accuracy
+locale._override_localeconv={'frac_digits':2}
+iacDict['NGC'] = locale.currency(NGC, grouping=True)
+iacDict['DC'] = locale.currency(DC, grouping=True)
+
+# set the rest to integer
+locale._override_localeconv={'frac_digits':0}
+for cost in ['LR', 'MSPL', 'BL', 'BP1', 'BP2', 'BP3', 'ECS', 'DCS', 'ACS', 'MSC', 'BC', 'LC', 'IC', 'RB', 'MRB', 'MIC']:
+    iacDict[cost] = locale.currency(eval(cost), grouping=True)
 
 # Replacing keys
 docx_replace(doc, **iacDict)
@@ -89,7 +108,8 @@ DS3Eqn = '\\frac{{ ({0} \\times {1} - {2} \\times {3}) \\times {4} \\times 12 }}
 add_eqn(doc, '#DS3Eqn', DS3Eqn)
 
 # Save file as AR*.docx
-doc.save('../AR'+AR+'.docx')
+filename = 'AR'+iacDict['AR']+'.docx'
+doc.save(os.path.join(script_path, '..', 'ARs', filename))
 
 # Caveats
 print("Please manually change the font size of equations to 16.")

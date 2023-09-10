@@ -2,11 +2,12 @@
 This script is used to generate the IAC recommendation for Repair Leaks in Compressed Air Lines.
 """
 
-import json5, sys, os
+import json5, sys, os, locale
 from docx import Document
 from python_docx_replace import docx_replace, docx_blocks
-shared_path=os.path.join(os.path.dirname(os.path.abspath(__file__)),'../shared')
-sys.path.append(shared_path)
+# Get the path of the current script
+script_path = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.join(script_path, '..', 'shared'))
 from IAC import *
 import numpy as np
 # Might needs to be installed
@@ -14,10 +15,11 @@ from num2words import num2words
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 
 # Import docx template
-doc = Document("Repair Leaks in Compressed Air Lines.docx")
+doc = Document(os.path.join(script_path, 'Repair Leaks in Compressed Air Lines.docx'))
 # Load config file and convert everything to local variables
-iacDict = json5.load(open("Repair Leaks.json5"))
+iacDict = json5.load(open(os.path.join(script_path, 'Repair Leaks.json5')))
 locals().update(iacDict)
+
 # Calculations
 RT = round(PA / P0, 4)
 VF0 = np.pi / 4 * (T0 + 460) * P1 / PA * C1 * C2 * CD / C3 / np.sqrt(T1 + 460)
@@ -51,7 +53,7 @@ ACS = round(sum(CS).item())
 # Estimate 1+1 hour per leak
 FLC = (1+1) * SNL * LR
 IC = FLC + USLD
-PB = payback(ACS, IC)
+iacDict['PB']  = payback(ACS, IC)
 
 # String formatting
 # eg, 'six 1/16-inch, six 1/8-inch and three 3/16-inch'
@@ -65,14 +67,33 @@ for i in range(NL.size):
             LeakString = LeakString + ', '
         if count == np.count_nonzero(NL) - 1:
             LeakString = LeakString + ' and ' 
-
-# Add all calculated numbers in local variables to iacDict
-iacDict.update({key: value for (key, value) in locals().items() if type(value) == int or type(value) == float})
-# Format numbers to string with thousand separator
-iacDict = add_thousand_sep(iacDict)
-# Append payback period (string) to iacDict
-iacDict['PB'] = PB
+# Add leakstring to iacDict
 iacDict['LeakString'] = LeakString
+
+# Formatting
+# Add all numbers in local variables to iacDict
+iacDict.update({key: value for (key, value) in locals().items() if type(value) == int or type(value) == float})
+
+# Format numbers to string with thousand separator
+iacDict = grouping_num(iacDict)
+
+# set locale to US
+locale.setlocale(locale.LC_ALL, 'en_US')
+
+# set 3 digits accuracy for electricity cost
+locale._override_localeconv={'frac_digits':3}
+iacDict['EC'] = locale.currency(EC, grouping=True)
+
+# set the natural gas and demand to 2 digits accuracy
+locale._override_localeconv={'frac_digits':2}
+iacDict['NGC'] = locale.currency(NGC, grouping=True)
+iacDict['DC'] = locale.currency(DC, grouping=True)
+
+# set the rest to integer
+locale._override_localeconv={'frac_digits':0}
+for cost in ['LR', 'FLC', 'USLD', 'IC', 'ACS']:
+    iacDict[cost] = locale.currency(eval(cost), grouping=True)
+
 
 # Replacing keys
 docx_replace(doc, **iacDict)
@@ -110,7 +131,8 @@ for i in reversed(range(NL.size)):
     if NL[i]==0:
         table3._tbl.remove(table3.rows[i+1]._tr)
 
-doc.save('../AR'+iacDict['AR']+'.docx')
+filename = 'AR'+iacDict['AR']+'.docx'
+doc.save(os.path.join(script_path, '..', 'ARs', filename))
 
 # Caveats
 print("Please change implementation cost references if necessary.")
