@@ -15,7 +15,9 @@ def grouping_num(dic):
     # set locale to US
     locale.setlocale(locale.LC_ALL, 'en_US')
     for key in dic.keys():
-        if type(dic[key]) == int or type(dic[key]) == float:# set locale to US
+        if type(dic[key]) == int:
+            dic[key] = locale.format('%d', dic[key], grouping=True)
+        elif type(dic[key]) == float:
             dic[key] = locale.format('%g', dic[key], grouping=True)
         else:
             pass
