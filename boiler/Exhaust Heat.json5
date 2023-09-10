@@ -1,14 +1,6 @@
 {
 // AR No., integer
 AR: 1,
-// Natural Gas Cost $/MMBtu, float
-NGC: 7.44,
-// Electricity Cost $/kWh, float
-EC: 0.075,
-// Demand Cost $/kW, float
-DC: 7.86,
-// Labor Rate $/hour, integer
-LR: 40,
 // Implementation Cost$, integer
 IC: 10000,
 

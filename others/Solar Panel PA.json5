@@ -1,14 +1,6 @@
 {
-// AR No., integer
+// AAR No., integer
 AR: 1,
-// Natural Gas Cost $/MMBtu, float
-NGC: 6.95,
-// Electricity Cost $/kWh, float
-EC: 0.057,
-// Demand Cost $/kW, float
-DC: 11.28,
-// Labor Rate $/hour, integer
-LR: 40,
 
 // Zip Code of the plant, string
 ZIP: "18015",

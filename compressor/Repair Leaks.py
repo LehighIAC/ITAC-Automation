@@ -18,6 +18,7 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 doc = Document(os.path.join(script_path, 'Repair Leaks in Compressed Air Lines.docx'))
 # Load config file and convert everything to local variables
 iacDict = json5.load(open(os.path.join(script_path, 'Repair Leaks.json5')))
+iacDict.update(json5.load(open(os.path.join(script_path, '..', 'plant.json5'))))
 locals().update(iacDict)
 
 # Calculations

@@ -15,6 +15,7 @@ import numpy as np
 doc = Document(os.path.join(script_path, 'Recover Exhaust Gas Heat.docx'))
 # Load config file and convert everything to local variables
 iacDict = json5.load(open(os.path.join(script_path, 'Exhaust Heat.json5')))
+iacDict.update(json5.load(open(os.path.join(script_path, '..', 'plant.json5'))))
 locals().update(iacDict)
 
 # Interpolation

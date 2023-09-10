@@ -1,16 +1,6 @@
 {
 // AR No., integer
 AR: 1,
-// Natural Gas Cost $/MMBtu, float
-NGC: 6.95,
-// Electricity Cost $/kWh, float
-EC: 0.057,
-// Demand Cost $/kW, float
-DC: 11.28,
-// Labor Rate $/hour, integer
-LR: 40,
-// Rebate Rate $/kWh, float
-RR: 0.075,
 // Number of motion sensors, integer
 MSN: 0,
 // Part + labor per motion serson $, integer

@@ -15,6 +15,7 @@ import requests, datetime
 doc = Document(os.path.join(script_path, 'Install an Array of Solar Panels - NJ.docx'))
 # Load config file and convert everything to local variables
 iacDict = json5.load(open(os.path.join(script_path, 'Solar Panel NJ.json5')))
+iacDict.update(json5.load(open(os.path.join(script_path, '..', 'plant.json5'))))
 locals().update(iacDict)
 
 # Calculations
