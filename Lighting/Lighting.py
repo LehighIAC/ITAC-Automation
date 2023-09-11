@@ -14,7 +14,7 @@ from IAC import *
 doc = Document(os.path.join(script_path, 'Switch to LED lighting.docx'))
 # Load config file and convert everything to local variables
 iacDict = json5.load(open(os.path.join(script_path, 'Lighting.json5')))
-iacDict.update(json5.load(open(os.path.join(script_path, '..', 'plant.json5'))))
+iacDict.update(json5.load(open(os.path.join(script_path, '..', 'Utility.json5'))))
 locals().update(iacDict)
 
 # Remove empty blocks
