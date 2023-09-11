@@ -3,7 +3,7 @@ Automated Python assessment templates
 
 Required Python packages:
 ```
-pip3 install numpy lxml latex2mathml json5 python_docx python_docx_replace num2words requests
+pip3 install numpy lxml latex2mathml json5 python_docx python_docx_replace num2words requests pandas
 ```
 ## Usage
 1. Edit `plant.json5` for general information including energy price
