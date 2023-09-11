@@ -7,7 +7,7 @@ from docx import Document
 from python_docx_replace import docx_replace, docx_blocks
 # Get the path of the current script
 script_path = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(os.path.join(script_path, '..', 'shared'))
+sys.path.append(os.path.join(script_path, '..', 'Shared'))
 from IAC import *
 
 # Import docx template

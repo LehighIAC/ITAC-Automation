@@ -48,7 +48,7 @@ def latex2word(latex_input):
     mathml = latex2mathml.converter.convert(latex_input)
     tree = etree.fromstring(mathml)
     script_path = os.path.dirname(os.path.abspath(__file__))
-    xslt = etree.parse(os.path.join(script_path,'..','shared','MML2OMML.XSL'))
+    xslt = etree.parse(os.path.join(script_path,'..','Shared','MML2OMML.XSL'))
     transform = etree.XSLT(xslt)
     new_dom = transform(tree)
     return new_dom.getroot()
