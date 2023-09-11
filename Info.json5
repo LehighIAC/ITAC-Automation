@@ -6,7 +6,7 @@ VDATE: 'September 11, 2023',
 // Plant location, city, state, zip, string
 LOC: 'Bethlehem, PA 18015',
 // Princial product, string
-PROD: 'Education',
+PROD: 'education',
 // Annual production, string
 ANPR: '2,000 students',
 // Area, sqft, int
