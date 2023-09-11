@@ -11,7 +11,13 @@ pip3 install numpy lxml latex2mathml json5 python_docx python_docx_replace num2w
 3. Run the corresponding `.py` file
 4. The output will be in `ARs` directory
 
-## Supported ARs
+## Semi-automatic AR compiler (beta)
+1. Fill in `Info.json5`
+2. Copy all AR files into `ARs` directory
+3. Run `Compiler.py`
+4. Follow the instructions of the script
+
+## Supported AR templates
 
 ### Boiler
 Recover Exhaust Gas Heat
