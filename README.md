@@ -7,7 +7,11 @@ make a github account w/ lehigh email
 
 sign into github desktop
 
-fork the repository ( https://github.com/BrushXue/IAC-Automation.git )
+go to ( https://github.com/BrushXue/IAC-Automation ) on the github website 
+
+click the fork button
+
+got to github deskop, clone the fork
 
 Inside VS Code, install VS code python plugin, JSON5 syntax
 
@@ -30,8 +34,11 @@ conda remove --name iac --all
 
 ## TO COMMIT CHANGES 
 
-Figure this out now 
+make changes in the forked directory
 
+commit changes via github desktop
+
+go online to github, go to https://github.com/BrushXue/IAC-Automation.git , find the fork 
 
 ## Usage
 1. Edit `plant.json5` for general information including energy price
