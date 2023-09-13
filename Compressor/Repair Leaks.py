@@ -58,17 +58,12 @@ iacDict['PB']  = payback(ACS, IC)
 
 # String formatting
 # eg, 'six 1/16-inch, six 1/8-inch and three 3/16-inch'
-LeakString = ""
-count = 0
+# Make a list of strings
+LeakString = []
 for i in range(NL.size):
     if NL[i]!=0:
-        LeakString = LeakString + num2words(NL[i]) + ' ' + LS[i] + '-inch'
-        count += 1
-        if count <= np.count_nonzero(NL) - 2:
-            LeakString = LeakString + ', '
-        if count == np.count_nonzero(NL) - 1:
-            LeakString = LeakString + ' and ' 
-# Add leakstring to iacDict
+        LeakString.append(num2words(NL[i]) + ' ' + LS[i] + '-inch')
+LeakString = combine_words(LeakString)
 iacDict['LeakString'] = LeakString
 
 # Formatting

@@ -51,6 +51,14 @@ RB = round(ES * RR)
 MRB = min(RB, IC/2)
 MIC = IC - MRB
 iacDict['PB'] = payback(ACS, MIC)
+# Combine words
+AREAS = []
+AREAS.append(AREA1)
+if FLAG2:
+    AREAS.append(AREA2)
+if FLAG3:
+    AREAS.append(AREA3)
+iacDict['AREAS'] = combine_words(AREAS)
 
 # Formatting
 # Add all numbers in local variables to iacDict
@@ -114,6 +122,4 @@ doc.save(os.path.join(script_path, '..', 'ARs', filename))
 
 # Caveats
 print("Please manually change the font size of equations to 16.")
-if not (FLAG2 and FLAG3):
-    print("Please manually remove zeroes in the document.")
 print("Please change implementation cost references if necessary.")

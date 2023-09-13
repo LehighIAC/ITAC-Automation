@@ -6,6 +6,22 @@ import math, os, locale
 from lxml import etree
 import latex2mathml.converter
 
+def combine_words(words):
+    """
+    :param words: list of strings
+    :return: string of words separated by "," and "and"
+    """
+    combined = ""
+    for i in range(len(words)):  
+        combined = combined + words[i]    
+        if i < len(words) - 2:
+            combined = combined + ', '
+        if i == len(words) - 2:
+            combined = combined + ' and ' 
+        else:
+            pass
+    return combined
+
 def grouping_num(dic):
     """
     Add thousand separator to numbers in a dictionary and format it to string
@@ -23,7 +39,6 @@ def grouping_num(dic):
             pass
     return dic
 
-# Add equations
 def add_eqn(doc, eqn, eqn_input):
     """
     Add equation to Word document, search for eqn in doc and replace with eqn_input
@@ -38,7 +53,6 @@ def add_eqn(doc, eqn, eqn_input):
             word_math = latex2word(eqn_input)
             p._element.append(word_math)
 
-# Function to create Word equation from LaTeX
 def latex2word(latex_input):
     """
     Convert LaTeX equation to Word equation
@@ -53,7 +67,6 @@ def latex2word(latex_input):
     new_dom = transform(tree)
     return new_dom.getroot()
 
-# Payback Period formatting
 def payback(ACS,IC):
     """
     Formet payback period by year and month
