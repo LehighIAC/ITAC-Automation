@@ -1,6 +1,13 @@
 # IAC-Automation
 Automated Python assessment for Lehigh University Industrial Assessment Center
-### Set up an environment:
+##
+install VS code, anaconda, go to source control and install git.
+
+open source control, clone repository ( https://github.com/BrushXue/IAC-Automation.git )
+
+Inside VS Code, install VS code python plugin, JSON5 syntax
+
+### Set up an environment COPY LINE BY LINE:
 ```
 conda create -n iac python=3.8 
 conda activate iac 
@@ -12,10 +19,16 @@ conda install json5 numpy pandas requests
 conda install -c conda-forge python-docx latex2mathml num2words
 pip install python-docx-replace
 ```
-### To remove this env
+### To remove this env DO NOT RUN CONDA REMOVE 
 ```
 conda remove --name iac --all
 ```
+
+## TO COMMIT CHANGES 
+
+Figure this out now 
+
+
 ## Usage
 1. Edit `plant.json5` for general information including energy price
 2. Edit any specific `.json5` database
