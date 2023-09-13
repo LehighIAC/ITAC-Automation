@@ -1,9 +1,13 @@
 # IAC-Automation
 Automated Python assessment for Lehigh University Industrial Assessment Center
 ##
-install VS code, anaconda, go to source control and install git.
+install VS code, anaconda, go to source control and install git and github desktop.
 
-open source control, clone repository ( https://github.com/BrushXue/IAC-Automation.git )
+make a github account w/ lehigh email
+
+sign into github desktop
+
+fork the repository ( https://github.com/BrushXue/IAC-Automation.git )
 
 Inside VS Code, install VS code python plugin, JSON5 syntax
 
