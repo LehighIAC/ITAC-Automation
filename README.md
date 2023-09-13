@@ -34,11 +34,13 @@ conda remove --name iac --all
 
 ## TO COMMIT CHANGES 
 
-make changes in the forked directory
+make changes in vscode inside the GitHub/... folder
 
-commit changes via github desktop
+commit changes (github desktop) and push change (github desktop)
 
-go online to github, go to https://github.com/BrushXue/IAC-Automation.git , find the fork 
+go to github website and send a pull request WITH comments of proposed changes
+
+Admin can apporove and merge 
 
 ## Usage
 1. Edit `plant.json5` for general information including energy price
