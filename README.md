@@ -9,7 +9,7 @@ sign into github desktop
 
 go to ( https://github.com/BrushXue/IAC-Automation ) on the github website 
 
-click the fork button
+click the fork button(make sure both github web and desktop is under your account if you are using the lab computer)
 
 got to github deskop, clone the fork
 
@@ -41,6 +41,8 @@ commit changes (github desktop) and push change (github desktop)
 go to github website and send a pull request WITH comments of proposed changes (github desktop, branch -> pull request)
 
 Admin can apporove and merge 
+
+
 
 ## Usage
 1. Edit `plant.json5` for general information including energy price
