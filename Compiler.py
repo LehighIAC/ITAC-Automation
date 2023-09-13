@@ -290,10 +290,8 @@ for p in doc.paragraphs:
         r.add_picture('layout.png',width=shared.Inches(6.5))
         break
 
-# Process AAR blocks
-docx_blocks(doc, AAR1 = AAR)
-docx_blocks(doc, AAR2 = AAR)
-docx_blocks(doc, AAR3 = AAR)
+# Remove AAR blocks
+docx_blocks(doc, AAR = AAR)
 
 # Formatting
 # Add all numbers in local variables to iacDict
