@@ -38,7 +38,7 @@ make changes in vscode inside the GitHub/... folder
 
 commit changes (github desktop) and push change (github desktop)
 
-go to github website and send a pull request WITH comments of proposed changes
+go to github website and send a pull request WITH comments of proposed changes (github desktop, branch -> pull request)
 
 Admin can apporove and merge 
 
