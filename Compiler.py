@@ -1,7 +1,14 @@
+"""
+Semi-automatically compile IAC report
+Usage: Copy all ARs into the ARs folder, Update info in Info.json5 and Utility.json5,
+then run this script.
+"""
+
+
 import json5, sys, os, locale
 from docx import Document, shared
 from python_docx_replace import docx_replace, docx_blocks
-# Get the path of the current script
+# Get the path of the current script, auxilliary functions are under Shared folder
 script_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(script_path, 'Shared'))
 from IAC import *
@@ -23,7 +30,7 @@ df = pd.DataFrame(columns=columns)
 # Set locale to en_US
 locale.setlocale(locale.LC_ALL, 'en_US')
 
-# Get all .docx files in the current directory
+# Get all .docx files in the current directory and extract information
 ARList = [f for f in os.listdir('ARs') if f.endswith('.docx')]
 AR_id = 0
 for ARdoc in ARList:
@@ -82,6 +89,7 @@ for ARdoc in ARList:
         df.loc[AR_id, key] = ARinfo[key]
     AR_id += 1
 
+## Calculate on columns
 # Calculate payback period
 df['Payback Period'] = df['Implementation Cost'] / df['Annual Cost Savings']
 # Convert Electricity to MMBtu
@@ -89,7 +97,7 @@ df['Electricity (MMBtu)'] = df['Electricity (kWh)']* 0.003413/0.33
 # Sort df by payback period
 df = df.sort_values(by=['Payback Period'])
 
-# Format strings
+## Format Savings strings
 for index, row in df.iterrows():
     ST = ""
     SV = ""
@@ -114,6 +122,7 @@ for index, row in df.iterrows():
     df.at[index, 'Savings Type'] = ST
     df.at[index, 'Savings Value'] = SV
 
+## Summation statistics
 # Split df to AR
 AR_df = df[df['isAAR'] == False]
 # reorder index
@@ -141,8 +150,8 @@ iacDict['PB'] = payback(ACS, IC)
 # Modify the title of the AR docx
 for index, row in AR_df.iterrows():
     doc = Document(os.path.join('ARs', row['File Name']))
-    # Change title
-    doc.paragraphs[0].text = "AR "+ str(index+1) + ': ' + row['Description']
+    # Change title and make it upper case
+    doc.paragraphs[0].text = "AR "+ str(index+1) + ': ' + row['Description'].upper()
     # set font to bold
     doc.paragraphs[0].runs[0].bold = True
     # set font to upright
@@ -178,8 +187,8 @@ if AAR:
     # Modify the title of the AR docx
     for index, row in AAR_df.iterrows():
         doc = Document(os.path.join('ARs', row['File Name']))
-        # Change title
-        doc.paragraphs[0].text = "AAR "+ str(index+1) + ': ' + row['Description']
+        # Change title and make it upper case
+        doc.paragraphs[0].text = "AAR "+ str(index+1) + ': ' + row['Description'].upper()
         # set font to bold
         doc.paragraphs[0].runs[0].bold = True
         # set font to upright
@@ -190,13 +199,13 @@ if AAR:
         doc.paragraphs[0].runs[0].font.size = shared.Pt(12)
         doc.save(os.path.join('ARs', 'Sorted', 'AAR'+ str(index+1) + '.docx'))
 
-# Calculations
+## Info.json5 Calculations
 # Report date = today or 60 days after assessment, which ever is earlier
 VD = datetime.datetime.strptime(VDATE, '%B %d, %Y')
 RDATE = min(datetime.datetime.today(), VD + datetime.timedelta(days=60))
 iacDict['RDATE'] = datetime.datetime.strftime(RDATE, '%B %d, %Y')
 
-# Sort name list
+# Sort participant and contributor name list
 PART=""
 for name in PARTlist:
     # Sort by last name
@@ -302,5 +311,4 @@ doc.save(os.path.join(script_path, filename))
 # Caveats
 print("Please copy and paste the energy chart manually")
 print("Please copy and paste each AR into the document.")
-print("Please double check outline levels in each AR. Otherwise the ToC will not work.")
 print("Please refresh ToC, tables and figures after running this script.")

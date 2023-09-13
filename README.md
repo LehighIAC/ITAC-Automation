@@ -1,9 +1,20 @@
 # IAC-Automation
-Automated Python assessment templates
-
-Required Python packages:
+Automated Python assessment for Lehigh University Industrial Assessment Center
+### Set up an environment:
 ```
-pip3 install numpy lxml latex2mathml json5 python_docx python_docx_replace num2words requests pandas
+conda create -n iac python=3.8 
+conda activate iac 
+```
+You can easily set up this env in VSCode.
+### Install the following packages:
+```
+conda install json5 numpy pandas requests
+conda install -c conda-forge python-docx latex2mathml num2words
+pip install python-docx-replace
+```
+### To remove this env
+```
+conda remove --name iac --all
 ```
 ## Usage
 1. Edit `plant.json5` for general information including energy price
@@ -16,6 +27,12 @@ pip3 install numpy lxml latex2mathml json5 python_docx python_docx_replace num2w
 2. Copy all AR files into `ARs` directory
 3. Run `Compiler.py`
 4. Follow the instructions of the script
+
+### Requirements of AR files:
+1. No requirement for filename, as long as it's `.docx`
+2. Doesn't matter if the file is made from Python template, Excel template, or by hand. The only requirement is no external links (break links if you use Excel template).
+3. The title should be "AR *: abcdefg" or "AAR *: abcdefg". Case insensitive. Open View -> Outline, the title should be **level 1**.
+5. All sub titles, such as "Recommend Actions", "Anticipated Savings" should be **body text** in outline view. Then set it to **bold, 1.5x line spacing, and 6pt spacing before paragraph**. Otherwise the automatic table of contents will be broken.
 
 ## Supported AR templates
 
