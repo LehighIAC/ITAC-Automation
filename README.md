@@ -1,66 +1,59 @@
 # IAC-Automation
 Automated Python assessment for Lehigh University Industrial Assessment Center
-##
-install VS code, anaconda, go to source control and install git and github desktop.
+## Guide for new IAC members:
+1. When contributing code, DO NOT include any sensitive information such as plant name and address.
+   
+2. Install [VS code](https://code.visualstudio.com/download), [Anaconda](https://www.anaconda.com/download) and [Github Desktop](https://desktop.github.com).
 
-make a github account w/ lehigh email
+3. In VS Code, go to `Source Control`(Ctrl+Shift+G) and install git for Windows. goto `Extensions`(Ctrl+Shift+X) and install python, json5.
 
-sign into github desktop
+4. Register a Github account with your lehigh email, then ``fork`` the [main repository](https://github.com/BrushXue/IAC-Automation). It will make a copy under your account.
 
-go to ( https://github.com/BrushXue/IAC-Automation ) on the github website 
+5. Sign in Github Desktop, `clone` **your fork** (not the main repository) to the local computer. The fork should be under your username,
 
-click the fork button(make sure both github web and desktop is under your account if you are using the lab computer)
+6. After validating your proposed changes, go to Github Desktop to `commit` and `push` new code to your fork. *Remember to write detailed comments so other people can understand your proposed changes.*
+   
+7. Go to github website (there should be a shortcut in Github Desktop) and send a pull request. *Remeber to write detailed comments so other people can understand your proposed changes.*
 
-got to github deskop, clone the fork
+8. After reviewing the code, The IAC Admin can apporove and merge your proposed changes.
 
-Inside VS Code, install VS code python plugin, JSON5 syntax
-
-### Set up an environment COPY LINE BY LINE:
+## Setting up Python environment:
+### Open Anaconda Terminal, or VS Code terminal.
 ```
 conda create -n iac python=3.8 
 conda activate iac 
 ```
-You can easily set up this env in VSCode.
 ### Install the following packages:
 ```
 conda install json5 numpy pandas requests
 conda install -c conda-forge python-docx latex2mathml num2words
 pip install python-docx-replace
 ```
-### To remove this env DO NOT RUN CONDA REMOVE 
+### NOTE: TO REMOVE THIS ENVIRONMENT
 ```
 conda remove --name iac --all
 ```
-
-## TO COMMIT CHANGES 
-
-make changes in vscode inside the GitHub/... folder
-
-commit changes (github desktop) and push change (github desktop)
-
-go to github website and send a pull request WITH comments of proposed changes (github desktop, branch -> pull request)
-
-Admin can apporove and merge 
-
-
-
 ## Usage
-1. Edit `plant.json5` for general information including energy price
-2. Edit any specific `.json5` database
-3. Run the corresponding `.py` file
-4. The output will be in `ARs` directory
-
-## Semi-automatic AR compiler (beta)
-1. Fill in `Info.json5`
-2. Copy all AR files into `ARs` directory
-3. Run `Compiler.py`
-4. Follow the instructions of the script
+Is it suggested work on a copy of this reposiotry when generating an IAC report.
+### Energy Chart
+1. Edit `Energy Charts.xlsx`. Select fuel type and unit, then edit raw data (if copying from other spreadsheet, copy values only). The formatting is fully automatic and shouldn't be touched.
+2. Click the button to run the macro to save all charts as pictures. You may need to find out how to enable macro on your computer.
+3. Run `Utility.py` to extract data from the spreadsheet.
+### Recommendations
+4. Edit `.json5` database for any specific AR. Make sure the data type is matching the description.
+5. Run the corresponding `.py` file. The output will be saved in `ARs` directory. Follow the instructions of the script if there's anything you need to adjust manually.
+### Compiling Report
+6. Fill plant information in `Info.json5`.
+7. Replace plant layout `layout.png`.
+8. Copy other AR files(if you made it from other sources) into `ARs` directory.
+9.  Run `Compiler.py` to compile the final report.
 
 ### Requirements of AR files:
 1. No requirement for filename, as long as it's `.docx`
 2. Doesn't matter if the file is made from Python template, Excel template, or by hand. The only requirement is no external links (break links if you use Excel template).
-3. The title should be "AR *: abcdefg" or "AAR *: abcdefg". Case insensitive. Open View -> Outline, the title should be **level 1**.
-5. All sub titles, such as "Recommend Actions", "Anticipated Savings" should be **body text** in outline view. Then set it to **bold, 1.5x line spacing, and 6pt spacing before paragraph**. Otherwise the automatic table of contents will be broken.
+3. The title text should always be "AR x: Title" or "AAR x: Title". Case insensitive. Open View -> Outline, the title should always be **level 1**.
+4. If there's any other type of energy savings, the unit should be `MMBtu`.
+5. All sub titles, such as "Recommend Actions", "Anticipated Savings" should always be **body text** in outline view. Then set it to **bold, 1.5x line spacing, and 6pt spacing before paragraph**. Otherwise the automatic table of contents will be broken.
 
 ## Supported AR templates
 
