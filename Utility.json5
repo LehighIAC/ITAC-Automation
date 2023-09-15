@@ -1,10 +1,14 @@
 {
-// Natural Gas Cost $/MMBtu, float
-NGC: 6.95,
+// Fuel Type, string
+FUEL: "Natural Gas",
+// Fuel Cost $/MMBtu, float
+FC: 2.95,
+// Natural Gas Cost(for compatibility) $/MMBtu, float
+NGC: 2.95,
 // Electricity Cost $/kWh, float
-EC: 0.057,
+EC: 0.081,
 // Demand Cost $/kW, float
-DC: 11.28,
+DC: 4.22,
 // Labor Rate $/hour, integer
 LR: 40,
 // Rebate Rate $/kWh, float
