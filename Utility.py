@@ -23,9 +23,9 @@ FuelType = ws.cell(row=2, column=17).value
 # Get Fuel unit from cell Q3, string
 FuelUnit = ws.cell(row=3, column=17).value
 # Get Start Month from cell B7, string
-StartMo = ws.cell(row=7, column=2).value.strftime("%b %y")
+StartMo = ws.cell(row=7, column=2).value
 # Get End Month from cell B18, string
-EndMo = ws.cell(row=18, column=2).value.strftime("%b %y")
+EndMo = ws.cell(row=18, column=2).value
 
 # Get Total Electricity kWh from cell C19
 TotalEkWh = round(ws.cell(row=19, column=3).value)
@@ -48,7 +48,7 @@ TotalBtu = round(ws.cell(row=8, column=4).value)
 TotalCost = round(ws.cell(row=8, column=5).value)
 
 # Write Natural Gas Cost for compatibility.
-if Fuel == 'Natural Gas':
+if FuelType == 'Natural Gas':
     NGC = FC
 else:
     NGC = 0
