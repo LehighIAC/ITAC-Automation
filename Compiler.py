@@ -368,6 +368,10 @@ iacDict['EC'] = locale.currency(EC, grouping=True)
 locale._override_localeconv={'frac_digits':2}
 iacDict['DC'] = locale.currency(DC, grouping=True)
 iacDict['FC'] = locale.currency(FC, grouping=True)
+locale._override_localeconv={'frac_digits':0}
+iacDict['TotalECost'] = locale.currency(TotalECost, grouping=True)
+iacDict['TotalFCost'] = locale.currency(TotalFCost, grouping=True)
+iacDict['TotalCost'] = locale.currency(TotalCost, grouping=True)
 
 # Replacing keys
 docx_replace(doc, **iacDict)
