@@ -1,20 +1,21 @@
 """
-Semi-automatically compile IAC report
+Fully-automated IAC report compiler
 Usage: Copy all ARs into the ARs folder, Update info in Info.json5 and Utility.json5,
 then run this script.
 """
 
 
-import json5, sys, os, locale
+import json5, sys, os, locale, datetime
 from docx import Document, shared
+from docxcompose.composer import Composer
 from python_docx_replace import docx_replace, docx_blocks
 # Get the path of the current script, auxilliary functions are under Shared folder
 script_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(script_path, 'Shared'))
 from IAC import *
 import pandas as pd
-import datetime
 from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.enum.section import WD_ORIENT
 
 # If ARs/Sorted/ folder doesn't exist, create one
 os.makedirs(os.path.join('ARs', 'Sorted'), exist_ok=True)
@@ -170,6 +171,8 @@ for index, row in AR_df.iterrows():
     doc.paragraphs[0].runs[0].underline = False
     # set font size to 12
     doc.paragraphs[0].runs[0].font.size = shared.Pt(12)
+    # Add pagebreak to the end of the document
+    doc.add_page_break()
     doc.save(os.path.join('ARs', 'Sorted', 'AR'+ str(index+1) + '.docx'))
 
 # Check if there's at least 1 AAR
@@ -207,6 +210,8 @@ if AAR:
         doc.paragraphs[0].runs[0].underline = False
         # set font size to 12
         doc.paragraphs[0].runs[0].font.size = shared.Pt(12)
+        # Add pagebreak to the end of the document
+        doc.add_page_break()
         doc.save(os.path.join('ARs', 'Sorted', 'AAR'+ str(index+1) + '.docx'))
 
 ## Info.json5 Calculations
@@ -229,11 +234,11 @@ for name in CONTlist:
     CONT  = CONT + name + '\n'
 iacDict['CONT'] = CONT.rstrip('\n')
 
-# Import docx template
-doc = Document(os.path.join(script_path, 'IACtemplate.docx'))
+# Import docx template1
+doc1 = Document(os.path.join(script_path, 'Report', 'IACtemplate1.docx'))
 
 # Add rows to AR table (Should be the 3rd table)
-ARTable = doc.tables[2]
+ARTable = doc1.tables[2]
 for index, row in AR_df.iterrows():
     ARrow = ARTable.rows[index+1].cells
     # Add ARC No.
@@ -267,7 +272,7 @@ for index in reversed(range(len(AR_df), 15)):
 
 if AAR:
     # Add rows to AAR table (Should be the 4th table)
-    AARTable = doc.tables[3]
+    AARTable = doc1.tables[3]
     for index, row in AAR_df.iterrows():
         AARrow = AARTable.rows[index+1].cells
         # Add ARC No.
@@ -299,20 +304,30 @@ if AAR:
     for index in reversed(range(len(AAR_df), 5)):
         AARTable._tbl.remove(AARTable.rows[index+1]._tr)
 
+# Remove AAR blocks
+docx_blocks(doc1, AAR = AAR)
+
+# Save part 1
+filename1 = LE + '-1.docx'
+doc1.save(filename1)
+
+# Import docx template2
+doc2 = Document(os.path.join(script_path, 'Report', 'IACtemplate2.docx'))
+
 # Add plant layout
 # The file should be saved as "layout.png"
-add_image(doc, '#LAYOUT', "layout.png", shared.Inches(6))
+add_image(doc2, '#LAYOUT', "layout.png", shared.Inches(6))
 
 # Add energy chart images
-add_image(doc, '#EUChart', os.path.join("Energy Charts.fld","image001.png"), shared.Inches(6))
-add_image(doc, '#ECChart', os.path.join("Energy Charts.fld","image002.png"), shared.Inches(6))
-add_image(doc, '#DUChart', os.path.join("Energy Charts.fld","image003.png"), shared.Inches(6))
-add_image(doc, '#DCChart', os.path.join("Energy Charts.fld","image004.png"), shared.Inches(6))
-add_image(doc, '#FUChart', os.path.join("Energy Charts.fld","image005.png"), shared.Inches(6))
-add_image(doc, '#FCChart', os.path.join("Energy Charts.fld","image006.png"), shared.Inches(6))
-add_image(doc, '#PieUChart', os.path.join("Energy Charts.fld","image007.png"), shared.Inches(6))
-add_image(doc, '#PieCChart', os.path.join("Energy Charts.fld","image008.png"), shared.Inches(6))
-add_image(doc, '#TotalChart', os.path.join("Energy Charts.fld","image009.png"), shared.Inches(9))
+add_image(doc2, '#EUChart', os.path.join("Energy Charts.fld","image001.png"), shared.Inches(6))
+add_image(doc2, '#ECChart', os.path.join("Energy Charts.fld","image002.png"), shared.Inches(6))
+add_image(doc2, '#DUChart', os.path.join("Energy Charts.fld","image003.png"), shared.Inches(6))
+add_image(doc2, '#DCChart', os.path.join("Energy Charts.fld","image004.png"), shared.Inches(6))
+add_image(doc2, '#FUChart', os.path.join("Energy Charts.fld","image005.png"), shared.Inches(6))
+add_image(doc2, '#FCChart', os.path.join("Energy Charts.fld","image006.png"), shared.Inches(6))
+add_image(doc2, '#PieUChart', os.path.join("Energy Charts.fld","image007.png"), shared.Inches(6))
+add_image(doc2, '#PieCChart', os.path.join("Energy Charts.fld","image008.png"), shared.Inches(6))
+add_image(doc2, '#TotalChart', os.path.join("Energy Charts.fld","image009.png"), shared.Inches(9))
 
 # Fill in energy chart tables from Energy Charts.xlsx
 # Read electricity table from B6 to I19
@@ -320,8 +335,8 @@ edf = pd.read_excel("Energy Charts.xlsx", sheet_name="Raw Data", skiprows = 5, n
 # Read fuel table from K6 to N19
 fdf = pd.read_excel("Energy Charts.xlsx", sheet_name="Raw Data", skiprows = 5, nrows=13, usecols = 'K:N')
 
-# Add rows to electricity table (Should be the 10th table)
-edfTable = doc.tables[9]
+# Add rows to electricity table (Should be the 5th table)
+edfTable = doc2.tables[5]
 for index, row in edf.iterrows():
     edfrow = edfTable.rows[index+3].cells
     # Add Month
@@ -336,8 +351,8 @@ for index, row in edf.iterrows():
         for col in range(0,8):
             edfrow[col].paragraphs[0].runs[0].bold = True
 
-# Add rows to fuel table (Should be the 11th table)
-fdfTable = doc.tables[10]
+# Add rows to fuel table (Should be the 6th table)
+fdfTable = doc2.tables[6]
 for index, row in fdf.iterrows():
     fdfrow = fdfTable.rows[index+3].cells
     # Add Month
@@ -352,8 +367,37 @@ for index, row in fdf.iterrows():
         for col in range(0,4):
             fdfrow[col].paragraphs[0].runs[0].bold = True
 
-# Remove AAR blocks
-docx_blocks(doc, AAR = AAR)
+# Save part 2
+filename2 = LE + '-2.docx'
+doc2.save(filename2)
+
+# A list of docs to combine
+ARList = []
+for ARlen in range(1, len(AR_df)+1):
+    ARList.append(os.path.join('ARs','Sorted','AR' + str(ARlen) + '.docx'))
+AARList = []
+for AARlen in range(1, len(AAR_df)+1):
+    AARList.append(os.path.join('ARs','Sorted','AAR' + str(AARlen) + '.docx'))
+docList = []
+docList.extend(ARList)
+if AAR:
+    docList.append(os.path.join('Report','AAR.docx'))
+    docList.extend(AARList)
+else:
+    pass
+docList.append(filename2)
+
+# Combine all docx files
+master = Document(filename1)
+composer = Composer(master)
+for i in range(0, len(docList)):
+    doc_temp = Document(docList[i])
+    composer.append(doc_temp)
+filename = LE +'.docx'
+composer.save(filename)
+
+# Open the combined docx file
+doc = Document(filename)
 
 # Formatting
 # Add all numbers in local variables to iacDict
@@ -376,10 +420,20 @@ iacDict['TotalCost'] = locale.currency(TotalCost, grouping=True)
 # Replacing keys
 docx_replace(doc, **iacDict)
 
-filename = LE +'.docx'
-doc.save(os.path.join(script_path, filename))
+# Change the orientation of the last section back to landscape
+section = doc.sections[-1]
+new_width, new_height = section.page_height, section.page_width
+section.orientation = WD_ORIENT.LANDSCAPE
+section.page_width = new_width
+section.page_height = new_height
+
+# Save final report
+doc.save(filename)
+
+# delete temp files
+os.remove(filename1)
+os.remove(filename2)
 
 # Caveats
 print("Please add Process Description, Major Equipment and Current Best Practices.")
-print("Please copy and paste each sorted AR into the document.")
 print("Please refresh ToC, tables and figures after running this script.")
