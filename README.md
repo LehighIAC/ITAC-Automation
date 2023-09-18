@@ -26,7 +26,7 @@ conda activate iac
 ### Install the following packages:
 ```
 conda install json5 numpy pandas openpyxl requests
-conda install -c conda-forge python-docx latex2mathml num2words
+conda install -c conda-forge python-docx docxcompose latex2mathml num2words
 pip install python-docx-replace
 ```
 ### NOTE: TO REMOVE THIS ENVIRONMENT
