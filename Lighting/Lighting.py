@@ -20,10 +20,6 @@ iacDict = json5.load(open(os.path.join(script_path, 'Lighting.json5')))
 iacDict.update(json5.load(open(os.path.join(script_path, '..', 'Utility.json5'))))
 locals().update(iacDict)
 
-# Remove empty blocks
-docx_blocks(doc, area2 = FLAG2)
-docx_blocks(doc, area3 = FLAG3)
-
 # Calculations
 # Area 1
 ES1 = round((CN1 * CFW1 * COH1 - PN1 * PFW1 * POH1) / 1000.0)
@@ -118,6 +114,11 @@ add_eqn(doc, '#ES3Eqn', ES3Eqn)
 DS3Eqn = '\\frac{{ ({0} \\times {1} - {2} \\times {3}) \\times {4} \\times 12 }} {{ \\mathrm{{1,000}} }}' \
     .format(CN3, CFW3, PN3, PFW3, CF3)
 add_eqn(doc, '#DS3Eqn', DS3Eqn)
+
+# Remove empty blocks
+docx_blocks(doc, area1 = (FLAG2 or FLAG3))
+docx_blocks(doc, area2 = FLAG2)
+docx_blocks(doc, area3 = FLAG3)
 
 # Save file as AR*.docx
 filename = 'AR'+iacDict['AR']+'.docx'
