@@ -19,6 +19,11 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 # If ARs/Sorted/ folder doesn't exist, create one
 os.makedirs(os.path.join('ARs', 'Sorted'), exist_ok=True)
 
+# If Energy Charts.fld doesn't exist, exit
+if not os.path.exists(os.path.join(script_path, 'Energy Charts.fld')):
+    print('Energy Charts.fld not found. Please save the energy chart as web page (.thm).')
+    exit()
+
 # Load config file and convert everything to local variables
 iacDict = json5.load(open(os.path.join(script_path, 'Info.json5')))
 iacDict.update(json5.load(open(os.path.join(script_path, 'Utility.json5'))))
@@ -252,6 +257,10 @@ for index, row in AR_df.iterrows():
     # Add payback period
     ARrow[6].text = str(round(row['Payback Period'],1))
     ARrow[6].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.RIGHT
+    # Set 3pt before and after paragraph
+    for col in range(0,7):
+        ARrow[col].paragraphs[0].paragraph_format.space_before = shared.Pt(3)
+        ARrow[col].paragraphs[0].paragraph_format.space_after = shared.Pt(3)
 # Delete unused rows (Currectly row 1-15 are empty)
 for index in reversed(range(len(AR_df), 15)):
     ARTable._tbl.remove(ARTable.rows[index+1]._tr)
@@ -282,6 +291,10 @@ if AAR:
         # Add payback period
         AARrow[6].text = str(round(row['Payback Period'],1))
         AARrow[6].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.RIGHT
+    # Set 3pt before and after paragraph
+    for col in range(0,7):
+        AARrow[col].paragraphs[0].paragraph_format.space_before = shared.Pt(3)
+        AARrow[col].paragraphs[0].paragraph_format.space_after = shared.Pt(3)
     # Delete unused rows (Currectly row 1-5 are empty)
     for index in reversed(range(len(AAR_df), 5)):
         AARTable._tbl.remove(AARTable.rows[index+1]._tr)
@@ -290,7 +303,7 @@ if AAR:
 # The file should be saved as "layout.png"
 add_image(doc, '#LAYOUT', "layout.png", shared.Inches(6))
 
-# Add energy charts
+# Add energy chart images
 add_image(doc, '#EUChart', os.path.join("Energy Charts.fld","image001.png"), shared.Inches(6))
 add_image(doc, '#ECChart', os.path.join("Energy Charts.fld","image002.png"), shared.Inches(6))
 add_image(doc, '#DUChart', os.path.join("Energy Charts.fld","image003.png"), shared.Inches(6))
@@ -300,6 +313,44 @@ add_image(doc, '#FCChart', os.path.join("Energy Charts.fld","image006.png"), sha
 add_image(doc, '#PieUChart', os.path.join("Energy Charts.fld","image007.png"), shared.Inches(6))
 add_image(doc, '#PieCChart', os.path.join("Energy Charts.fld","image008.png"), shared.Inches(6))
 add_image(doc, '#TotalChart', os.path.join("Energy Charts.fld","image009.png"), shared.Inches(9))
+
+# Fill in energy chart tables from Energy Charts.xlsx
+# Read electricity table from B6 to I19
+edf = pd.read_excel("Energy Charts.xlsx", sheet_name="Raw Data", skiprows = 5, nrows=13, usecols = 'B:I')
+# Read fuel table from K6 to N19
+fdf = pd.read_excel("Energy Charts.xlsx", sheet_name="Raw Data", skiprows = 5, nrows=13, usecols = 'K:N')
+
+# Add rows to electricity table (Should be the 10th table)
+edfTable = doc.tables[9]
+for index, row in edf.iterrows():
+    edfrow = edfTable.rows[index+3].cells
+    # Add Month
+    edfrow[0].text = edf.iloc[(index, 0)]
+    edfrow[0].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+    for col in range(1,8):
+        # Add interger with thousand separator
+        edfrow[col].text = locale.format_string('%d',edf.iloc[(index, col)], grouping=True)
+        edfrow[col].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.RIGHT
+    # Bold the last row
+    if index == 12:
+        for col in range(0,8):
+            edfrow[col].paragraphs[0].runs[0].bold = True
+
+# Add rows to fuel table (Should be the 11th table)
+fdfTable = doc.tables[10]
+for index, row in fdf.iterrows():
+    fdfrow = fdfTable.rows[index+3].cells
+    # Add Month
+    fdfrow[0].text = fdf.iloc[(index, 0)]
+    fdfrow[0].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+    for col in range(1,4):
+        # Add interger with thousand separator
+        fdfrow[col].text = locale.format_string('%d',fdf.iloc[(index, col)], grouping=True)
+        fdfrow[col].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.RIGHT
+    # Bold the last row
+    if index == 12:
+        for col in range(0,4):
+            fdfrow[col].paragraphs[0].runs[0].bold = True
 
 # Remove AAR blocks
 docx_blocks(doc, AAR = AAR)
