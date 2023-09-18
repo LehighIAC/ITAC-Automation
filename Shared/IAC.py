@@ -6,6 +6,26 @@ import math, os, locale
 from lxml import etree
 import latex2mathml.converter
 
+def add_image(doc, tag, image_path, wd):
+    """
+    Add image to Word document, search for tag in doc and replace with the image
+    :param doc: Document
+    :param tag: Image tag string
+    :param image_path: Path to the image
+    :param wd: Image width
+    :return: None
+    """
+    found_tag = False
+    for p in doc.paragraphs:
+        if tag in p.text:
+            p.text = p.text.replace(tag, '')
+            r = p.add_run()
+            r.add_picture(image_path, width=wd)
+            found_tag = True
+            break
+    if found_tag == False:
+        print("Tag "+ tag +" not found")
+
 def combine_words(words):
     """
     :param words: list of strings
@@ -39,19 +59,24 @@ def grouping_num(dic):
             pass
     return dic
 
-def add_eqn(doc, eqn, eqn_input):
+def add_eqn(doc, tag, eqn_input):
     """
     Add equation to Word document, search for eqn in doc and replace with eqn_input
     :param doc: Document
-    :param eqn: Equation string
+    :param tag: Equation tag string
     :param eqn_input: Equation input
     :return: None
     """
+    found_tag = False
     for p in doc.paragraphs:
-        if eqn in p.text:
-            p.text = p.text.replace(eqn, '')
+        if tag in p.text:
+            p.text = p.text.replace(tag, '')
             word_math = latex2word(eqn_input)
             p._element.append(word_math)
+            found_tag = True
+            break
+    if found_tag == False:
+        print("Tag "+ tag +" not found")
 
 def latex2word(latex_input):
     """
