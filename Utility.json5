@@ -1,6 +1,6 @@
 {
 // Fuel Type, string
-FUEL: "Natural Gas",
+Fuel: "Natural Gas",
 // Fuel Cost $/MMBtu, float
 FC: 2.95,
 // Natural Gas Cost(for compatibility) $/MMBtu, float
@@ -13,4 +13,24 @@ DC: 4.22,
 LR: 40,
 // Rebate Rate $/kWh, float
 RR: 0.075,
+// Start month, string
+StartMo: "Jan 23",
+// End month, string
+EndMo: "Dec 23",
+// Total Electricity kWh, integer
+TotalEkWh: 17622865,
+// Total Electricity MMBtu, integer
+TotalEBtu: 182210,
+// Total demand kW, integer
+TotalDkW: 33494,
+// Total Electricity Cost, integer
+TotalECost: 1560550,
+// Total Fuel MMBtu, integer
+TotalFBtu: 392327,
+// Total Fuel Cost, integer
+TotalFCost: 1158864,
+// Total Energy MMBtu, integer
+TotalBtu: 574536,
+// Total Energy Cost, integer
+TotalCost: 2719414,
 }
