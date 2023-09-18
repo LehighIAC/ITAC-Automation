@@ -1,6 +1,8 @@
 {
 // Fuel Type, string
-Fuel: "Natural Gas",
+FuelType: "Natural Gas",
+// Fuel Unit, string
+FuelUnit: "Mcf",
 // Fuel Cost $/MMBtu, float
 FC: 2.95,
 // Natural Gas Cost(for compatibility) $/MMBtu, float

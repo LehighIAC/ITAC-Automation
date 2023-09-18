@@ -19,7 +19,9 @@ DC = round(ws.cell(row=23, column=4).value,2)
 # Get Fuel cost from cell D24, 2 digits
 FC = round(ws.cell(row=24, column=4).value,2)
 # Get Fuel type from cell Q2, string
-Fuel = ws.cell(row=2, column=17).value
+FuelType = ws.cell(row=2, column=17).value
+# Get Fuel unit from cell Q3, string
+FuelUnit = ws.cell(row=3, column=17).value
 # Get Start Month from cell B7, string
 StartMo = ws.cell(row=7, column=2).value.strftime("%b %y")
 # Get End Month from cell B18, string
@@ -59,7 +61,8 @@ with open('utility.json5', 'r') as f:
 utility = re.sub(r'EC: .*', 'EC: ' + str(EC) + ',', utility)
 utility = re.sub(r'DC: .*', 'DC: ' + str(DC) + ',', utility)
 utility = re.sub(r'FC: .*', 'FC: ' + str(FC) + ',', utility)
-utility = re.sub(r'Fuel: .*', 'Fuel: "' + Fuel + '",', utility)
+utility = re.sub(r'FuelType: .*', 'FuelType: "' + FuelType + '",', utility)
+utility = re.sub(r'FuelUnit: .*', 'FuelUnit: "' + FuelUnit + '",', utility)
 utility = re.sub(r'NGC: .*', 'NGC: ' + str(NGC) + ',', utility)
 utility = re.sub(r'StartMo: .*', 'StartMo: "' + str(StartMo) + '",', utility)
 utility = re.sub(r'EndMo: .*', 'EndMo: "' + str(EndMo) + '",', utility)
