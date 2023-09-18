@@ -16,6 +16,9 @@ import pandas as pd
 import datetime
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 
+# If ARs/Sorted/ folder doesn't exist, create one
+os.makedirs(os.path.join('ARs', 'Sorted'), exist_ok=True)
+
 # Load config file and convert everything to local variables
 iacDict = json5.load(open(os.path.join(script_path, 'Info.json5')))
 iacDict.update(json5.load(open(os.path.join(script_path, 'Utility.json5'))))
@@ -140,10 +143,12 @@ CO2 = round((53 * NMMBtu + 0.22 * EkWh)/1000)
 ACS = AR_df['Annual Cost Savings'].sum(axis=0, skipna=True)
 IC = AR_df['Implementation Cost'].sum(axis=0, skipna=True)
 ARPB = round(IC / ACS, 1)
-# format as interger currency
+# Format as interger currency
 locale._override_localeconv={'frac_digits':0}
 iacDict['ARACS'] = locale.currency(ACS, grouping=True)
 iacDict['ARIC'] = locale.currency(IC, grouping=True)
+
+
 # Payback period string
 iacDict['PB'] = payback(ACS, IC)
 
@@ -287,7 +292,7 @@ for p in doc.paragraphs:
     if '#LAYOUT' in p.text:
         p.text = p.text.replace('#LAYOUT', '')
         r = p.add_run()
-        r.add_picture('layout.png',width=shared.Inches(6.5))
+        r.add_picture('layout.png',width=shared.Inches(6))
         break
 
 # Remove AAR blocks
@@ -299,6 +304,13 @@ iacDict.update({key: value for (key, value) in locals().items() if type(value) =
 
 # Format numbers to string with thousand separator
 iacDict = grouping_num(iacDict)
+
+# Format energy cost
+locale._override_localeconv={'frac_digits':3}
+iacDict['EC'] = locale.currency(EC, grouping=True)
+locale._override_localeconv={'frac_digits':2}
+iacDict['DC'] = locale.currency(DC, grouping=True)
+iacDict['FC'] = locale.currency(FC, grouping=True)
 
 # Replacing keys
 docx_replace(doc, **iacDict)
