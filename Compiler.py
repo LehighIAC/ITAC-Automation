@@ -288,12 +288,18 @@ if AAR:
 
 # Add plant layout
 # The file should be saved as "layout.png"
-for p in doc.paragraphs:
-    if '#LAYOUT' in p.text:
-        p.text = p.text.replace('#LAYOUT', '')
-        r = p.add_run()
-        r.add_picture('layout.png',width=shared.Inches(6))
-        break
+add_image(doc, '#LAYOUT', "layout.png", shared.Inches(6))
+
+# Add energy charts
+add_image(doc, '#EUChart', os.path.join("Energy Charts.fld","image001.png"), shared.Inches(6))
+add_image(doc, '#ECChart', os.path.join("Energy Charts.fld","image002.png"), shared.Inches(6))
+add_image(doc, '#DUChart', os.path.join("Energy Charts.fld","image003.png"), shared.Inches(6))
+add_image(doc, '#DCChart', os.path.join("Energy Charts.fld","image004.png"), shared.Inches(6))
+add_image(doc, '#FUChart', os.path.join("Energy Charts.fld","image005.png"), shared.Inches(6))
+add_image(doc, '#FCChart', os.path.join("Energy Charts.fld","image006.png"), shared.Inches(6))
+add_image(doc, '#PieUChart', os.path.join("Energy Charts.fld","image007.png"), shared.Inches(6))
+add_image(doc, '#PieCChart', os.path.join("Energy Charts.fld","image008.png"), shared.Inches(6))
+add_image(doc, '#TotalChart', os.path.join("Energy Charts.fld","image009.png"), shared.Inches(9))
 
 # Remove AAR blocks
 docx_blocks(doc, AAR = AAR)
@@ -319,6 +325,6 @@ filename = LE +'.docx'
 doc.save(os.path.join(script_path, filename))
 
 # Caveats
-print("Please copy and paste the energy chart manually")
-print("Please copy and paste each AR into the document.")
+print("Please add Process Description, Major Equipment and Current Best Practices.")
+print("Please copy and paste each sorted AR into the document.")
 print("Please refresh ToC, tables and figures after running this script.")
