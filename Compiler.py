@@ -62,23 +62,23 @@ for ARdoc in ARList:
         # Parse Annual Cost Savings
         elif "annual" in key.lower() and "cost" in key.lower():
             # convert currency to interger
-            ARinfo['Annual Cost Savings'] = locale.atof(value.strip("$"))
+            ARinfo['Annual Cost Savings'] = locale.atoi(value.strip("$"))
         # Parse Implementation Cost
         elif "implementation" in key.lower():
             # convert currency to interger
-            ARinfo['Implementation Cost'] = locale.atof(value.strip("$"))
+            ARinfo['Implementation Cost'] = locale.atoi(value.strip("$"))
         # If Payback Period skip (Doesn't matter, will calculate later)
         elif "payback" in key.lower():
             continue
         # Parse Electricity
         elif "electricity" in key.lower():
-            ARinfo['Electricity (kWh)'] = locale.atof(value.split(' ')[0])
+            ARinfo['Electricity (kWh)'] = locale.atoi(value.split(' ')[0])
         # Parse Demand
         elif "demand" in key.lower():
-            ARinfo['Demand (kW)'] = locale.atof(value.split(' ')[0])
+            ARinfo['Demand (kW)'] = locale.atoi(value.split(' ')[0])
         # Parse Natural Gas
         elif "natural" in key.lower():
-            ARinfo['Natural Gas (MMBtu)'] = locale.atof(value.split(' ')[0])
+            ARinfo['Natural Gas (MMBtu)'] = locale.atoi(value.split(' ')[0])
         # Parse undefined type
         else:
             # If the value contains mmbtu, parse it as other energy
@@ -86,7 +86,7 @@ for ARdoc in ARList:
                 # Remove the last word (usually "savings")
                 ARinfo['Other Energy Type'] = key.rsplit(' ', 1)[0]
                 # Parse number
-                ARinfo['Other Energy Amount'] = locale.atof(value.split(' ')[0])
+                ARinfo['Other Energy Amount'] = locale.atoi(value.split(' ')[0])
             # If not, parse it as other resource
             else:
                 # Remove the last word (usually "savings")
@@ -332,37 +332,37 @@ edf = pd.read_excel("Energy Charts.xlsx", sheet_name="Raw Data", skiprows = 5, n
 # Read fuel table from K6 to N19
 fdf = pd.read_excel("Energy Charts.xlsx", sheet_name="Raw Data", skiprows = 5, nrows=13, usecols = 'K:N')
 
-# Add rows to electricity table (Should be the 5th table)
-edfTable = doc2.tables[5]
+# Add rows to electricity table (Should be the 1st table)
+etable = doc2.tables[0]
 for index, row in edf.iterrows():
-    edfrow = edfTable.rows[index+3].cells
+    erow = etable.rows[index+3].cells
     # Add Month
-    edfrow[0].text = edf.iloc[(index, 0)]
-    edfrow[0].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+    erow[0].text = edf.iloc[(index, 0)]
+    erow[0].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
     for col in range(1,8):
         # Add interger with thousand separator
-        edfrow[col].text = locale.format_string('%d',edf.iloc[(index, col)], grouping=True)
-        edfrow[col].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.RIGHT
+        erow[col].text = locale.format_string('%d',round(edf.iloc[(index, col)]), grouping=True)
+        erow[col].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.RIGHT
     # Bold the last row
     if index == 12:
         for col in range(0,8):
-            edfrow[col].paragraphs[0].runs[0].bold = True
+            erow[col].paragraphs[0].runs[0].bold = True
 
-# Add rows to fuel table (Should be the 6th table)
-fdfTable = doc2.tables[6]
+# Add rows to fuel table (Should be the 2nd table)
+ftable = doc2.tables[1]
 for index, row in fdf.iterrows():
-    fdfrow = fdfTable.rows[index+3].cells
+    frow = ftable.rows[index+3].cells
     # Add Month
-    fdfrow[0].text = fdf.iloc[(index, 0)]
-    fdfrow[0].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+    frow[0].text = fdf.iloc[(index, 0)]
+    frow[0].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
     for col in range(1,4):
         # Add interger with thousand separator
-        fdfrow[col].text = locale.format_string('%d',fdf.iloc[(index, col)], grouping=True)
-        fdfrow[col].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.RIGHT
+        frow[col].text = locale.format_string('%d',round(fdf.iloc[(index, col)]), grouping=True)
+        frow[col].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.RIGHT
     # Bold the last row
     if index == 12:
         for col in range(0,4):
-            fdfrow[col].paragraphs[0].runs[0].bold = True
+            frow[col].paragraphs[0].runs[0].bold = True
 
 # Save part 2
 filename2 = LE + '-2.docx'
