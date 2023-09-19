@@ -314,9 +314,6 @@ doc1.save(filename1)
 # Import docx template2
 doc2 = Document(os.path.join(script_path, 'Report', 'IACtemplate2.docx'))
 
-# Add plant layout
-# The file should be saved as "layout.png"
-add_image(doc2, '#LAYOUT', "layout.png", shared.Inches(6))
 
 # Add energy chart images
 add_image(doc2, '#EUChart', os.path.join("Energy Charts.fld","image001.png"), shared.Inches(6))
@@ -435,5 +432,5 @@ os.remove(filename1)
 os.remove(filename2)
 
 # Caveats
-print("Please add Process Description, Major Equipment and Current Best Practices.")
+print("Please add Process Description, Major Equipment, Current Best Practices, and plant layout image.")
 print("Please refresh ToC, tables and figures after running this script.")
