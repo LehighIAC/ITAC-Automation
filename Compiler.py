@@ -234,8 +234,8 @@ for name in CONTlist:
     CONT  = CONT + name + '\n'
 iacDict['CONT'] = CONT.rstrip('\n')
 
-# Import docx template1
-doc1 = Document(os.path.join(script_path, 'Report', 'IACtemplate1.docx'))
+## Load introduction template
+doc1 = Document(os.path.join(script_path, 'Report', 'Introduction.docx'))
 
 # Add rows to AR table (Should be the 3rd table)
 ARTable = doc1.tables[2]
@@ -311,9 +311,8 @@ docx_blocks(doc1, AAR = AAR)
 filename1 = LE + '-1.docx'
 doc1.save(filename1)
 
-# Import docx template2
-doc2 = Document(os.path.join(script_path, 'Report', 'IACtemplate2.docx'))
-
+## Load energy bill analysis template
+doc2 = Document(os.path.join(script_path, 'Report', 'Energy.docx'))
 
 # Add energy chart images
 add_image(doc2, '#EUChart', os.path.join("Energy Charts.fld","image001.png"), shared.Inches(6))
@@ -369,19 +368,20 @@ filename2 = LE + '-2.docx'
 doc2.save(filename2)
 
 # A list of docs to combine
+docList = []
 ARList = []
 for ARlen in range(1, len(AR_df)+1):
     ARList.append(os.path.join('ARs','Sorted','AR' + str(ARlen) + '.docx'))
-AARList = []
-for AARlen in range(1, len(AAR_df)+1):
-    AARList.append(os.path.join('ARs','Sorted','AAR' + str(AARlen) + '.docx'))
-docList = []
 docList.extend(ARList)
 if AAR:
     docList.append(os.path.join('Report','AAR.docx'))
+    AARList = []
+    for AARlen in range(1, len(AAR_df)+1):
+        AARList.append(os.path.join('ARs','Sorted','AAR' + str(AARlen) + '.docx'))
     docList.extend(AARList)
 else:
     pass
+docList.append(os.path.join('Report','Background.docx'))
 docList.append(filename2)
 
 # Combine all docx files
@@ -392,6 +392,9 @@ for i in range(0, len(docList)):
     composer.append(doc_temp)
 filename = LE +'.docx'
 composer.save(filename)
+# delete temp files
+os.remove(filename1)
+os.remove(filename2)
 
 # Open the combined docx file
 doc = Document(filename)
@@ -418,6 +421,8 @@ iacDict['TotalCost'] = locale.currency(TotalCost, grouping=True)
 docx_replace(doc, **iacDict)
 
 # Change the orientation of the last section back to landscape
+# If anything goes wrong, check if there's a section break
+# in the end of background.docx
 section = doc.sections[-1]
 new_width, new_height = section.page_height, section.page_width
 section.orientation = WD_ORIENT.LANDSCAPE
@@ -426,10 +431,6 @@ section.page_height = new_height
 
 # Save final report
 doc.save(filename)
-
-# delete temp files
-os.remove(filename1)
-os.remove(filename2)
 
 # Caveats
 print("Please add Process Description, Major Equipment, Current Best Practices, and plant layout image.")
