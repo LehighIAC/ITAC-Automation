@@ -25,9 +25,11 @@ if not os.path.exists(os.path.join(script_path, 'Energy Charts.fld')):
     exit()
 
 # Load config file and convert everything to local variables
+print("Reading json5 database...", end ="")
 iacDict = json5.load(open(os.path.join(script_path, 'Info.json5')))
 iacDict.update(json5.load(open(os.path.join(script_path, 'Utility.json5'))))
 locals().update(iacDict)
+print("done")
 
 # Initialize dataframe
 columns = ["isAAR", "File Name", "ARC No.", "Description", "Electricity (kWh)", "Electricity (MMBtu)", "Demand (kW)"
@@ -38,10 +40,12 @@ df = pd.DataFrame(columns=columns)
 # Set locale to en_US
 locale.setlocale(locale.LC_ALL, 'en_US')
 
+print("Reading ARs...")
 # Get all .docx files in ARs directory and extract information
 ARList = [f for f in os.listdir('ARs') if f.endswith('.docx')]
 AR_id = 0
 for ARdoc in ARList:
+    print(ARdoc)
     doc = Document(os.path.join('ARs', ARdoc))
     ARinfo = {}
     # check if the document is an AAR
@@ -96,7 +100,9 @@ for ARdoc in ARList:
     for key in ARinfo:
         df.loc[AR_id, key] = ARinfo[key]
     AR_id += 1
+print("done")
 
+print("Analyzing ARs...", end ="")
 ## Calculate on columns
 # Calculate payback period
 df['Payback Period'] = df['Implementation Cost'] / df['Annual Cost Savings']
@@ -154,7 +160,9 @@ iacDict['ARACS'] = locale.currency(ACS, grouping=True)
 iacDict['ARIC'] = locale.currency(IC, grouping=True)
 # Payback period string
 iacDict['PB'] = payback(ACS, IC)
+print("done")
 
+print("Reformatting ARs...", end ="")
 ## Reformatting ARs
 for index, row in AR_df.iterrows():
     doc = Document(os.path.join('ARs', row['File Name']))
@@ -171,10 +179,12 @@ for index, row in AR_df.iterrows():
     # Add pagebreak to the end of the document
     doc.add_page_break()
     doc.save(os.path.join('ARs', 'Sorted', 'AR'+ str(index+1) + '.docx'))
+print("done")
 
 # Check if there's at least 1 AAR
 AAR = df['isAAR'].any()
 if AAR:
+    print("Analyzing AARs...", end ="")
     # Filter AAR
     AAR_df = df[df['isAAR'] == True]
     # reorder index
@@ -193,7 +203,9 @@ if AAR:
     iacDict['AARIC'] = locale.currency(IC, grouping=True)
     # Payback period number in the table
     AARPB = round(IC / ACS, 1)
+    print("done")
 
+    print("Reformatting AARs...", end ="")
     # Modify the title of the AAR docx
     for index, row in AAR_df.iterrows():
         doc = Document(os.path.join('ARs', row['File Name']))
@@ -210,7 +222,9 @@ if AAR:
         # Add pagebreak to the end of the document
         doc.add_page_break()
         doc.save(os.path.join('ARs', 'Sorted', 'AAR'+ str(index+1) + '.docx'))
+    print("done")
 
+print("Parsing plant information...", end ="")
 ## Info.json5 Calculations
 # Report date = today or 60 days after assessment, which ever is earlier
 VD = datetime.datetime.strptime(VDATE, '%B %d, %Y')
@@ -229,11 +243,13 @@ for name in CONTlist:
     CONTlist.sort(key=lambda x: x.rsplit(' ', 1)[1])
     CONT  = CONT + name + '\n'
 iacDict['CONT'] = CONT.rstrip('\n')
+print("done")
 
 ## Load introduction template
 doc1 = Document(os.path.join(script_path, 'Report', 'Introduction.docx'))
 
 # Add rows to AR table (Should be the 3rd table)
+print("Writing AR table...", end ="")
 ARTable = doc1.tables[2]
 for index, row in AR_df.iterrows():
     ARrow = ARTable.rows[index+1].cells
@@ -265,9 +281,11 @@ for index, row in AR_df.iterrows():
 # Delete unused rows (Currectly row 1-15 are empty)
 for index in reversed(range(len(AR_df), 15)):
     ARTable._tbl.remove(ARTable.rows[index+1]._tr)
+print("done")
 
 if AAR:
     # Add rows to AAR table (Should be the 4th table)
+    print("Writing AAR table...", end ="")
     AARTable = doc1.tables[3]
     for index, row in AAR_df.iterrows():
         AARrow = AARTable.rows[index+1].cells
@@ -299,15 +317,17 @@ if AAR:
     # Delete unused rows (Currectly row 1-5 are empty)
     for index in reversed(range(len(AAR_df), 5)):
         AARTable._tbl.remove(AARTable.rows[index+1]._tr)
+    print("done")
 
 # Remove AAR blocks if no AAR
 docx_blocks(doc1, AAR = AAR)
 
 # Save part 1
-filename1 = LE + '-1.docx'
+filename1 = LE + '-intro.docx'
 doc1.save(filename1)
 
 ## Load energy bill analysis template
+print("Adding energy chart images...", end ="")
 doc2 = Document(os.path.join(script_path, 'Report', 'Energy.docx'))
 
 # Add energy chart images
@@ -320,8 +340,10 @@ add_image(doc2, '#FCChart', os.path.join("Energy Charts.fld","image006.png"), sh
 add_image(doc2, '#PieUChart', os.path.join("Energy Charts.fld","image007.png"), shared.Inches(6))
 add_image(doc2, '#PieCChart', os.path.join("Energy Charts.fld","image008.png"), shared.Inches(6))
 add_image(doc2, '#TotalChart', os.path.join("Energy Charts.fld","image009.png"), shared.Inches(9))
+print("done")
 
 # Fill in energy chart tables from Energy Charts.xlsx
+print("Adding energy chart tables...", end ="")
 # Read electricity table from B6 to I19
 edf = pd.read_excel("Energy Charts.xlsx", sheet_name="Raw Data", skiprows = 5, nrows=13, usecols = 'B:I')
 # Read fuel table from K6 to N19
@@ -358,11 +380,12 @@ for index, row in fdf.iterrows():
     if index == 12:
         for col in range(0,4):
             frow[col].paragraphs[0].runs[0].bold = True
-
+print("done")
 # Save part 2
-filename2 = LE + '-2.docx'
+filename2 = LE + '-energy.docx'
 doc2.save(filename2)
 
+print("Combining all docs...", end ="")
 # A list of docs to combine
 docList = []
 ARList = []
@@ -391,11 +414,13 @@ composer.save(filename)
 # delete temp files
 os.remove(filename1)
 os.remove(filename2)
+print("done")
 
 # Open the combined docx file
 doc = Document(filename)
 
 # Formatting
+print("Replacing all keys...", end ="")
 # Add all numbers in local variables to iacDict
 iacDict.update({key: value for (key, value) in locals().items() if type(value) == int or type(value) == float})
 
@@ -415,6 +440,7 @@ iacDict['TotalCost'] = locale.currency(TotalCost, grouping=True)
 
 # Replacing keys
 docx_replace(doc, **iacDict)
+print("done")
 
 # Change the orientation of the last section back to landscape
 # If anything goes wrong, check if there's a section break
@@ -427,6 +453,7 @@ section.page_height = new_height
 
 # Save final report
 doc.save(filename)
+print(filename + " is finished.")
 
 # Caveats
 print("Please add Process Description, Major Equipment, Current Best Practices, and plant layout image.")
