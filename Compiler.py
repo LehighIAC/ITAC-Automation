@@ -6,20 +6,19 @@ then run this script.
 
 
 import json5, sys, os, locale, datetime
+import pandas as pd
 from docx import Document, shared
+from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.enum.section import WD_ORIENT
 from docxcompose.composer import Composer
 from python_docx_replace import docx_replace, docx_blocks
 # Get the path of the current script, auxilliary functions are under Shared folder
 script_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(script_path, 'Shared'))
 from IAC import *
-import pandas as pd
-from docx.enum.text import WD_ALIGN_PARAGRAPH
-from docx.enum.section import WD_ORIENT
 
 # If ARs/Sorted/ folder doesn't exist, create one
 os.makedirs(os.path.join('ARs', 'Sorted'), exist_ok=True)
-
 # If Energy Charts.fld doesn't exist, exit
 if not os.path.exists(os.path.join(script_path, 'Energy Charts.fld')):
     print('Energy Charts.fld not found. Please save the energy chart as web page (.thm).')
@@ -39,7 +38,7 @@ df = pd.DataFrame(columns=columns)
 # Set locale to en_US
 locale.setlocale(locale.LC_ALL, 'en_US')
 
-# Get all .docx files in the current directory and extract information
+# Get all .docx files in ARs directory and extract information
 ARList = [f for f in os.listdir('ARs') if f.endswith('.docx')]
 AR_id = 0
 for ARdoc in ARList:
@@ -51,7 +50,7 @@ for ARdoc in ARList:
     ARinfo['File Name'] = ARdoc
     # Parse the title of the .docx file
     ARinfo['Description'] = doc.paragraphs[0].text.split(':')[1].strip()
-    # Read the first table in .docx files
+    # Read the 1st table in .docx files
     table = doc.tables[0]
     for row in table.rows:
         key = row.cells[0].text
@@ -101,12 +100,12 @@ for ARdoc in ARList:
 ## Calculate on columns
 # Calculate payback period
 df['Payback Period'] = df['Implementation Cost'] / df['Annual Cost Savings']
-# Convert Electricity to MMBtu
+# Convert electricity to MMBtu
 df['Electricity (MMBtu)'] = df['Electricity (kWh)']* 0.003413/0.33
 # Sort df by payback period
 df = df.sort_values(by=['Payback Period'])
 
-## Format Savings strings
+## Format energy savings strings
 for index, row in df.iterrows():
     ST = ""
     SV = ""
@@ -132,18 +131,18 @@ for index, row in df.iterrows():
     df.at[index, 'Savings Value'] = SV
 
 ## Summation statistics
-# Split df to AR
+# Filter ARs
 AR_df = df[df['isAAR'] == False]
-# reorder index
+# Reorder index
 AR_df = AR_df.reset_index(drop=True)
 # AR statistics
 EkWh = AR_df['Electricity (kWh)'].sum(axis=0, skipna=True)
 EMMBtu = AR_df['Electricity (MMBtu)'].sum(axis=0, skipna=True)
 NMMBtu = AR_df['Natural Gas (MMBtu)'].sum(axis=0, skipna=True)
 OMMBtu = AR_df['Other Energy Amount'].sum(axis=0, skipna=True)
-# Add up all energy
+# Add up all energy in MMBtu
 ARMMBtu = round(EMMBtu + NMMBtu + OMMBtu)
-# Calculate CO2
+# Calculate CO2 (Currently other type of energy ignored)
 CO2 = round((53 * NMMBtu + 0.22 * EkWh)/1000)
 # Add up all cost
 ACS = AR_df['Annual Cost Savings'].sum(axis=0, skipna=True)
@@ -153,23 +152,21 @@ ARPB = round(IC / ACS, 1)
 locale._override_localeconv={'frac_digits':0}
 iacDict['ARACS'] = locale.currency(ACS, grouping=True)
 iacDict['ARIC'] = locale.currency(IC, grouping=True)
-
-
 # Payback period string
 iacDict['PB'] = payback(ACS, IC)
 
-# Modify the title of the AR docx
+## Reformatting ARs
 for index, row in AR_df.iterrows():
     doc = Document(os.path.join('ARs', row['File Name']))
     # Change title and make it upper case
     doc.paragraphs[0].text = "AR "+ str(index+1) + ': ' + row['Description'].upper()
-    # set font to bold
+    # Set font to bold
     doc.paragraphs[0].runs[0].bold = True
-    # set font to upright
+    # Set font to upright
     doc.paragraphs[0].runs[0].italic = False
-    # set font to no underline
+    # Set font to no underline
     doc.paragraphs[0].runs[0].underline = False
-    # set font size to 12
+    # Set font size to 12
     doc.paragraphs[0].runs[0].font.size = shared.Pt(12)
     # Add pagebreak to the end of the document
     doc.add_page_break()
@@ -178,7 +175,7 @@ for index, row in AR_df.iterrows():
 # Check if there's at least 1 AAR
 AAR = df['isAAR'].any()
 if AAR:
-    # Split df to AAR
+    # Filter AAR
     AAR_df = df[df['isAAR'] == True]
     # reorder index
     AAR_df = AAR_df.reset_index(drop=True)
@@ -191,24 +188,24 @@ if AAR:
     # Add up all cost
     ACS = AAR_df['Annual Cost Savings'].sum(axis=0, skipna=True)
     IC = AAR_df['Implementation Cost'].sum(axis=0, skipna=True)
-    AARPB = round(IC / ACS, 1)
     # Format as interger currency
     iacDict['AARACS'] = locale.currency(ACS, grouping=True)
     iacDict['AARIC'] = locale.currency(IC, grouping=True)
     # Payback period number in the table
+    AARPB = round(IC / ACS, 1)
 
-    # Modify the title of the AR docx
+    # Modify the title of the AAR docx
     for index, row in AAR_df.iterrows():
         doc = Document(os.path.join('ARs', row['File Name']))
         # Change title and make it upper case
         doc.paragraphs[0].text = "AAR "+ str(index+1) + ': ' + row['Description'].upper()
-        # set font to bold
+        # Set font to bold
         doc.paragraphs[0].runs[0].bold = True
-        # set font to upright
+        # Set font to upright
         doc.paragraphs[0].runs[0].italic = False
-        # set font to no underline
+        # Set font to no underline
         doc.paragraphs[0].runs[0].underline = False
-        # set font size to 12
+        # Set font size to 12
         doc.paragraphs[0].runs[0].font.size = shared.Pt(12)
         # Add pagebreak to the end of the document
         doc.add_page_break()
@@ -219,7 +216,6 @@ if AAR:
 VD = datetime.datetime.strptime(VDATE, '%B %d, %Y')
 RDATE = min(datetime.datetime.today(), VD + datetime.timedelta(days=60))
 iacDict['RDATE'] = datetime.datetime.strftime(RDATE, '%B %d, %Y')
-
 # Sort participant and contributor name list
 PART=""
 for name in PARTlist:
@@ -304,7 +300,7 @@ if AAR:
     for index in reversed(range(len(AAR_df), 5)):
         AARTable._tbl.remove(AARTable.rows[index+1]._tr)
 
-# Remove AAR blocks
+# Remove AAR blocks if no AAR
 docx_blocks(doc1, AAR = AAR)
 
 # Save part 1
@@ -406,7 +402,7 @@ iacDict.update({key: value for (key, value) in locals().items() if type(value) =
 # Format numbers to string with thousand separator
 iacDict = grouping_num(iacDict)
 
-# Format energy cost
+# Format energy cost to currency
 locale._override_localeconv={'frac_digits':3}
 iacDict['EC'] = locale.currency(EC, grouping=True)
 locale._override_localeconv={'frac_digits':2}
