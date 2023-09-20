@@ -19,9 +19,16 @@ from IAC import *
 
 # If ARs/Sorted/ folder doesn't exist, create one
 os.makedirs(os.path.join('ARs', 'Sorted'), exist_ok=True)
-# If Energy Charts.fld doesn't exist, exit
-if not os.path.exists(os.path.join(script_path, 'Energy Charts.fld')):
-    print('Energy Charts.fld not found. Please save the energy chart as web page (.thm).')
+
+# If on macOS
+if os.path.exists(os.path.join(script_path, "Energy Charts.fld")):
+    chartPath = "Energy Charts.fld"
+# If on Windows
+elif os.path.exists(os.path.join(script_path, "Energy Charts_files")):
+    chartPath = "Energy Charts_files"
+else:
+    # If chart html folder doesn't exist, exit
+    print("Chart images not found. Please save the energy chart as web page (.htm).")
     exit()
 
 # Load config file and convert everything to local variables
@@ -334,15 +341,15 @@ print("Adding energy chart images...", end ="")
 doc2 = Document(os.path.join(script_path, 'Report', 'Energy.docx'))
 
 # Add energy chart images
-add_image(doc2, '#EUChart', os.path.join("Energy Charts.fld","image001.png"), shared.Inches(6))
-add_image(doc2, '#ECChart', os.path.join("Energy Charts.fld","image002.png"), shared.Inches(6))
-add_image(doc2, '#DUChart', os.path.join("Energy Charts.fld","image003.png"), shared.Inches(6))
-add_image(doc2, '#DCChart', os.path.join("Energy Charts.fld","image004.png"), shared.Inches(6))
-add_image(doc2, '#FUChart', os.path.join("Energy Charts.fld","image005.png"), shared.Inches(6))
-add_image(doc2, '#FCChart', os.path.join("Energy Charts.fld","image006.png"), shared.Inches(6))
-add_image(doc2, '#PieUChart', os.path.join("Energy Charts.fld","image007.png"), shared.Inches(6))
-add_image(doc2, '#PieCChart', os.path.join("Energy Charts.fld","image008.png"), shared.Inches(6))
-add_image(doc2, '#TotalChart', os.path.join("Energy Charts.fld","image009.png"), shared.Inches(9))
+add_image(doc2, '#EUChart', os.path.join(chartPath, "image001.png"), shared.Inches(6))
+add_image(doc2, '#ECChart', os.path.join(chartPath, "image002.png"), shared.Inches(6))
+add_image(doc2, '#DUChart', os.path.join(chartPath, "image003.png"), shared.Inches(6))
+add_image(doc2, '#DCChart', os.path.join(chartPath, "image004.png"), shared.Inches(6))
+add_image(doc2, '#FUChart', os.path.join(chartPath, "image005.png"), shared.Inches(6))
+add_image(doc2, '#FCChart', os.path.join(chartPath, "image006.png"), shared.Inches(6))
+add_image(doc2, '#PieUChart', os.path.join(chartPath, "image007.png"), shared.Inches(6))
+add_image(doc2, '#PieCChart', os.path.join(chartPath, "image008.png"), shared.Inches(6))
+add_image(doc2, '#TotalChart', os.path.join(chartPath, "image009.png"), shared.Inches(9))
 print("done")
 
 # Fill in energy chart tables from Energy Charts.xlsx
