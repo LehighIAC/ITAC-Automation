@@ -1,19 +1,21 @@
 # IAC-Automation
 Automated Python script for Lehigh University Industrial Assessment Center
 ## Guide for new IAC members:
-1. When contributing code, DO NOT include any sensitive information such as plant name and address.
+0. Of course, you need to have Microsoft Office installed.
    
-2. Install [VS code](https://code.visualstudio.com/download), [Anaconda](https://www.anaconda.com/download) and [Github Desktop](https://desktop.github.com).
+1. Install [VS code](https://code.visualstudio.com/download), [Anaconda](https://www.anaconda.com/download), [Github Desktop](https://desktop.github.com), and [git](https://gitforwindows.org/) (all default).
 
-3. In VS Code, go to `Source Control`(Ctrl+Shift+G) and install git for Windows. goto `Extensions`(Ctrl+Shift+X) and install python, json5.
+2. In VS Code, go to `Extensions`(Ctrl+Shift+X), install `Python` (from Microsoft) and `JSON5 syntax` from mrmlnc.
 
-4. Register a Github account with your lehigh email, then ``fork`` the [main repository](https://github.com/BrushXue/IAC-Automation). It will make a copy under your account.
+3. Register a Github account with your lehigh email, then **fork** the [main repository](https://github.com/BrushXue/IAC-Automation). It will make a copy under your account.
 
-5. Sign in Github Desktop, `clone` **your fork** (not the main repository) to the local computer. The fork should be under your username,
+4. Sign in Github Desktop, **clone your fork** (not the main repository) to the local computer. The fork should be under your username,
 
-6. After validating your proposed changes, go to Github Desktop to `commit` and `push` new code to your fork. *Remember to write detailed comments so other people can understand your proposed changes.*
+5. After validating your proposed changes, go to Github Desktop to `commit` and `push` new code to your fork. *Remember to write detailed comments so other people can understand your proposed changes.*
    
-7. Go to github website (there should be a shortcut in Github Desktop) and send a pull request. *Remeber to write detailed comments so other people can understand your proposed changes.*
+6. Go to github website (there should be a shortcut in Github Desktop) and send a pull request. *Remeber to write detailed comments so other people can understand your proposed changes.*
+
+7. DO NOT include any sensitive information such as plant name and address when contributing code.
 
 8. After reviewing the code, The IAC Admin can apporove and merge your proposed changes.
 
@@ -29,18 +31,21 @@ conda install json5 numpy pandas openpyxl requests
 conda install -c conda-forge python-docx docxcompose latex2mathml num2words
 pip install python-docx-replace
 ```
+`conda` always has the highest priority. If not available, install packages from `conda-forge`. Don't install from `pip` unless you have to, otherwise there might be dependency issue.
+### Config VS Code environment
+In VS Code, press Ctrl+Shift+P, search `Python: Select Interpreter` and select the `iac` environment you just created.
 ### NOTE: TO REMOVE THIS ENVIRONMENT
 ```
 conda remove --name iac --all
 ```
 ## Usage
-Is it suggested work on a copy of this reposiotry when generating an IAC report.
+Is it suggested to work on a copy of this reposiotry when generating an IAC report.
 ### Energy Charts
-1. Edit `Energy Charts.xlsx`. Select fuel type and unit, then edit raw data (if copying from other spreadsheet, copy values only). The formatting is fully automatic and shouldn't be touched.
+1. Edit `Energy Charts.xlsx`. Select `fuel type` ,`fuel unit` and start month, then edit raw data (if copying from other spreadsheet, copy values only). The formatting is fully automatic and shouldn't be touched.
 2. Save the workbook as `Web Page (.htm)` format (DO NOT change the name, all images will be in `Energy Charts.fld` folder). This is the only stable way to save all charts as images.
 3. Run `Utility.py` to extract data from the spreadsheet.
 ### Assessment Recommendations
-1. Edit `.json5` database for any specific AR. Make sure the data type is matching the description.
+1. Edit `.json5` database of any specific AR. Make sure the data type is matching the description.
 2. Run the corresponding `.py` file. The output will be saved in `ARs` directory. Follow the instructions of the script if there's anything you need to adjust manually.
 ### Compiling Report
 1. Fill plant information in `Info.json5`.
