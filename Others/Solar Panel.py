@@ -11,12 +11,21 @@ sys.path.append(os.path.join(script_path, '..', 'Shared'))
 from IAC import *
 import requests, datetime
 
-# Import docx template
-doc = Document(os.path.join(script_path, 'Install an Array of Solar Panels - PA.docx'))
+
 # Load config file and convert everything to local variables
-iacDict = json5.load(open(os.path.join(script_path, 'Solar Panel PA.json5')))
+iacDict = json5.load(open(os.path.join(script_path, 'Solar Panel.json5')))
 iacDict.update(json5.load(open(os.path.join(script_path, '..', 'Utility.json5'))))
 locals().update(iacDict)
+
+if ST == "PA":
+    template = "Install an Array of Solar Panels - PA.docx"
+    AMV = AMVPA
+elif ST == "NJ":
+    template = "Install an Array of Solar Panels - NJ.docx"
+    AMV = AMVNJ
+else:
+    pass
+doc = Document(os.path.join(script_path, template))
 
 # Calculations
 # Avaialble space ft2
@@ -27,10 +36,9 @@ CAP = round(AS / 100)
 AES = CAP * 1200
 
 # PVWatts API
-# The api key should be replaced after I gradudate
 parameters = {
 'format': 'json',
-'api_key': 'bMgehoZeIcJNoYFh2KHbZFJw2X7ZYDn2z1SUdpNR',
+'api_key': api_key,
 'system_capacity': CAP,
 'module_type': 0,
 'losses': 14.08,
@@ -45,8 +53,8 @@ ES = round(PVresults.get('outputs').get('ac_annual'))
 
 ACSel = round(ES * EC)
 credits = round(ES / 1000)
-ACSsr = round(AMV * credits)
-ACS = ACSel + ACSsr
+ACSsu = round(AMV * credits)
+ACS = ACSel + ACSsu
 
 # Implementation cost
 IC = round(CAP * PPW * 1000)
@@ -77,7 +85,7 @@ iacDict['PPW'] = locale.currency(PPW, grouping=True)
 
 # set the rest to integer
 locale._override_localeconv={'frac_digits':0}
-for cost in ['LR', 'MIC', 'IC', 'ITC', 'AMV', 'ACSel', 'ACSsr', 'ACS']:
+for cost in ['LR', 'MIC', 'IC', 'ITC', 'AMV', 'ACSel', 'ACSsu', 'ACS']:
     iacDict[cost] = locale.currency(eval(cost), grouping=True)
 
 # Replacing keys

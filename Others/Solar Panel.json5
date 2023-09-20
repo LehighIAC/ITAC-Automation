@@ -1,7 +1,8 @@
 {
-// AAR No., integer
+// AAR No., typically this is an AAR, integer
 AR: 1,
-
+// State, PA or NJ, string
+ST: "PA",
 // Zip Code of the plant, string
 ZIP: "18015",
 // Roof space sqft, integer
@@ -12,6 +13,10 @@ ASR: 70,
 PPW: 2.00,
 // Federal Investament Tax Credit Rate %, integer
 ITCR: 30,
+// Average market value of NJ SuSI, interger, should be updatey annualy.
+AMVNJ: 85,
 // Average market value of PA SREC, interger, should be updatey annualy.
-AMV: 40,
+AMVPA: 40,
+// The api key should be replaced after I gradudate
+api_key: "bMgehoZeIcJNoYFh2KHbZFJw2X7ZYDn2z1SUdpNR",
 }
