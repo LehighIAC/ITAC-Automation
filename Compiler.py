@@ -337,19 +337,32 @@ filename1 = LE + '-intro.docx'
 doc1.save(filename1)
 
 ## Load energy bill analysis template
-print("Adding energy chart images...", end ="")
 doc2 = Document(os.path.join(script_path, 'Report', 'Energy.docx'))
 
 # Add energy chart images
-add_image(doc2, '#EUChart', os.path.join(chartPath, "image001.png"), shared.Inches(6))
-add_image(doc2, '#ECChart', os.path.join(chartPath, "image002.png"), shared.Inches(6))
-add_image(doc2, '#DUChart', os.path.join(chartPath, "image003.png"), shared.Inches(6))
-add_image(doc2, '#DCChart', os.path.join(chartPath, "image004.png"), shared.Inches(6))
-add_image(doc2, '#FUChart', os.path.join(chartPath, "image005.png"), shared.Inches(6))
-add_image(doc2, '#FCChart', os.path.join(chartPath, "image006.png"), shared.Inches(6))
-add_image(doc2, '#PieUChart', os.path.join(chartPath, "image007.png"), shared.Inches(6))
-add_image(doc2, '#PieCChart', os.path.join(chartPath, "image008.png"), shared.Inches(6))
-add_image(doc2, '#TotalChart', os.path.join(chartPath, "image009.png"), shared.Inches(9))
+print("Adding energy chart images...", end ="")
+# If on macOS
+if chartPath == "Energy Charts.fld":
+    add_image(doc2, '#EUChart', os.path.join(chartPath, "image001.png"), shared.Inches(6))
+    add_image(doc2, '#ECChart', os.path.join(chartPath, "image002.png"), shared.Inches(6))
+    add_image(doc2, '#DUChart', os.path.join(chartPath, "image003.png"), shared.Inches(6))
+    add_image(doc2, '#DCChart', os.path.join(chartPath, "image004.png"), shared.Inches(6))
+    add_image(doc2, '#FUChart', os.path.join(chartPath, "image005.png"), shared.Inches(6))
+    add_image(doc2, '#FCChart', os.path.join(chartPath, "image006.png"), shared.Inches(6))
+    add_image(doc2, '#PieUChart', os.path.join(chartPath, "image007.png"), shared.Inches(6))
+    add_image(doc2, '#PieCChart', os.path.join(chartPath, "image008.png"), shared.Inches(6))
+    add_image(doc2, '#TotalChart', os.path.join(chartPath, "image009.png"), shared.Inches(9))
+# If on Windows
+elif chartPath == "Energy Charts_files":
+    add_image(doc2, '#EUChart', os.path.join(chartPath, "image001.png"), shared.Inches(6))
+    add_image(doc2, '#ECChart', os.path.join(chartPath, "image002.png"), shared.Inches(6))
+    add_image(doc2, '#DUChart', os.path.join(chartPath, "image003.png"), shared.Inches(6))
+    add_image(doc2, '#DCChart', os.path.join(chartPath, "image005.png"), shared.Inches(6))
+    add_image(doc2, '#FUChart', os.path.join(chartPath, "image006.png"), shared.Inches(6))
+    add_image(doc2, '#FCChart', os.path.join(chartPath, "image007.png"), shared.Inches(6))
+    add_image(doc2, '#PieUChart', os.path.join(chartPath, "image009.png"), shared.Inches(6))
+    add_image(doc2, '#PieCChart', os.path.join(chartPath, "image011.png"), shared.Inches(6))
+    add_image(doc2, '#TotalChart', os.path.join(chartPath, "image013.png"), shared.Inches(9))
 print("done")
 
 # Fill in energy chart tables from Energy Charts.xlsx
