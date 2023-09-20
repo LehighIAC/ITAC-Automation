@@ -318,6 +318,9 @@ if AAR:
     for index in reversed(range(len(AAR_df), 5)):
         AARTable._tbl.remove(AARTable.rows[index+1]._tr)
     print("done")
+else:
+    # delete this table
+    doc1._body._body.remove(doc1.tables[3]._tbl)
 
 # Remove AAR blocks if no AAR
 docx_blocks(doc1, AAR = AAR)
