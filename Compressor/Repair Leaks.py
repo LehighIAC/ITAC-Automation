@@ -14,9 +14,6 @@ import numpy as np
 from num2words import num2words
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 
-# If ARs/ folder doesn't exist, create one
-os.makedirs('ARs', exist_ok=True)
-
 # Import docx template
 doc = Document(os.path.join(script_path, 'Repair Leaks in Compressed Air Lines.docx'))
 # Load config file and convert everything to local variables

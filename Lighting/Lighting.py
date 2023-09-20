@@ -10,9 +10,6 @@ script_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(script_path, '..', 'Shared'))
 from IAC import *
 
-# If ARs/ folder doesn't exist, create one
-os.makedirs('ARs', exist_ok=True)
-
 # Import docx template
 doc = Document(os.path.join(script_path, 'Switch to LED lighting.docx'))
 # Load config file and convert everything to local variables

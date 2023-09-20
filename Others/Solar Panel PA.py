@@ -11,9 +11,6 @@ sys.path.append(os.path.join(script_path, '..', 'Shared'))
 from IAC import *
 import requests, datetime
 
-# If ARs/ folder doesn't exist, create one
-os.makedirs('ARs', exist_ok=True)
-
 # Import docx template
 doc = Document(os.path.join(script_path, 'Install an Array of Solar Panels - PA.docx'))
 # Load config file and convert everything to local variables
