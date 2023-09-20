@@ -5,24 +5,28 @@ LE: 'LE0554',
 VDATE: 'September 11, 2023',
 // Plant location, city, state, zip, string
 LOC: 'Bethlehem, PA 18015',
-// Princial product, string
-PROD: 'education',
-// Annual production, string
-ANPR: '2,000 students',
-// Area, sqft, int
-AREA: 100000,
-// Number of employees, int
-EMPL: 1000,
-// Production operating hours, string
-PROH: '24 hours per day, 7 days per week, 52 weeks per year',
-// Office operating hours, string
-OFOH: '8 hours per day, 5 days per week, 52 weeks per year',
 // SIC code, string
 // Look up from https://www.osha.gov/data/sic-manual
 SIC: '1234',
 // NAICS code, string
 // Look up from https://www.census.gov/naics/
 NAICS: '123456',
+// Annual sales, $, integer
+SALE: 1000000,
+// Number of employees, int
+EMPL: 1000,
+// Area, sqft, int
+AREA: 100000,
+// Princial product, string
+PROD: 'student',
+// Annual production, float
+ANPR: 2000,
+// Production units, string
+PRUN: 'pieces',
+// Production operating hours, string
+PROH: '24 hours per day, 7 days per week, 52 weeks per year',
+// Office operating hours, string
+OFOH: '8 hours per day, 5 days per week, 52 weeks per year',
 // Lead Assessor, string
 LEAS: 'Dr. Alparslan Oztekin',
 // Lead Student, string
