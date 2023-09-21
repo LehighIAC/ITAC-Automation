@@ -5,8 +5,7 @@ AR: 1,
 MSN: 0,
 // Part + labor per motion serson $, integer
 MSPL: 25,
-// Labor per bulb $, integer
-BL: 20,
+
 
 // Area 1 name, string
 AREA1: 'production area 1',
@@ -26,6 +25,8 @@ PFW1: 100,
 POH1: 2912,
 // Unit price of proposed bulbs $, float
 BP1: 180,
+// Labor per bulb $, integer
+BL1: 20,
 // Coincidence Factor, float, default 1.0
 CF1: 1.0,
 
@@ -49,6 +50,8 @@ PFW2: 0,
 POH2: 0,
 // Unit price of proposed bulbs $, float
 BP2: 0,
+// Labor per bulb $, integer
+BL2: 0,
 // Coincidence Factor, float, default 1.0
 CF2: 1.0,
 
@@ -70,6 +73,8 @@ PN3: 0,
 PFW3: 0,
 // Opearating hours of proposed bulbs hrs/yr, float
 POH3: 0,
+// Labor per bulb $, integer
+BL3: 0,
 // Unit price of proposed bulbs $, float
 BP3: 0,
 // Coincidence Factor, float, default 1.0

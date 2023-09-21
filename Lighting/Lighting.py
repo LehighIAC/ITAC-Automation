@@ -40,7 +40,7 @@ ACS = ECS + DCS
 MSC = MSN * MSPL
 BC = BC1 + BC2 + BC3
 CN = CN1 + CN2 + CN3
-LC = BL * CN
+LC = BL1 * CN1 + BL2 * CN2 + BL3 * CN3
 IC = MSC + BC + LC
 # Rebate
 RB = round(ES * RR)
@@ -78,8 +78,14 @@ iacDict['DC'] = locale.currency(DC, grouping=True)
 
 # set the rest to integer
 locale._override_localeconv={'frac_digits':0}
-for cost in ['LR', 'MSPL', 'BL', 'BP1', 'BP2', 'BP3', 'ECS', 'DCS', 'ACS', 'MSC', 'BC', 'LC', 'IC', 'RB', 'MRB', 'MIC']:
+for cost in ['LR', 'MSPL', 'BL1', 'BL2', 'BL3', 'BP1', 'BP2', 'BP3', 'ECS', 'DCS', 'ACS', 'MSC', 'BC', 'LC', 'IC', 'RB', 'MRB', 'MIC']:
     iacDict[cost] = locale.currency(eval(cost), grouping=True)
+
+# Motion sensors
+if MSN == '0':
+    docx_blocks(doc, ms = False)
+else:
+    docx_blocks(doc, ms = True)
 
 # Replacing keys
 docx_replace(doc, **iacDict)
