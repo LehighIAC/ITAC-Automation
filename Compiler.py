@@ -437,7 +437,7 @@ os.remove(filename2)
 print("done")
 
 ## Format strings
-# set electricity cost / rebate to 3 digits accuracy
+# set electricity cost to 3 digits accuracy
 iac = dollar(['EC'],iac,3)
 # set the natural gas and demand to 2 digits accuracy
 iac = dollar(['DC', 'FC'],iac,2)
