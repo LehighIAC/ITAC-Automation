@@ -13,39 +13,38 @@ ws = wb['Raw Data']
 
 ## Save statistics to Utility.json5
 # Get Electricity cost from cell D21, 3 digits
-EC = round(ws.cell(row=21, column=4).value,3)
+EC = round(ws['D21'].value,3)
 # Get Demand cost from cell D23, 2 digits
-DC = round(ws.cell(row=23, column=4).value,2)
+DC = round(ws['D23'].value,2)
 # Get Fuel cost from cell D24, 2 digits
-FC = round(ws.cell(row=24, column=4).value,2)
+FC = round(ws['D24'].value,2)
 # Get Fuel type from cell Q2, string
-FuelType = ws.cell(row=2, column=17).value
+FuelType = ws['Q2'].value
 # Get Fuel unit from cell Q3, string
-FuelUnit = ws.cell(row=3, column=17).value
+FuelUnit = ws['Q3'].value
 # Get Start Month from cell B7, string
-StartMo = ws.cell(row=7, column=2).value
+StartMo = ws['B7'].value
 # Get End Month from cell B18, string
-EndMo = ws.cell(row=18, column=2).value
-
+EndMo = ws['B18'].value
 # Get Total Electricity kWh from cell C19
-TotalEkWh = round(ws.cell(row=19, column=3).value)
+TotalEkWh = round(ws['C19'].value)
 # Get Total Electricity MMBtu from cell I19
-TotalEBtu = round(ws.cell(row=19, column=9).value)
+TotalEBtu = round(ws['I19'].value)
 # Get Total Demand kW from cell E19
-TotalDkW = round(ws.cell(row=19, column=5).value)
+TotalDkW = round(ws['E19'].value)
 # Get Total Fuel MMBtu from cell M19
-TotalFBtu = round(ws.cell(row=19, column=13).value)
+TotalFBtu = round(ws['M19'].value)
 
 # Get Total Energy worksheet
 ws = wb['Total Energy']
 # Get Total Electricity cost from cell E5+E6
-TotalECost = round(ws.cell(row=5, column=5).value+ws.cell(row=6, column=5).value)
+TotalECost = round(ws['E5'].value+ws['E6'].value)
 # Get Total Fuel cost from cell E7
-TotalFCost = round(ws.cell(row=7, column=5).value)
+TotalFCost = round(ws['E7'].value)
 # Get Total Energy MMBtu from cell D8
-TotalBtu = round(ws.cell(row=8, column=4).value)
+TotalBtu = round(ws['D8'].value)
 # Get Total Energy Cost from cell E8
-TotalCost = round(ws.cell(row=8, column=5).value)
+TotalCost = round(ws['E8'].value)
 
 # Write Natural Gas Cost for compatibility.
 if FuelType == 'Natural Gas':
