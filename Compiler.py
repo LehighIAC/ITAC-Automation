@@ -7,6 +7,7 @@ then run this script.
 
 import json5, sys, os, locale, datetime
 import pandas as pd
+from easydict import EasyDict
 from docx import Document, shared
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.section import WD_ORIENT
@@ -15,7 +16,7 @@ from python_docx_replace import docx_replace, docx_blocks
 # Get the path of the current script, auxilliary functions are under Shared folder
 script_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(script_path, 'Shared'))
-from IAC import *
+from IAC import payback, grouping_num, dollar, add_image
 
 # If ARs/Sorted/ folder doesn't exist, create one
 os.makedirs(os.path.join('ARs', 'Sorted'), exist_ok=True)
@@ -33,9 +34,9 @@ else:
 
 # Load config file and convert everything to local variables
 print("Reading json5 database...", end ="")
-iacDict = json5.load(open(os.path.join(script_path, 'Info.json5')))
-iacDict.update(json5.load(open(os.path.join(script_path, 'Utility.json5'))))
-locals().update(iacDict)
+jsonDict = json5.load(open(os.path.join(script_path, 'Info.json5')))
+jsonDict.update(json5.load(open(os.path.join(script_path, 'Utility.json5'))))
+iac = EasyDict(jsonDict)
 print("done")
 
 # Initialize dataframe
@@ -154,19 +155,16 @@ EMMBtu = AR_df['Electricity (MMBtu)'].sum(axis=0, skipna=True)
 NMMBtu = AR_df['Natural Gas (MMBtu)'].sum(axis=0, skipna=True)
 OMMBtu = AR_df['Other Energy Amount'].sum(axis=0, skipna=True)
 # Add up all energy in MMBtu
-ARMMBtu = round(EMMBtu + NMMBtu + OMMBtu)
+iac.ARMMBtu = round(EMMBtu + NMMBtu + OMMBtu)
 # Calculate CO2 (Currently other type of energy ignored)
-CO2 = round((53 * NMMBtu + 0.22 * EkWh)/1000)
+iac.CO2 = round((53 * NMMBtu + 0.22 * EkWh)/1000)
 # Add up all cost
-ACS = AR_df['Annual Cost Savings'].sum(axis=0, skipna=True)
-IC = AR_df['Implementation Cost'].sum(axis=0, skipna=True)
-ARPB = round(IC / ACS, 1)
-# Format as interger currency
-locale._override_localeconv={'frac_digits':0}
-iacDict['ARACS'] = locale.currency(ACS, grouping=True)
-iacDict['ARIC'] = locale.currency(IC, grouping=True)
-# Payback period string
-iacDict['PB'] = payback(ACS, IC)
+iac.ARACS = AR_df['Annual Cost Savings'].sum(axis=0, skipna=True)
+iac.ARIC = AR_df['Implementation Cost'].sum(axis=0, skipna=True)
+# Payback period in number
+iac.ARPB = round(iac.ARIC / iac.ARACS, 1)
+# Payback period in formatted string
+iac.PB = payback(iac.ARACS, iac.ARIC)
 print("done")
 
 print("Reformatting ARs...", end ="")
@@ -201,15 +199,12 @@ if AAR:
     NMMBtu = AAR_df['Natural Gas (MMBtu)'].sum(axis=0, skipna=True)
     OMMBtu = AAR_df['Other Energy Amount'].sum(axis=0, skipna=True)
     # Add up all energy
-    AARMMBtu = round(EMMBtu + NMMBtu + OMMBtu)
+    iac.AARMMBtu = round(EMMBtu + NMMBtu + OMMBtu)
     # Add up all cost
-    ACS = AAR_df['Annual Cost Savings'].sum(axis=0, skipna=True)
-    IC = AAR_df['Implementation Cost'].sum(axis=0, skipna=True)
-    # Format as interger currency
-    iacDict['AARACS'] = locale.currency(ACS, grouping=True)
-    iacDict['AARIC'] = locale.currency(IC, grouping=True)
-    # Payback period number in the table
-    AARPB = round(IC / ACS, 1)
+    iac.AARACS = AAR_df['Annual Cost Savings'].sum(axis=0, skipna=True)
+    iac.AARIC = AAR_df['Implementation Cost'].sum(axis=0, skipna=True)
+    # Payback period in number
+    iac.AARPB = round(iac.AARIC / iac.AARACS, 1)
     print("done")
 
     print("Reformatting AARs...", end ="")
@@ -234,22 +229,22 @@ if AAR:
 print("Parsing plant information...", end ="")
 ## Info.json5 Calculations
 # Report date = today or 60 days after assessment, which ever is earlier
-VD = datetime.datetime.strptime(VDATE, '%B %d, %Y')
+VD = datetime.datetime.strptime(iac.VDATE, '%B %d, %Y')
 RDATE = min(datetime.datetime.today(), VD + datetime.timedelta(days=60))
-iacDict['RDATE'] = datetime.datetime.strftime(RDATE, '%B %d, %Y')
+iac.RDATE = datetime.datetime.strftime(RDATE, '%B %d, %Y')
 # Sort participant and contributor name list
 PART=""
-for name in PARTlist:
+for name in iac.PARTlist:
     # Sort by last name
-    PARTlist.sort(key=lambda x: x.rsplit(' ', 1)[1])
+    iac.PARTlist.sort(key=lambda x: x.rsplit(' ', 1)[1])
     PART  = PART + name + '\n'
-iacDict['PART'] = PART.rstrip('\n')
+iac.PART = PART.rstrip('\n')
 CONT=""
-for name in CONTlist:
+for name in iac.CONTlist:
     # Sort by last name
-    CONTlist.sort(key=lambda x: x.rsplit(' ', 1)[1])
+    iac.CONTlist.sort(key=lambda x: x.rsplit(' ', 1)[1])
     CONT  = CONT + name + '\n'
-iacDict['CONT'] = CONT.rstrip('\n')
+iac.CONT = CONT.rstrip('\n')
 print("done")
 
 ## Load introduction template
@@ -257,6 +252,7 @@ doc1 = Document(os.path.join(script_path, 'Report', 'Introduction.docx'))
 
 # Add rows to AR table (Should be the 3rd table)
 print("Writing AR table...", end ="")
+locale._override_localeconv={'frac_digits':0}
 ARTable = doc1.tables[2]
 for index, row in AR_df.iterrows():
     ARrow = ARTable.rows[index+1].cells
@@ -293,6 +289,7 @@ print("done")
 if AAR:
     # Add rows to AAR table (Should be the 4th table)
     print("Writing AAR table...", end ="")
+    locale._override_localeconv={'frac_digits':0}
     AARTable = doc1.tables[3]
     for index, row in AAR_df.iterrows():
         AARrow = AARTable.rows[index+1].cells
@@ -333,7 +330,7 @@ else:
 docx_blocks(doc1, AAR = AAR)
 
 # Save part 1
-filename1 = LE + '-intro.docx'
+filename1 = iac.LE + '-intro.docx'
 doc1.save(filename1)
 
 ## Load energy bill analysis template
@@ -405,7 +402,7 @@ for index, row in fdf.iterrows():
             frow[col].paragraphs[0].runs[0].bold = True
 print("done")
 # Save part 2
-filename2 = LE + '-energy.docx'
+filename2 = iac.LE + '-energy.docx'
 doc2.save(filename2)
 
 print("Combining all docs...", end ="")
@@ -432,37 +429,30 @@ composer = Composer(master)
 for i in range(0, len(docList)):
     doc_temp = Document(docList[i])
     composer.append(doc_temp)
-filename = LE +'.docx'
+filename = iac.LE +'.docx'
 composer.save(filename)
 # delete temp files
 os.remove(filename1)
 os.remove(filename2)
 print("done")
 
+## Format strings
+# set electricity cost / rebate to 3 digits accuracy
+iac = dollar(['EC'],iac,3)
+# set the natural gas and demand to 2 digits accuracy
+iac = dollar(['DC', 'FC'],iac,2)
+# set the rest to integer
+varList = ['ARACS', 'ARIC', 'AARACS', 'AARIC', 'TotalECost', 'TotalFCost', 'TotalCost']
+iac = dollar(varList,iac,0)
+# Format all numbers to string with thousand separator
+iac = grouping_num(iac)
+
 # Open the combined docx file
 doc = Document(filename)
 
-# Formatting
-print("Replacing all keys...", end ="")
-# Add all numbers in local variables to iacDict
-iacDict.update({key: value for (key, value) in locals().items() if type(value) == int or type(value) == float})
-
-# Format numbers to string with thousand separator
-iacDict = grouping_num(iacDict)
-
-# Format energy cost to currency
-locale._override_localeconv={'frac_digits':3}
-iacDict['EC'] = locale.currency(EC, grouping=True)
-locale._override_localeconv={'frac_digits':2}
-iacDict['DC'] = locale.currency(DC, grouping=True)
-iacDict['FC'] = locale.currency(FC, grouping=True)
-locale._override_localeconv={'frac_digits':0}
-iacDict['TotalECost'] = locale.currency(TotalECost, grouping=True)
-iacDict['TotalFCost'] = locale.currency(TotalFCost, grouping=True)
-iacDict['TotalCost'] = locale.currency(TotalCost, grouping=True)
-
 # Replacing keys
-docx_replace(doc, **iacDict)
+print("Replacing keys...", end ="")
+docx_replace(doc, **iac)
 print("done")
 
 # Change the orientation of the last section back to landscape

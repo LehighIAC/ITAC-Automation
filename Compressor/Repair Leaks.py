@@ -2,59 +2,58 @@
 This script is used to generate the IAC recommendation for Repair Leaks in Compressed Air Lines.
 """
 
-import json5, sys, os, locale
+import json5, sys, os
 from docx import Document
+from easydict import EasyDict
 from python_docx_replace import docx_replace, docx_blocks
 # Get the path of the current script
 script_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(script_path, '..', 'Shared'))
-from IAC import *
+from IAC import payback, grouping_num, combine_words, dollar
 import numpy as np
-# Might needs to be installed
 from num2words import num2words
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 
-# Import docx template
-doc = Document(os.path.join(script_path, 'Repair Leaks in Compressed Air Lines.docx'))
-# Load config file and convert everything to local variables
-iacDict = json5.load(open(os.path.join(script_path, 'Repair Leaks.json5')))
-iacDict.update(json5.load(open(os.path.join(script_path, '..', 'Utility.json5'))))
-locals().update(iacDict)
+# Load config file and convert everything to EasyDict
+jsonDict = json5.load(open(os.path.join(script_path, 'Repair Leaks.json5')))
+jsonDict.update(json5.load(open(os.path.join(script_path, '..', 'Utility.json5'))))
+iac = EasyDict(jsonDict)
 
 # Calculations
-RT = round(PA / P0, 4)
-VF0 = np.pi / 4 * (T0 + 460) * P1 / PA * C1 * C2 * CD / C3 / np.sqrt(T1 + 460)
+iac.RT = round(iac.PA / iac.P0, 4)
+iac.VF0 = np.pi / 4 * (iac.T0 + 460) * iac.P1 / iac.PA * iac.C1 * iac.C2 * iac.CD / iac.C3 / np.sqrt(iac.T1 + 460)
 # Number of leaks
-NL = np.array([NL1, NL2, NL3, NL4, NL5, NL6])
+NL = np.array([iac.NL1, iac.NL2, iac.NL3, iac.NL4, iac.NL5, iac.NL6])
 # Leak diameters
 LD = np.array([1.0/64, 1.0/32, 1.0/16, 1.0/8, 3.0/16, 1.0/4])
 # Leak strings
 LS = ["1/64", "1/32", "1/16", "1/8", "3/16", "1/4"]
 # Flow rate (cfm)
-FR = LD * LD * VF0
+FR = LD * LD * iac.VF0
 # Power Loss (hp)
-PL = PA * C3 * FR * k/(k-1.0) * N * C4 * (np.power(P0/float(PA),(k-1.0)/(k*N)) - 1.0) / (EA * EM)
+PL = iac.PA * iac.C3 * FR * iac.k/(iac.k-1.0) * iac.N * iac.C4 * \
+    (np.power(iac.P0/float(iac.PA),(iac.k-1.0)/(iac.k*iac.N)) - 1.0) / (iac.EA * iac.EM)
 # Demand Loss (kW/yr)
-DL = PL * C5 * CF * 12
+DL = PL * iac.C5 * iac.CF * 12
 # Energy Loss (kWh/yr)
-EL = PL * C5 * OH
+EL = PL * iac.C5 * iac.OH
 # Leak Cost ($/yr)
-LC = DL * DC + EL * EC
+LC = DL * iac.DC + EL * iac.EC
 # Add Table 2
 DS = NL * DL
 ES = NL * EL
 CS = NL * LC
-# Convert from numpy dtype to python native type
-SNL = sum(NL).item()
-ADS = round(sum(DS).item())
-AES = round(sum(ES).item())
-ACS = round(sum(CS).item())
+# Convert from numpy dtype to EasyDict
+iac.SNL = sum(NL).item()
+iac.ADS = round(sum(DS).item())
+iac.AES = round(sum(ES).item())
+iac.ACS = round(sum(CS).item())
 
 # Implementation
 # Estimate 1+1 hour per leak
-FLC = (1+1) * SNL * LR
-IC = FLC + USLD
-iacDict['PB']  = payback(ACS, IC)
+iac.FLC = (1+1) * iac.SNL * iac.LR
+iac.IC = iac.FLC + iac.USLD
+iac.PB  = payback(iac.ACS, iac.IC)
 
 # String formatting
 # eg, 'six 1/16-inch, six 1/8-inch and three 3/16-inch'
@@ -63,36 +62,24 @@ LeakString = []
 for i in range(NL.size):
     if NL[i]!=0:
         LeakString.append(num2words(NL[i]) + ' ' + LS[i] + '-inch')
-LeakString = combine_words(LeakString)
-iacDict['LeakString'] = LeakString
+iac.LeakString = combine_words(LeakString)
 
-# Formatting
-# Add all numbers in local variables to iacDict
-iacDict.update({key: value for (key, value) in locals().items() if type(value) == int or type(value) == float})
-
-# Format numbers to string with thousand separator
-iacDict = grouping_num(iacDict)
-
-# set locale to US
-locale.setlocale(locale.LC_ALL, 'en_US')
-
-# set 3 digits accuracy for electricity cost
-locale._override_localeconv={'frac_digits':3}
-iacDict['EC'] = locale.currency(EC, grouping=True)
-
+## Format strings
+# set electricity cost to 3 digits accuracy
+iac = dollar(['EC'],iac,3)
 # set the natural gas and demand to 2 digits accuracy
-locale._override_localeconv={'frac_digits':2}
-iacDict['NGC'] = locale.currency(NGC, grouping=True)
-iacDict['DC'] = locale.currency(DC, grouping=True)
-
+iac = dollar(['NGC', 'DC'],iac,2)
 # set the rest to integer
-locale._override_localeconv={'frac_digits':0}
-for cost in ['LR', 'FLC', 'USLD', 'IC', 'ACS']:
-    iacDict[cost] = locale.currency(eval(cost), grouping=True)
+varList = ['LR', 'FLC', 'USLD', 'IC', 'ACS']
+iac = dollar(varList,iac,0)
+# Format all numbers to string with thousand separator
+iac = grouping_num(iac)
 
+# Import docx template
+doc = Document(os.path.join(script_path, 'Repair Leaks in Compressed Air Lines.docx'))
 
 # Replacing keys
-docx_replace(doc, **iacDict)
+docx_replace(doc, **iac)
 
 # Add numbers to table 2
 table2 = doc.tables[2]
@@ -127,7 +114,7 @@ for i in reversed(range(NL.size)):
     if NL[i]==0:
         table3._tbl.remove(table3.rows[i+1]._tr)
 
-filename = 'AR'+iacDict['AR']+'.docx'
+filename = 'AR'+iac.AR+'.docx'
 doc.save(os.path.join(script_path, '..', 'ARs', filename))
 
 # Caveats

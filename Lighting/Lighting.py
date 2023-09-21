@@ -2,129 +2,117 @@
 This script is used to generate the IAC recommendation for Switch to LED lighting.
 """
 
-import json5, sys, os, locale
+import json5, sys, os
 from docx import Document
+from easydict import EasyDict
 from python_docx_replace import docx_replace, docx_blocks
 # Get the path of the current script
 script_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(script_path, '..', 'Shared'))
-from IAC import *
+from IAC import payback, grouping_num, add_eqn, combine_words, dollar
 
-# Import docx template
-doc = Document(os.path.join(script_path, 'Switch to LED lighting.docx'))
-# Load config file and convert everything to local variables
-iacDict = json5.load(open(os.path.join(script_path, 'Lighting.json5')))
-iacDict.update(json5.load(open(os.path.join(script_path, '..', 'Utility.json5'))))
-locals().update(iacDict)
+# Load config file and convert everything to EasyDict
+jsonDict = json5.load(open(os.path.join(script_path, 'Lighting.json5')))
+jsonDict.update(json5.load(open(os.path.join(script_path, '..', 'Utility.json5'))))
+iac = EasyDict(jsonDict)
 
 # Calculations
 # Area 1
-ES1 = round((CN1 * CFW1 * COH1 - PN1 * PFW1 * POH1) / 1000.0)
-DS1 = round((CN1 * CFW1 - PN1 * PFW1) * CF1 * 12.0 / 1000.0)
-BC1 = round(PN1 * BP1)
+iac.ES1 = round((iac.CN1 * iac.CFW1 * iac.COH1 - iac.PN1 * iac.PFW1 * iac.POH1) / 1000.0)
+iac.DS1 = round((iac.CN1 * iac.CFW1 - iac.PN1 * iac.PFW1) * iac.CF1 * 12.0 / 1000.0)
+iac.BC1 = round(iac.PN1 * iac.BP1)
 # Area 2
-ES2 = round((CN2 * CFW2 * COH2 - PN2 * PFW2 * POH2) / 1000.0)
-DS2 = round((CN2 * CFW2 - PN2 * PFW2) * CF2 * 12.0 / 1000.0)
-BC2 = round(PN2 * BP2)
+iac.ES2 = round((iac.CN2 * iac.CFW2 * iac.COH2 - iac.PN2 * iac.PFW2 * iac.POH2) / 1000.0)
+iac.DS2 = round((iac.CN2 * iac.CFW2 - iac.PN2 * iac.PFW2) * iac.CF2 * 12.0 / 1000.0)
+iac.BC2 = round(iac.PN2 * iac.BP2)
 # Area 3
-ES3 = round((CN3 * CFW3 * COH3 - PN3 * PFW3 * POH3) / 1000.0)
-DS3 = round((CN3 * CFW3 - PN3 * PFW3) * CF3 * 12.0 / 1000.0)
-BC3 = round(PN3 * BP3)
+iac.ES3 = round((iac.CN3 * iac.CFW3 * iac.COH3 - iac.PN3 * iac.PFW3 * iac.POH3) / 1000.0)
+iac.DS3 = round((iac.CN3 * iac.CFW3 - iac.PN3 * iac.PFW3) * iac.CF3 * 12.0 / 1000.0)
+iac.BC3 = round(iac.PN3 * iac.BP3)
 # Savings
-ES = ES1 + ES2 + ES3
-DS = DS1 + DS2 + DS3
-ECS = round(ES * EC)
-DCS = round(DS * DC)
-ACS = ECS + DCS
+iac.ES = iac.ES1 + iac.ES2 + iac.ES3
+iac.DS = iac.DS1 + iac.DS2 + iac.DS3
+iac.ECS = round(iac.ES * iac.EC)
+iac.DCS = round(iac.DS * iac.DC)
+iac.ACS = iac.ECS + iac.DCS
 # Implementation
-MSC = MSN * MSPL
-BC = BC1 + BC2 + BC3
-CN = CN1 + CN2 + CN3
-LC = BL1 * CN1 + BL2 * CN2 + BL3 * CN3
-IC = MSC + BC + LC
+iac.MSC = iac.MSN * iac.MSPL
+iac.BC = iac.BC1 + iac.BC2 + iac.BC3
+iac.CN = iac.CN1 + iac.CN2 + iac.CN3
+iac.LC = iac.BL1 * iac.CN1 + iac.BL2 * iac.CN2 + iac.BL3 * iac.CN3
+iac.IC = iac.MSC + iac.BC + iac.LC
 # Rebate
-RB = round(ES * RR)
-MRB = min(RB, IC/2)
-MIC = IC - MRB
-iacDict['PB'] = payback(ACS, MIC)
+iac.RB = round(iac.ES * iac.RR)
+iac.MRB = min(iac.RB, iac.IC/2)
+iac.MIC = iac.IC - iac.MRB
+iac.PB = payback(iac.ACS, iac.MIC)
+
 # Combine words
 AREAS = []
-AREAS.append(AREA1)
-if FLAG2:
-    AREAS.append(AREA2)
-if FLAG3:
-    AREAS.append(AREA3)
-iacDict['AREAS'] = combine_words(AREAS)
+AREAS.append(iac.AREA1)
+if iac.FLAG2:
+    AREAS.append(iac.AREA2)
+if iac.FLAG3:
+    AREAS.append(iac.AREA3)
+iac.AREAS = combine_words(AREAS)
 
-# Formatting
-# Add all numbers in local variables to iacDict
-iacDict.update({key: value for (key, value) in locals().items() if type(value) == int or type(value) == float})
-
-# Format numbers to string with thousand separator
-iacDict = grouping_num(iacDict)
-
-# set locale to US
-locale.setlocale(locale.LC_ALL, 'en_US')
-
-# set 3 digits accuracy for electricity cost
-locale._override_localeconv={'frac_digits':3}
-iacDict['EC'] = locale.currency(EC, grouping=True)
-iacDict['RR'] = locale.currency(RR, grouping=True)
-
-# set the natural gas and demand to 2 digits accuracy
-locale._override_localeconv={'frac_digits':2}
-iacDict['NGC'] = locale.currency(NGC, grouping=True)
-iacDict['DC'] = locale.currency(DC, grouping=True)
-
-# set the rest to integer
-locale._override_localeconv={'frac_digits':0}
-for cost in ['LR', 'MSPL', 'BL1', 'BL2', 'BL3', 'BP1', 'BP2', 'BP3', 'ECS', 'DCS', 'ACS', 'MSC', 'BC', 'LC', 'IC', 'RB', 'MRB', 'MIC']:
-    iacDict[cost] = locale.currency(eval(cost), grouping=True)
-
-# Motion sensors
-if MSN == '0':
-    docx_blocks(doc, ms = False)
+# Motion sensors flag
+if iac.MSN == 0:
+    MSFLAG = False
 else:
-    docx_blocks(doc, ms = True)
+    MSFLAG = True
+
+## Format strings
+# set electricity cost / rebate to 3 digits accuracy
+iac = dollar(['EC', 'RR'],iac,3)
+# set the natural gas and demand to 2 digits accuracy
+iac = dollar(['NGC', 'DC'],iac,2)
+# set the rest to integer
+varList = ['LR', 'MSPL', 'BL1', 'BL2', 'BL3', 'BP1', 'BP2', 'BP3', 'ECS', 'DCS', 'ACS', 'MSC', 'BC', 'LC', 'IC', 'RB', 'MRB', 'MIC']
+iac = dollar(varList,iac,0)
+# Format all numbers to string with thousand separator
+iac = grouping_num(iac)
+
+# Import docx template
+doc = Document(os.path.join(script_path, 'Switch to LED lighting.docx'))
 
 # Replacing keys
-docx_replace(doc, **iacDict)
+docx_replace(doc, **iac)
 
 # Add equations
-# Update numbers in local variables to formatted strings for easier access
-locals().update(iacDict)
 # Requires double backslash / curly bracket for LaTeX characters
 ES1Eqn = '\\frac{{ {0} \\times {1} \\times {2} - {3} \\times {4} \\times {5} }} {{ \\mathrm{{1,000}} }}' \
-    .format(CN1, CFW1, COH1, PN1, PFW1, POH1)
+    .format(iac.CN1, iac.CFW1, iac.COH1, iac.PN1, iac.PFW1, iac.POH1)
 add_eqn(doc, '#ES1Eqn', ES1Eqn)
 
 DS1Eqn = '\\frac{{ ({0} \\times {1} - {2} \\times {3}) \\times {4} \\times 12 }} {{ \\mathrm{{1,000}} }}' \
-    .format(CN1, CFW1, PN1, PFW1, CF1)
+    .format(iac.CN1, iac.CFW1, iac.PN1, iac.PFW1, iac.CF1)
 add_eqn(doc, '#DS1Eqn', DS1Eqn)
 
 ES2Eqn = '\\frac{{ {0} \\times {1} \\times {2} - {3} \\times {4} \\times {5} }} {{ \\mathrm{{1,000}} }}' \
-    .format(CN2, CFW2, COH2, PN2, PFW2, POH2)
+    .format(iac.CN2, iac.CFW2, iac.COH2, iac.PN2, iac.PFW2, iac.POH2)
 add_eqn(doc, '#ES2Eqn', ES2Eqn)
 
 DS2Eqn = '\\frac{{ ({0} \\times {1} - {2} \\times {3}) \\times {4} \\times 12 }} {{ \\mathrm{{1,000}} }}' \
-    .format(CN2, CFW2, PN2, PFW2, CF2)
+    .format(iac.CN2, iac.CFW2, iac.PN2, iac.PFW2, iac.CF2)
 add_eqn(doc, '#DS2Eqn', DS2Eqn)
 
 ES3Eqn = '\\frac{{ {0} \\times {1} \\times {2} - {3} \\times {4} \\times {5} }} {{ \\mathrm{{1,000}} }}' \
-    .format(CN3, CFW3, COH3, PN3, PFW3, POH3)
+    .format(iac.CN3, iac.CFW3, iac.COH3, iac.PN3, iac.PFW3, iac.POH3)
 add_eqn(doc, '#ES3Eqn', ES3Eqn)
 
 DS3Eqn = '\\frac{{ ({0} \\times {1} - {2} \\times {3}) \\times {4} \\times 12 }} {{ \\mathrm{{1,000}} }}' \
-    .format(CN3, CFW3, PN3, PFW3, CF3)
+    .format(iac.CN3, iac.CFW3, iac.PN3, iac.PFW3, iac.CF3)
 add_eqn(doc, '#DS3Eqn', DS3Eqn)
 
 # Remove empty blocks
-docx_blocks(doc, area1 = (FLAG2 or FLAG3))
-docx_blocks(doc, area2 = FLAG2)
-docx_blocks(doc, area3 = FLAG3)
+docx_blocks(doc, area1 = (iac.FLAG2 or iac.FLAG3))
+docx_blocks(doc, area2 = iac.FLAG2)
+docx_blocks(doc, area3 = iac.FLAG3)
+docx_blocks(doc, ms = MSFLAG)
 
 # Save file as AR*.docx
-filename = 'AR'+iacDict['AR']+'.docx'
+filename = 'AR'+iac.AR+'.docx'
 doc.save(os.path.join(script_path, '..', 'ARs', filename))
 
 # Caveats
