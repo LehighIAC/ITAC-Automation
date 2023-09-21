@@ -3,7 +3,7 @@
 """
 
 import math, os, locale
-from easydict import EasyDict
+#from easydict import EasyDict
 from lxml import etree
 import latex2mathml.converter
 
