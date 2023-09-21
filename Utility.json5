@@ -16,9 +16,9 @@ LR: 40,
 // Rebate Rate $/kWh, float
 RR: 0.075,
 // Start month, string
-StartMo: "Jun 22",
+StartMo: "Jul 22",
 // End month, string
-EndMo: "May 23",
+EndMo: "Jun 23",
 // Total Electricity kWh, integer
 TotalEkWh: 17622865,
 // Total Electricity MMBtu, integer

@@ -22,9 +22,9 @@ PROD: 'student',
 // Annual production, float
 ANPR: 2000,
 // Production units, string
-PRUN: 'pieces',
+PRUN: 'units',
 // Production operating hours, string
-PROH: '24 hours per day, 7 days per week, 52 weeks per year',
+PROH: '10.5 hours per day, 7 days per week, 52 weeks per year',
 // Office operating hours, string
 OFOH: '8 hours per day, 5 days per week, 52 weeks per year',
 // Lead Assessor, string
