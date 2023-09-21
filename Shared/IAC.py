@@ -3,8 +3,56 @@
 """
 
 import math, os, locale
+from easydict import EasyDict
 from lxml import etree
 import latex2mathml.converter
+
+def grouping_num(dic):
+    """
+    Add thousand separator to numbers in a dictionary and format it to string
+    :param dic: EasyDict
+    :return: Dictionary with keys in thousand separator
+    """
+    # set locale to US
+    locale.setlocale(locale.LC_ALL, 'en_US')
+    for key in dic.keys():
+        if type(dic[key]) == int:
+            dic[key] = locale.format_string('%d', dic[key], grouping=True)
+        elif type(dic[key]) == float:
+            dic[key] = locale.format_string('%g', dic[key], grouping=True)
+        else:
+            pass
+    return dic
+
+def dollar(varlist, dic, digits):
+    """
+    Format numbers in a dictionary and to currency string
+    :param varlist: List of keys in the dictionary
+    :param dic: EasyDict
+    :param digits: Number of digits
+    :return: Dictionary with keys in formatted currency string
+    """
+    locale.setlocale(locale.LC_ALL, 'en_US')
+    locale._override_localeconv={'frac_digits':digits}
+    for var in varlist:
+        dic[var] = locale.currency(dic[var], grouping=True)
+    return dic
+
+def combine_words(words):
+    """
+    :param words: list of strings
+    :return: string of words separated by "," and "and"
+    """
+    combined = ""
+    for i in range(len(words)):  
+        combined = combined + words[i]    
+        if i < len(words) - 2:
+            combined = combined + ', '
+        if i == len(words) - 2:
+            combined = combined + ' and ' 
+        else:
+            pass
+    return combined
 
 def add_image(doc, tag, image_path, wd):
     """
@@ -25,39 +73,6 @@ def add_image(doc, tag, image_path, wd):
             break
     if found_tag == False:
         print("Tag "+ tag +" not found")
-
-def combine_words(words):
-    """
-    :param words: list of strings
-    :return: string of words separated by "," and "and"
-    """
-    combined = ""
-    for i in range(len(words)):  
-        combined = combined + words[i]    
-        if i < len(words) - 2:
-            combined = combined + ', '
-        if i == len(words) - 2:
-            combined = combined + ' and ' 
-        else:
-            pass
-    return combined
-
-def grouping_num(dic):
-    """
-    Add thousand separator to numbers in a dictionary and format it to string
-    :param dic: Dictionary
-    :return: Dictionary with keys in thousand separator
-    """
-    # set locale to US
-    locale.setlocale(locale.LC_ALL, 'en_US')
-    for key in dic.keys():
-        if type(dic[key]) == int:
-            dic[key] = locale.format_string('%d', dic[key], grouping=True)
-        elif type(dic[key]) == float:
-            dic[key] = locale.format_string('%g', dic[key], grouping=True)
-        else:
-            pass
-    return dic
 
 def add_eqn(doc, tag, eqn_input):
     """
