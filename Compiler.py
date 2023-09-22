@@ -19,7 +19,7 @@ sys.path.append(os.path.join(script_path, 'Shared'))
 from IAC import payback, grouping_num, dollar, add_image, validate_arc
 
 # If ARs/Sorted/ folder doesn't exist, create one
-os.makedirs(os.path.join('ARs', 'Sorted'), exist_ok=True)
+os.makedirs(os.path.join(script_path, 'ARs', 'Sorted'), exist_ok=True)
 
 # If on macOS
 if os.path.exists(os.path.join(script_path, "Energy Charts.fld")):
@@ -50,11 +50,11 @@ locale.setlocale(locale.LC_ALL, 'en_US')
 
 print("Reading ARs...")
 # Get all .docx files in ARs directory and extract information
-ARList = [f for f in os.listdir('ARs') if f.endswith('.docx')]
+ARList = [f for f in os.listdir(os.path.join(script_path, 'ARs')) if f.endswith('.docx')]
 AR_id = 0
 for ARdoc in ARList:
     print(ARdoc)
-    doc = Document(os.path.join('ARs', ARdoc))
+    doc = Document(os.path.join(script_path, 'ARs', ARdoc))
     ARinfo = {}
     # check if the document is an AAR
     ARinfo['isAAR'] = ("AAR" in doc.paragraphs[0].text.split(':')[0])
@@ -171,7 +171,7 @@ print("done")
 print("Reformatting ARs...", end ="")
 ## Reformatting ARs
 for index, row in AR_df.iterrows():
-    doc = Document(os.path.join('ARs', row['File Name']))
+    doc = Document(os.path.join(script_path, 'ARs', row['File Name']))
     # Change title and make it upper case
     doc.paragraphs[0].text = "AR "+ str(index+1) + ': ' + row['Description'].upper()
     # Set font to bold
@@ -184,7 +184,7 @@ for index, row in AR_df.iterrows():
     doc.paragraphs[0].runs[0].font.size = shared.Pt(12)
     # Add pagebreak to the end of the document
     doc.add_page_break()
-    doc.save(os.path.join('ARs', 'Sorted', 'AR'+ str(index+1) + '.docx'))
+    doc.save(os.path.join(script_path, 'ARs', 'Sorted', 'AR'+ str(index+1) + '.docx'))
 print("done")
 
 # Check if there's at least 1 AAR
@@ -211,7 +211,7 @@ if AAR:
     print("Reformatting AARs...", end ="")
     # Modify the title of the AAR docx
     for index, row in AAR_df.iterrows():
-        doc = Document(os.path.join('ARs', row['File Name']))
+        doc = Document(os.path.join(script_path, 'ARs', row['File Name']))
         # Change title and make it upper case
         doc.paragraphs[0].text = "AAR "+ str(index+1) + ': ' + row['Description'].upper()
         # Set font to bold
@@ -224,7 +224,7 @@ if AAR:
         doc.paragraphs[0].runs[0].font.size = shared.Pt(12)
         # Add pagebreak to the end of the document
         doc.add_page_break()
-        doc.save(os.path.join('ARs', 'Sorted', 'AAR'+ str(index+1) + '.docx'))
+        doc.save(os.path.join(script_path, 'ARs', 'Sorted', 'AAR'+ str(index+1) + '.docx'))
     print("done")
 
 print("Parsing plant information...", end ="")
@@ -341,26 +341,26 @@ doc2 = Document(os.path.join(script_path, 'Report', 'Energy.docx'))
 print("Adding energy chart images...", end ="")
 # If on macOS
 if chartPath == "Energy Charts.fld":
-    add_image(doc2, '#EUChart', os.path.join(chartPath, "image001.png"), shared.Inches(6))
-    add_image(doc2, '#ECChart', os.path.join(chartPath, "image002.png"), shared.Inches(6))
-    add_image(doc2, '#DUChart', os.path.join(chartPath, "image003.png"), shared.Inches(6))
-    add_image(doc2, '#DCChart', os.path.join(chartPath, "image004.png"), shared.Inches(6))
-    add_image(doc2, '#FUChart', os.path.join(chartPath, "image005.png"), shared.Inches(6))
-    add_image(doc2, '#FCChart', os.path.join(chartPath, "image006.png"), shared.Inches(6))
-    add_image(doc2, '#PieUChart', os.path.join(chartPath, "image007.png"), shared.Inches(6))
-    add_image(doc2, '#PieCChart', os.path.join(chartPath, "image008.png"), shared.Inches(6))
-    add_image(doc2, '#TotalChart', os.path.join(chartPath, "image009.png"), shared.Inches(9))
+    add_image(doc2, '#EUChart', os.path.join(script_path, chartPath, "image001.png"), shared.Inches(6))
+    add_image(doc2, '#ECChart', os.path.join(script_path, chartPath, "image002.png"), shared.Inches(6))
+    add_image(doc2, '#DUChart', os.path.join(script_path, chartPath, "image003.png"), shared.Inches(6))
+    add_image(doc2, '#DCChart', os.path.join(script_path, chartPath, "image004.png"), shared.Inches(6))
+    add_image(doc2, '#FUChart', os.path.join(script_path, chartPath, "image005.png"), shared.Inches(6))
+    add_image(doc2, '#FCChart', os.path.join(script_path, chartPath, "image006.png"), shared.Inches(6))
+    add_image(doc2, '#PieUChart', os.path.join(script_path, chartPath, "image007.png"), shared.Inches(6))
+    add_image(doc2, '#PieCChart', os.path.join(script_path, chartPath, "image008.png"), shared.Inches(6))
+    add_image(doc2, '#TotalChart', os.path.join(script_path, chartPath, "image009.png"), shared.Inches(9))
 # If on Windows
 elif chartPath == "Energy Charts_files":
-    add_image(doc2, '#EUChart', os.path.join(chartPath, "image001.png"), shared.Inches(6))
-    add_image(doc2, '#ECChart', os.path.join(chartPath, "image002.png"), shared.Inches(6))
-    add_image(doc2, '#DUChart', os.path.join(chartPath, "image003.png"), shared.Inches(6))
-    add_image(doc2, '#DCChart', os.path.join(chartPath, "image005.png"), shared.Inches(6))
-    add_image(doc2, '#FUChart', os.path.join(chartPath, "image006.png"), shared.Inches(6))
-    add_image(doc2, '#FCChart', os.path.join(chartPath, "image007.png"), shared.Inches(6))
-    add_image(doc2, '#PieUChart', os.path.join(chartPath, "image009.png"), shared.Inches(6))
-    add_image(doc2, '#PieCChart', os.path.join(chartPath, "image011.png"), shared.Inches(6))
-    add_image(doc2, '#TotalChart', os.path.join(chartPath, "image013.png"), shared.Inches(9))
+    add_image(doc2, '#EUChart', os.path.join(script_path, chartPath, "image001.png"), shared.Inches(6))
+    add_image(doc2, '#ECChart', os.path.join(script_path, chartPath, "image002.png"), shared.Inches(6))
+    add_image(doc2, '#DUChart', os.path.join(script_path, chartPath, "image003.png"), shared.Inches(6))
+    add_image(doc2, '#DCChart', os.path.join(script_path, chartPath, "image005.png"), shared.Inches(6))
+    add_image(doc2, '#FUChart', os.path.join(script_path, chartPath, "image006.png"), shared.Inches(6))
+    add_image(doc2, '#FCChart', os.path.join(script_path, chartPath, "image007.png"), shared.Inches(6))
+    add_image(doc2, '#PieUChart', os.path.join(script_path, chartPath, "image009.png"), shared.Inches(6))
+    add_image(doc2, '#PieCChart', os.path.join(script_path, chartPath, "image011.png"), shared.Inches(6))
+    add_image(doc2, '#TotalChart', os.path.join(script_path, chartPath, "image013.png"), shared.Inches(9))
 print("done")
 
 # Fill in energy chart tables from Energy Charts.xlsx
@@ -411,17 +411,17 @@ print("Combining all docs...", end ="")
 docList = []
 ARList = []
 for ARlen in range(1, len(AR_df)+1):
-    ARList.append(os.path.join('ARs','Sorted','AR' + str(ARlen) + '.docx'))
+    ARList.append(os.path.join(script_path, 'ARs', 'Sorted','AR' + str(ARlen) + '.docx'))
 docList.extend(ARList)
 if AAR:
-    docList.append(os.path.join('Report','AAR.docx'))
+    docList.append(os.path.join(script_path, 'Report','AAR.docx'))
     AARList = []
     for AARlen in range(1, len(AAR_df)+1):
-        AARList.append(os.path.join('ARs','Sorted','AAR' + str(AARlen) + '.docx'))
+        AARList.append(os.path.join(script_path, 'ARs', 'Sorted','AAR' + str(AARlen) + '.docx'))
     docList.extend(AARList)
 else:
     pass
-docList.append(os.path.join('Report','Background.docx'))
+docList.append(os.path.join(script_path, 'Report','Background.docx'))
 docList.append(filename2)
 
 # Combine all docx files

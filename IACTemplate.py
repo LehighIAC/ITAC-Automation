@@ -7,14 +7,15 @@ then run this script.
 
 import os, json5, re, math, easydict, openpyxl
 
+script_path = os.path.dirname(os.path.abspath(__file__))
 # Get Info from Info.json5
-jsonDict = json5.load(open('Info.json5'))
-jsonDict.update(json5.load(open('Utility.json5')))
+jsonDict = json5.load(open(os.path.join(script_path, 'Info.json5')))
+jsonDict.update(json5.load(open(os.path.join(script_path, 'Utility.json5'))))
 # Convert to EasyDict
 iac = easydict.EasyDict(jsonDict)
 
 # Read IAC template
-wb = openpyxl.load_workbook(os.path.join('Shared','IACAssessmentTemplate.v2.1.xlsx'))
+wb = openpyxl.load_workbook(os.path.join(script_path, 'Shared', 'IACAssessmentTemplate.v2.1.xlsx'))
 # Open "General Info" sheet
 print("Filling General Info:")
 ws = wb['General Info']
@@ -57,7 +58,7 @@ print("Please manually fill B11:B16.")
 print("Filling Energy-Waste Info:")
 ws = wb['Energy-Waste Info']
 # Read Energy Charts.xlsx
-ecwb = openpyxl.load_workbook('Energy Charts.xlsx', data_only=True)
+ecwb = openpyxl.load_workbook(os.path.join(script_path, 'Energy Charts.xlsx'), data_only=True)
 # Get Raw Data worksheet
 ecws = ecwb['Raw Data']
 # Make a list of corresponding cells to copy
@@ -96,4 +97,4 @@ ws = wb['Recommendation Info']
 print("Please manually fill Recommendation Info for cross validation")
 
 # Save as new file
-wb.save('IACAssessmentTemplate.xlsx')
+wb.save(os.path.join(script_path, 'IACAssessmentTemplate.xlsx'))
