@@ -5,18 +5,16 @@ then run this script.
 """
 
 
-import os, json5, re, math, easydict, openpyxl, locale
-from docx import Document
+import os, json5, re, math, easydict, openpyxl
 
 # Get Info from Info.json5
-script_path = os.path.dirname(os.path.abspath(__file__))
-jsonDict = json5.load(open(os.path.join(script_path, 'Info.json5')))
-jsonDict.update(json5.load(open(os.path.join(script_path, 'Utility.json5'))))
+jsonDict = json5.load(open('Info.json5'))
+jsonDict.update(json5.load(open('Utility.json5')))
 # Convert to EasyDict
 iac = easydict.EasyDict(jsonDict)
 
 # Read IAC template
-wb = openpyxl.load_workbook('IACAssessmentTemplate.v2.1.xlsx')
+wb = openpyxl.load_workbook(os.path.join('Shared','IACAssessmentTemplate.v2.1.xlsx'))
 # Open "General Info" sheet
 print("Filling General Info:")
 ws = wb['General Info']
