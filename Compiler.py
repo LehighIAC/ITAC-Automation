@@ -16,7 +16,7 @@ from python_docx_replace import docx_replace, docx_blocks
 # Get the path of the current script, auxilliary functions are under Shared folder
 script_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(script_path, 'Shared'))
-from IAC import payback, grouping_num, dollar, add_image
+from IAC import payback, grouping_num, dollar, add_image, validate_arc
 
 # If ARs/Sorted/ folder doesn't exist, create one
 os.makedirs(os.path.join('ARs', 'Sorted'), exist_ok=True)
@@ -69,6 +69,7 @@ for ARdoc in ARList:
         value = row.cells[1].text
         # Parse ARC Number
         if "arc" in key.lower() and "number" in key.lower():
+            validate_arc(value)
             ARinfo['ARC No.'] = value
         # Parse Annual Cost Savings
         elif "annual" in key.lower() and "cost" in key.lower():

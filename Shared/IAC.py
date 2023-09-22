@@ -2,10 +2,52 @@
 (Purpose) IAC.py is a module that contains functions used in the IAC report
 """
 
-import math, os, locale
-#from easydict import EasyDict
+import math, os, locale, json
+# json5 is too slow, use json instead.
 from lxml import etree
 import latex2mathml.converter
+
+def validate_arc(ARC):
+    """
+    Validate ARC input
+    :param ARC: Full ARC number as a string
+    """
+    # Validate if ARC is in x.xxxx.xxx format
+    ARCsplit = ARC.split('.')
+    if len(ARCsplit) != 3:
+        print("ARC number must be in x.xxxx.x format")
+        exit()
+    # if ARC split are nut full numbers
+    for i in range(len(ARCsplit)):
+        if ARCsplit[i].isdigit() == False:
+            print("ARC number must be in x.xxxx.x format")
+            exit()
+    
+    # Parse ARC code
+    code = ARCsplit[0] + '.' + ARCsplit[1]
+    # Read ARC.json5 as dictionary
+    arc_path = os.path.dirname(os.path.abspath(__file__))
+    ARCdict = json.load(open(os.path.join(arc_path, 'ARC.json')))
+    desc = ARCdict[code]
+    if desc == None:
+        print("ARC code not found.")
+    else:
+        print(code + ": "+ desc)
+
+    # Parse application code
+    app = ARCsplit[2]
+    if app == '1':
+        print("Application code 1: Manufacturing Process")
+    elif app == '2':
+        print("Application code 2: Process Support")
+    elif app == '3':
+        print("Application code 3: Building and Grounds")
+    elif app == '4':
+        print("Application code 4: Administrative")
+    else:
+        print("Application code not found.")
+
+    print("")
 
 def grouping_num(dic):
     """
