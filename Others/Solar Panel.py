@@ -6,15 +6,13 @@ import json5, sys, os
 from docx import Document
 from easydict import EasyDict
 from python_docx_replace import docx_replace, docx_blocks
-# Get the path of the current script
-script_path = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(os.path.join(script_path, '..', 'Shared'))
-from IAC import payback, grouping_num, dollar
+sys.path.append('..') 
+from Shared.IAC import *
 import requests, datetime
 
 # Load config file and convert everything to EasyDict
-jsonDict = json5.load(open(os.path.join(script_path, 'Solar Panel.json5')))
-jsonDict.update(json5.load(open(os.path.join(script_path, '..', 'Utility.json5'))))
+jsonDict = json5.load(open('Solar Panel.json5'))
+jsonDict.update(json5.load(open(os.path.join('..', 'Utility.json5'))))
 iac = EasyDict(jsonDict)
 
 if iac.ST == "PA":
@@ -73,14 +71,14 @@ iac = dollar(varList,iac,0)
 # Format all numbers to string with thousand separator
 iac = grouping_num(iac)
 
-doc = Document(os.path.join(script_path, template))
+doc = Document(template)
 
 # Replacing keys
 docx_replace(doc, **iac)
 
 # This is an AAR by default
 filename = 'AAR'+iac.AR+'.docx'
-doc.save(os.path.join(script_path, '..', 'ARs', filename))
+doc.save(os.path.join('..', 'ARs', filename))
 
 # Caveats
 print("Please check if the grabbed info is correct.")

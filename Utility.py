@@ -4,10 +4,9 @@ Save statistics to Utility.json5
 """
 
 import os, re, openpyxl
-script_path = os.path.dirname(os.path.abspath(__file__))
 
 # Read Energy Charts.xlsx
-wb = openpyxl.load_workbook(os.path.join(script_path, 'Energy Charts.xlsx'), data_only=True)
+wb = openpyxl.load_workbook('Energy Charts.xlsx', data_only=True)
 # Get Raw Data worksheet
 ws = wb['Raw Data']
 
@@ -53,7 +52,7 @@ else:
     NGC = 0
 
 # Open Utility.json5 as text
-with open(os.path.join(script_path, 'utility.json5'), 'r') as f:
+with open('utility.json5', 'r') as f:
     utility = f.read()
 
 # Replace values in Utility.json5
@@ -75,5 +74,5 @@ utility = re.sub(r'TotalBtu: .*', 'TotalBtu: ' + str(TotalBtu) + ',', utility)
 utility = re.sub(r'TotalCost: .*', 'TotalCost: ' + str(TotalCost) + ',', utility)
 
 # Save utility.json5
-with open(os.path.join(script_path, 'utility.json5'), 'w') as f:
+with open('utility.json5', 'w') as f:
     f.write(utility)

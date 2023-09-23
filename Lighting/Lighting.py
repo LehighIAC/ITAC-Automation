@@ -6,14 +6,12 @@ import json5, sys, os
 from docx import Document
 from easydict import EasyDict
 from python_docx_replace import docx_replace, docx_blocks
-# Get the path of the current script
-script_path = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(os.path.join(script_path, '..', 'Shared'))
-from IAC import payback, grouping_num, add_eqn, combine_words, dollar
+sys.path.append('..') 
+from Shared.IAC import *
 
 # Load config file and convert everything to EasyDict
-jsonDict = json5.load(open(os.path.join(script_path, 'Lighting.json5')))
-jsonDict.update(json5.load(open(os.path.join(script_path, '..', 'Utility.json5'))))
+jsonDict = json5.load(open('Lighting.json5'))
+jsonDict.update(json5.load(open(os.path.join('..', 'Utility.json5'))))
 iac = EasyDict(jsonDict)
 
 # Calculations
@@ -74,7 +72,7 @@ iac = dollar(varList,iac,0)
 iac = grouping_num(iac)
 
 # Import docx template
-doc = Document(os.path.join(script_path, 'Switch to LED lighting.docx'))
+doc = Document('Switch to LED lighting.docx')
 
 # Replacing keys
 docx_replace(doc, **iac)
@@ -113,7 +111,7 @@ docx_blocks(doc, ms = MSFLAG)
 
 # Save file as AR*.docx
 filename = 'AR'+iac.AR+'.docx'
-doc.save(os.path.join(script_path, '..', 'ARs', filename))
+doc.save(os.path.join('..', 'ARs', filename))
 
 # Caveats
 print("Please manually change the font size of equations to 16.")
