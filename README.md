@@ -28,8 +28,8 @@ conda activate iac
 ### Install the following packages:
 ```
 conda install json5 numpy pandas openpyxl requests
-conda install -c conda-forge python-docx docxcompose easydict latex2mathml num2words
-pip install python-docx-replace
+conda install -c conda-forge python-docx docxcompose easydict latex2mathml num2words pgeocode
+pip install python-docx-replace meteostat
 ```
 `conda` always has the highest priority. If not available, install packages from `conda-forge`. Don't install from `pip` unless you have to, otherwise there might be dependency issue.
 ### Config VS Code environment

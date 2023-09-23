@@ -2,16 +2,58 @@
 (Purpose) IAC.py is a module that contains functions used in the IAC report
 """
 
-import math, os, locale, json
-# json5 is too slow, use json instead.
-from lxml import etree
-import latex2mathml.converter
+
+def degree_days(ZIP, basetemp, mode):
+    """
+    Automatically calculate degree days from ZIP code
+    :param ZIP: ZIP code as string
+    :param basetemp: Base temperature as integer
+    :param mode: "heating" or "cooling" as string
+    :return: Degree days as integer
+    """
+    from meteostat import Stations, Hourly, units
+    from datetime import datetime
+    import pgeocode
+
+    # Get coordinate from ZIP code
+    location = pgeocode.Nominatim('us').query_postal_code(ZIP)
+
+    # Get closest weather station
+    station = Stations().nearby(location.latitude, location.longitude).fetch(1).index[0]
+
+    # 4 years of data, by default
+    gap_year = 4
+    start = datetime(datetime.now().year - gap_year, 1, 1)
+    end = datetime(datetime.now().year - 1, 12, 31, 23, 59)
+
+    # Get hourly data
+    data = Hourly(station, start, end)
+    data = data.convert(units.imperial)
+    data = data.normalize()
+    # https://github.com/meteostat/meteostat-python/issues/130
+    #data = data.interpolate()
+    data = data.fetch()
+
+    if mode == "cooling":
+        # Calculate cooling degree days
+        data['dd'] = data.apply(lambda x: max((x['temp'] - basetemp), 0), axis=1)
+        dd = data.dd.sum() / gap_year / 24
+    elif mode == "heating":
+        # Calculate heating degree days
+        data['dd'] = data.apply(lambda x: max((basetemp - x['temp']), 0), axis=1)
+        dd = data.dd.sum() / gap_year / 24
+    else:
+        print("Mode must be 'heating' or 'cooling'")
+        exit()
+    return dd
 
 def validate_arc(ARC):
     """
     Validate ARC input
     :param ARC: Full ARC number as a string
     """
+    # json5 is too slow, use json instead.
+    import os, json
     # Validate if ARC is in x.xxxx.xxx format
     ARCsplit = ARC.split('.')
     if len(ARCsplit) != 3:
@@ -55,6 +97,7 @@ def grouping_num(dic):
     :param dic: EasyDict
     :return: Dictionary with keys in thousand separator
     """
+    import locale
     # set locale to US
     locale.setlocale(locale.LC_ALL, 'en_US')
     for key in dic.keys():
@@ -74,6 +117,7 @@ def dollar(varlist, dic, digits):
     :param digits: Number of digits
     :return: Dictionary with keys in formatted currency string
     """
+    import locale
     locale.setlocale(locale.LC_ALL, 'en_US')
     locale._override_localeconv={'frac_digits':digits}
     for var in varlist:
@@ -141,6 +185,8 @@ def latex2word(latex_input):
     :param latex_input: LaTeX equation
     :return: Word equation
     """
+    import os, latex2mathml.converter
+    from lxml import etree
     mathml = latex2mathml.converter.convert(latex_input)
     tree = etree.fromstring(mathml)
     script_path = os.path.dirname(os.path.abspath(__file__))
@@ -151,11 +197,12 @@ def latex2word(latex_input):
 
 def payback(ACS,IC):
     """
-    Formet payback period by year and month
+    Format payback period by year and month
     :param ACS: Annual Cost Savings ($/yr)
     :param IC: Implementation Cost ($)
     :return: formatted Payback Period (str)
     """
+    import math
     PB = IC / ACS
     if PB <= 11.0 / 12.0:
         PB = math.ceil(PB * 12.0)
