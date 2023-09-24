@@ -35,7 +35,7 @@ iac.AES = iac.CAP * 1200
 # PVWatts API
 parameters = {
 'format': 'json',
-'api_key': iac.api_key,
+'api_key': iac.api,
 'system_capacity': iac.CAP,
 'module_type': 0,
 'losses': 14.08,
@@ -44,9 +44,15 @@ parameters = {
 'azimuth': 180,
 'address': iac.ZIP,
 }
-response = requests.request('GET', 'https://developer.nrel.gov/api/pvwatts/v8.json', params=parameters)
-PVresults = response.json()
-iac.ES = round(PVresults.get('outputs').get('ac_annual'))
+
+try:
+    response = requests.request('GET', 'https://developer.nrel.gov/api/pvwatts/v8.json', params=parameters)
+    PVresults = response.json()
+    iac.ES = round(PVresults.get('outputs').get('ac_annual'))
+except:
+    print('PVWatts API error. Please look up the annual energy savings manually on PVWatts website')
+    # input number
+    iac.ES = int(input('Manually input annual energy savings (kWh): '))
 
 iac.ACSel = round(iac.ES * iac.EC)
 iac.credits = round(iac.ES / 1000)

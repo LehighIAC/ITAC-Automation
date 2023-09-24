@@ -3,19 +3,39 @@
 """
 
 
-def degree_days(ZIP: str, mode: str, temp: int) -> float:
+def degree_days(ZIP: str, mode: str, temp: int=65) -> float:
     """
     Automatically calculate degree days based on daily average temperature
     The result should be equal to degreedays.net
     :param ZIP: ZIP code as string
     :param mode: "heating" or "cooling" as string
-    :param temp: Base temperature as integer
+    :param temp (optional): Base temperature as integer, default is 65 degF
     :return: Degree days as float
     """
     from meteostat import Stations, Daily, units
     from datetime import datetime
     import pgeocode
 
+    # if ZIP code is invalid
+    if ZIP.isdigit() == False:
+        raise Exception("ZIP code must be 5 digits")
+    if len(ZIP) != 5:
+        raise Exception("ZIP code must be 5 digits")
+    
+    # sign is 1 or -1 or throw error
+    if mode == "cooling":
+        sign = 1
+    elif mode == "heating":
+        sign = -1
+    else:
+        raise Exception("Mode must be 'heating' or 'cooling'")
+    
+    # if temp is not an integer between 32 and 212 degF
+    if temp.type != int:
+        raise Exception("Base temperature must be an integer")
+    if temp < 32 or temp > 212:
+        raise Exception("Base temperature must be between 32 and 212 degF")
+    
     # Get coordinate from ZIP code
     location = pgeocode.Nominatim('us').query_postal_code(ZIP)
 
@@ -34,18 +54,10 @@ def degree_days(ZIP: str, mode: str, temp: int) -> float:
     # https://github.com/meteostat/meteostat-python/issues/130
     #data = data.interpolate()
     data = data.fetch()
-
-    if mode == "cooling":
-        # Calculate cooling degree days
-        data['dd'] = data.apply(lambda x: max((x['tavg'] - temp), 0), axis=1)
-    elif mode == "heating":
-        # Calculate heating degree days
-        data['dd'] = data.apply(lambda x: max((temp - x['tavg']), 0), axis=1)
-    else:
-        print("Mode must be 'heating' or 'cooling'")
-        exit()
-    dd = data.dd.sum() / gap_year
-    return dd
+        
+    data['degreeday'] = data.apply(lambda x: max((temp - x['tavg'])*sign, 0), axis=1)
+    degreedays = data.degreeday.sum() / gap_year
+    return degreedays
 
 def degree_hours(ZIP: str, mode: str, basetemp: int, setback: int=None, hours: list=[9,17], weekend: list=[]) -> float:
     """
@@ -53,15 +65,64 @@ def degree_hours(ZIP: str, mode: str, basetemp: int, setback: int=None, hours: l
     The result is usually higher than degreedays.net
     :param ZIP: ZIP code as string
     :param mode: "heating" or "cooling" as string
-    :param basetemp: Base temperature as integer
-    :param setback: Setback temperature as integer, default is None
-    :param hours: Operating hours as list of integer, default is [9, 17] (9am to 5pm)
-    :param weekend: List of weekend schedule as list, default is []. Example: [5,6] (Saturday and Sunday)
+    :param basetemp (optional): Base temperature as integer, default is 65 degF
+    :param setback (optional): Setback temperature as integer, default is None (eqauls to base temperature)
+    :param hours (optional): Operating hours as list of integer, default is [9, 17] (9am to 5pm)
+    :param weekend (optional): List of weekend schedule as list, default is []. Example: [5,6] (Saturday and Sunday)
     :return: Degree hours as float
     """
     from meteostat import Stations, Hourly, units
     from datetime import datetime
     import pgeocode
+
+    # if ZIP code is invalid
+    if ZIP.isdigit() == False:
+        raise Exception("ZIP code must be 5 digits")
+    if len(ZIP) != 5:
+        raise Exception("ZIP code must be 5 digits")
+    
+    # sign is 1 or -1 or throw error
+    if mode == "cooling":
+        sign = 1
+    elif mode == "heating":
+        sign = -1
+    else:
+        raise Exception("Mode must be 'heating' or 'cooling'")
+    
+    # if basetemp is not an integer between 32 and 212 degF
+    if type(basetemp) != int:
+        raise Exception("Base temperature must be an integer")
+    if basetemp < 32 or basetemp > 212:
+        raise Exception("Base temperature must be between 32 and 212 degF")
+    
+    # if setback is not an integer
+    if setback != None:
+        if type(setback) != int:
+            raise Exception("Setback temperature must be an integer")
+        if setback < 32 or setback > 212:
+            raise Exception("Setback temperature must be between 32 and 212 degF")
+    
+    # if hours is not a list of 2 integers between 0 and 23
+    if type(hours) != list:
+        raise Exception("Operating hours must be a list of 2 integers between 0 and 23")
+    if len(hours) != 2:
+        raise Exception("Operating hours must be a list of 2 integers between 0 and 23")
+    for hour in hours:
+        if type(hour) != int:
+            raise Exception("Operating hours must be a list of 2 integers between 0 and 23")
+        if hour < 0 or hour > 23:
+            raise Exception("Operating hours must be a list of 2 integers between 0 and 23")
+        if hours[0] >= hours[1]:
+            raise Exception("Opening hour must be earlier than closing hour")
+        
+    # if weekend is not a list of integers bewteen 0 and 6
+    if type(weekend) != list:
+        raise Exception("Weekend must be a list of integers between 0 and 6")
+    for day in weekend:
+        if type(day) != int:
+            raise Exception("Weekend must be a list of integers between 0 and 6")
+        if day < 0 or day > 6:
+            raise Exception("Weekend must be a list of integers between 0 and 6")
 
     # Get coordinate from ZIP code
     location = pgeocode.Nominatim('us').query_postal_code(ZIP)
@@ -85,8 +146,8 @@ def degree_hours(ZIP: str, mode: str, basetemp: int, setback: int=None, hours: l
     # Add a column for set temperature and set it to base temperature
     data['Tbase'] = basetemp
 
-    # If setback temperature is provided
-    if setback != None:
+    # If setback temperature is provided, override numbers
+    if type(setback) == int:
         # Override time outside weekday hours
         data['hour'] = data.index.hour
         data['Tbase'] = data.apply(lambda x: setback if (x['hour'] <= hours[0] or x['hour'] >= hours[1]) else x['Tbase'], axis=1)
@@ -95,17 +156,9 @@ def degree_hours(ZIP: str, mode: str, basetemp: int, setback: int=None, hours: l
             data['day'] = data.index.weekday
             data['Tbase'] = data.apply(lambda x: setback if (x['day'] == holiday) else x['Tbase'], axis=1)
 
-    if mode == "cooling":
-        # Calculate cooling degree hours
-        data['dh'] = data.apply(lambda x: max((x['temp'] - x['Tbase']), 0), axis=1)
-    elif mode == "heating":
-        # Calculate heating degree hours
-        data['dh'] = data.apply(lambda x: max((x['Tbase'] - x['temp']), 0), axis=1)     
-    else:
-        print("Mode must be 'heating' or 'cooling'")
-        exit()
-    dh = data.dh.sum() / gap_year
-    return dh
+    data['degreehour'] = data.apply(lambda x: max((x['temp'] - x['Tbase'])*sign, 0), axis=1)
+    degreehours = data.degreehour.sum() / gap_year
+    return degreehours
 
 def validate_arc(ARC):
     """
@@ -117,13 +170,11 @@ def validate_arc(ARC):
     # Validate if ARC is in x.xxxx.xxx format
     ARCsplit = ARC.split('.')
     if len(ARCsplit) != 3:
-        print("ARC number must be in x.xxxx.x format")
-        exit()
+        raise Exception("ARC number must be in x.xxxx.x format")
     # if ARC split are nut full numbers
     for i in range(len(ARCsplit)):
         if ARCsplit[i].isdigit() == False:
-            print("ARC number must be in x.xxxx.x format")
-            exit()
+            raise Exception("ARC number must be in x.xxxx.x format")
     
     # Parse ARC code
     code = ARCsplit[0] + '.' + ARCsplit[1]
@@ -178,6 +229,20 @@ def dollar(varlist: list, dic: dict, digits: int=0) -> str:
     :return: Dictionary with keys in formatted currency string
     """
     import locale
+    # if varlist is not a list of strings
+    if type(varlist) != list:
+        raise Exception("Variable list must be a list of strings")
+    for var in varlist:
+        if type(var) != str:
+            raise Exception("Variable list must be a list of strings")
+        if var not in dic.keys():
+            raise Exception("Variable not found in dictionary")
+    # if digits is not a natural number
+    if type(digits) != int:
+        raise Exception("Digits must be a natural number")
+    if digits < 0:
+        raise Exception("Digits must be a natural number")
+    # set locale to US
     locale.setlocale(locale.LC_ALL, 'en_US')
     locale._override_localeconv={'frac_digits':digits}
     for var in varlist:
@@ -189,8 +254,14 @@ def combine_words(words: list) -> str:
     :param words: list of strings
     :return: string of words separated by "," and "and"
     """
+    # if words is not a list
+    if type(words) != list:
+        raise Exception("Input must be a list of strings")
     combined = ""
     for i in range(len(words)):  
+        # if word is not a string
+        if type(words[i]) != str:
+            raise Exception("Input must be a list of strings")
         combined = combined + words[i]    
         if i < len(words) - 2:
             combined = combined + ', '
@@ -204,11 +275,18 @@ def add_image(doc, tag: str, image_path: str, wd):
     """
     Add image to Word document, search for tag in doc and replace with the image
     :param doc: Document
-    :param tag: Image tag string
-    :param image_path: Path to the image
+    :param tag: Image tag as string
+    :param image_path: Path to the image as string
     :param wd: Image width
     :return: None
     """
+    import os
+    # if tag is not a string
+    if type(tag) != str:
+        raise Exception("Tag must be a string")
+    # if image file is not found
+    if os.path.isfile(image_path) == False:
+        raise Exception("Image file not found")
     found_tag = False
     for p in doc.paragraphs:
         if tag in p.text:
@@ -218,16 +296,20 @@ def add_image(doc, tag: str, image_path: str, wd):
             found_tag = True
             break
     if found_tag == False:
-        print("Tag "+ tag +" not found")
+        # Throw error if tag is not found 
+        raise Exception("Tag "+ tag +" not found")
 
 def add_eqn(doc, tag: str, eqn_input):
     """
     Add equation to Word document, search for eqn in doc and replace with eqn_input
     :param doc: Document
-    :param tag: Equation tag string
-    :param eqn_input: Equation input
+    :param tag: Equation tag as string
+    :param eqn_input: Word Equation object
     :return: None
     """
+    # if tag is not a string
+    if type(tag) != str:
+        raise Exception("Tag must be a string")
     found_tag = False
     for p in doc.paragraphs:
         if tag in p.text:
@@ -237,16 +319,19 @@ def add_eqn(doc, tag: str, eqn_input):
             found_tag = True
             break
     if found_tag == False:
-        print("Tag "+ tag +" not found")
-
-def latex2word(latex_input):
+        # Throw error if tag is not found 
+        raise Exception("Tag "+ tag +" not found")
+def latex2word(latex_input: str):
     """
     Convert LaTeX equation to Word equation
-    :param latex_input: LaTeX equation
-    :return: Word equation
+    :param latex_input: LaTeX equation as a string
+    :return: Word equation object
     """
     import os, latex2mathml.converter
     from lxml import etree
+    #if latex input is not a string
+    if type(latex_input) != str:
+        raise Exception("LaTeX equation must be a string")
     mathml = latex2mathml.converter.convert(latex_input)
     tree = etree.fromstring(mathml)
     script_path = os.path.dirname(os.path.abspath(__file__))
@@ -255,14 +340,19 @@ def latex2word(latex_input):
     new_dom = transform(tree)
     return new_dom.getroot()
 
-def payback(ACS, IC) -> str:
+def payback(ACS: float, IC: float) -> str:
     """
     Format payback period by year and month
-    :param ACS: Annual Cost Savings ($/yr)
-    :param IC: Implementation Cost ($)
-    :return: formatted Payback Period (str)
+    :param ACS: Annual Cost Savings ($/yr) as float
+    :param IC: Implementation Cost ($) as float
+    :return: formatted Payback Period as string
     """
     import math
+    # if ACS or IC is not a number
+    if type(ACS) != int and type(ACS) != float:
+        raise Exception("Annual Cost Savings must be a number")
+    if type(IC) != int and type(IC) != float:
+        raise Exception("Implementation Cost must be a number")
     PB = IC / ACS
     if PB <= 11.0 / 12.0:
         PB = math.ceil(PB * 12.0)

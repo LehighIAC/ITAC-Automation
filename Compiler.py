@@ -26,8 +26,7 @@ elif os.path.exists("Energy Charts_files"):
     chartPath = "Energy Charts_files"
 else:
     # If chart html folder doesn't exist, exit
-    print("Chart images not found. Please save the energy chart as web page (.htm).")
-    exit()
+    raise Exception("Chart images not found. Please save the energy chart as web page (.htm).")
 
 # Load config file and convert everything to local variables
 print("Reading json5 database...", end ="")
@@ -53,14 +52,18 @@ for ARdoc in ARList:
     print(ARdoc)
     doc = Document(os.path.join('ARs', ARdoc))
     ARinfo = {}
-    # check if the document is an AAR
+    # check if the document is an AAR by title
     ARinfo['isAAR'] = ("AAR" in doc.paragraphs[0].text.split(':')[0])
     # Record file name
     ARinfo['File Name'] = ARdoc
     # Parse the title of the .docx file
     ARinfo['Description'] = doc.paragraphs[0].text.split(':')[1].strip()
     # Read the 1st table in .docx files
-    table = doc.tables[0]
+    try:
+        table = doc.tables[0]
+    except:
+        print("Error: " + ARdoc + " is not a valid AR. Please check if the summary table is present.")
+        exit()
     for row in table.rows:
         key = row.cells[0].text
         value = row.cells[1].text

@@ -52,8 +52,13 @@ else:
     NGC = 0
 
 # Open Utility.json5 as text
-with open('utility.json5', 'r') as f:
-    utility = f.read()
+try:
+    with open('utility.json5', 'r') as f:
+        utility = f.read()
+        f.close()
+except FileNotFoundError:
+    print('utility.json5 not found.')
+    os._exit(1)
 
 # Replace values in Utility.json5
 utility = re.sub(r'EC: .*', 'EC: ' + str(EC) + ',', utility)
@@ -74,5 +79,10 @@ utility = re.sub(r'TotalBtu: .*', 'TotalBtu: ' + str(TotalBtu) + ',', utility)
 utility = re.sub(r'TotalCost: .*', 'TotalCost: ' + str(TotalCost) + ',', utility)
 
 # Save utility.json5
-with open('utility.json5', 'w') as f:
-    f.write(utility)
+try:
+    with open('utility.json5', 'w') as f:
+        f.write(utility)
+        f.close()
+except FileNotFoundError:
+    print('utility.json5 not found.')
+    os._exit(1)
