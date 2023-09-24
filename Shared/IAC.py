@@ -13,10 +13,6 @@ def degree_days(ZIP: str, mode: str, Tbase: int=65, period: int=4) -> float:
     :param period (optional): Number of years of historical data as integer, default is 4
     :return: Degree days as float
     """
-    from meteostat import Stations, Daily, units
-    from datetime import datetime
-    import pgeocode
-
     # if ZIP code is invalid
     if ZIP.isdigit() == False:
         raise Exception("ZIP code must be 5 digits")
@@ -43,23 +39,7 @@ def degree_days(ZIP: str, mode: str, Tbase: int=65, period: int=4) -> float:
     if period < 1 or period > 20:
         raise Exception("Gap year must be between 1 and 20")
     
-    # Get coordinate from ZIP code
-    location = pgeocode.Nominatim('us').query_postal_code(ZIP)
-
-    # Get closest weather station
-    station = Stations().nearby(location.latitude, location.longitude).fetch(1).index[0]
-
-    # Set time period
-    start = datetime(datetime.now().year - period, 1, 1)
-    end = datetime(datetime.now().year - 1, 12, 31)
-
-    # Get daily data
-    data = Daily(station, start, end)
-    data = data.convert(units.imperial)
-    data = data.normalize()
-    # https://github.com/meteostat/meteostat-python/issues/130
-    #data = data.interpolate()
-    data = data.fetch()
+    data = weather_data(ZIP, "daily", period)
 
     data['degreeday'] = data.apply(lambda x: max((x['tavg'] - Tbase) * sign, 0), axis=1)
     degreedays = data.degreeday.sum() / period
@@ -73,15 +53,11 @@ def degree_hours(ZIP: str, mode: str, basetemp: int=65, setback: int=None, sched
     :param mode: "heating" or "cooling" as string
     :param basetemp (optional): Base temperature as integer, default is 65 degF
     :param setback (optional): Setback temperature as integer, default is None (eqauls to base temperature)
-    :param schedule (optional): Weekly operating hours as a tuple of 7 tuples of 2 integers, default is 9am-5pm, Mon-Fri
+    :param schedule (optional): Weekly operating hours as a tuple of 7 tuples of 2 integers, default is 9am-5pm, Mon.-Fri. 
     For example, ((0,24),(0,24),(0,24),(9,17),(9,17),(0,0),(0,0)) is 24 hrs, Mon-Wed, 9am-5pm, Thu-Fri, holiday, Sat-Sun
     :param period (optional): Number of years of historical data as integer, default is 4
     :return: Degree hours as float
     """
-    from meteostat import Stations, Hourly, units
-    from datetime import datetime
-    import pgeocode
-
     # if ZIP code is invalid
     if ZIP.isdigit() == False:
         raise Exception("ZIP code must be 5 digits")
@@ -134,23 +110,7 @@ def degree_hours(ZIP: str, mode: str, basetemp: int=65, setback: int=None, sched
     if period < 1 or period > 20:
         raise Exception("Gap year must be between 1 and 20")
 
-    # Get coordinate from ZIP code
-    location = pgeocode.Nominatim('us').query_postal_code(ZIP)
-
-    # Get closest weather station
-    station = Stations().nearby(location.latitude, location.longitude).fetch(1).index[0]
-
-    # 4 years of data, by default
-    starttime = datetime(datetime.now().year - period, 1, 1)
-    endtime = datetime(datetime.now().year - 1, 12, 31, 23, 59)
-
-    # Get hourly data
-    data = Hourly(station, starttime, endtime)
-    data = data.convert(units.imperial)
-    data = data.normalize()
-    # https://github.com/meteostat/meteostat-python/issues/130
-    #data = data.interpolate()
-    data = data.fetch()
+    data = weather_data(ZIP, "hourly", period)
 
     data['Tbase'] = basetemp
     data['day'] = data.index.dayofweek
@@ -162,6 +122,42 @@ def degree_hours(ZIP: str, mode: str, basetemp: int=65, setback: int=None, sched
     data['degreehour'] = data.apply(lambda x: max((x['temp'] - x['Tbase'])*sign, 0), axis=1)
     degreehours = data.degreehour.sum() / period
     return degreehours
+
+def weather_data(ZIP, mode: str, period: int):
+    """
+    Get raw weather data from meteostat
+    :param ZIP: ZIP code as string
+    :param mode: "daily" or "hourly" as string
+    :param period: Number of years of historical data as integer
+    :return: Pandas DataFrame
+    """
+    from meteostat import Stations, Hourly, Daily, units
+    from datetime import datetime
+    import pgeocode
+
+    # Get coordinate from ZIP code
+    location = pgeocode.Nominatim('us').query_postal_code(ZIP)
+
+    # Get closest weather station
+    station = Stations().nearby(location.latitude, location.longitude).fetch(1).index[0]
+
+    # 4 years of data, by default
+    starttime = datetime(datetime.now().year - period, 1, 1)
+    endtime = datetime(datetime.now().year - 1, 12, 31, 23, 59)
+
+    # fetch data
+    if mode == "daily":
+        data = Daily(station, starttime, endtime)
+    elif mode == "hourly":
+        data = Hourly(station, starttime, endtime)
+    else:
+        raise Exception("Mode must be 'daily' or 'hourly'")
+    data = data.convert(units.imperial)
+    data = data.normalize()
+    # https://github.com/meteostat/meteostat-python/issues/130
+    #data = data.interpolate()
+    data = data.fetch()
+    return data
 
 def validate_arc(ARC):
     """
