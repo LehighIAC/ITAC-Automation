@@ -14,7 +14,7 @@ jsonDict.update(json5.load(open('Utility.json5')))
 iac = easydict.EasyDict(jsonDict)
 
 # Read IAC template
-wb = openpyxl.load_workbook(os.path.join('Shared', 'IACAssessmentTemplate.v2.1.xlsx'))
+wb = openpyxl.load_workbook(os.path.join('Report', 'IACAssessmentTemplate.xlsx'))
 # Open "General Info" sheet
 print("Filling General Info:")
 ws = wb['General Info']
@@ -96,4 +96,4 @@ ws = wb['Recommendation Info']
 print("Please manually fill Recommendation Info for cross validation")
 
 # Save as new file
-wb.save('IACAssessmentTemplate.xlsx')
+wb.save(iac.LE +'.xlsx')
