@@ -3,13 +3,14 @@
 """
 
 
-def degree_days(ZIP: str, mode: str, temp: int=65) -> float:
+def degree_days(ZIP: str, mode: str, Tbase: int=65, period: int=4) -> float:
     """
     Automatically calculate degree days based on daily average temperature
     The result should be equal to degreedays.net
     :param ZIP: ZIP code as string
     :param mode: "heating" or "cooling" as string
-    :param temp (optional): Base temperature as integer, default is 65 degF
+    :param Tbase (optional): Base temperature as integer, default is 65 (degF)
+    :param period (optional): Number of years of historical data as integer, default is 4
     :return: Degree days as float
     """
     from meteostat import Stations, Daily, units
@@ -22,7 +23,7 @@ def degree_days(ZIP: str, mode: str, temp: int=65) -> float:
     if len(ZIP) != 5:
         raise Exception("ZIP code must be 5 digits")
     
-    # sign is 1 or -1 or throw error
+    # select mode or throw error
     if mode == "cooling":
         sign = 1
     elif mode == "heating":
@@ -31,10 +32,16 @@ def degree_days(ZIP: str, mode: str, temp: int=65) -> float:
         raise Exception("Mode must be 'heating' or 'cooling'")
     
     # if temp is not an integer between 32 and 212 degF
-    if temp.type != int:
+    if type(Tbase) != int:
         raise Exception("Base temperature must be an integer")
-    if temp < 32 or temp > 212:
+    if Tbase < 32 or Tbase > 212:
         raise Exception("Base temperature must be between 32 and 212 degF")
+    
+    # if period is not a positive integer between 1 and 20
+    if type(period) != int:
+        raise Exception("Gap year must be a integer")
+    if period < 1 or period > 20:
+        raise Exception("Gap year must be between 1 and 20")
     
     # Get coordinate from ZIP code
     location = pgeocode.Nominatim('us').query_postal_code(ZIP)
@@ -42,24 +49,23 @@ def degree_days(ZIP: str, mode: str, temp: int=65) -> float:
     # Get closest weather station
     station = Stations().nearby(location.latitude, location.longitude).fetch(1).index[0]
 
-    # 4 years of data, by default
-    gap_year = 4
-    start = datetime(datetime.now().year - gap_year, 1, 1)
+    # Set time period
+    start = datetime(datetime.now().year - period, 1, 1)
     end = datetime(datetime.now().year - 1, 12, 31)
 
-    # Get hourly data
+    # Get daily data
     data = Daily(station, start, end)
     data = data.convert(units.imperial)
     data = data.normalize()
     # https://github.com/meteostat/meteostat-python/issues/130
     #data = data.interpolate()
     data = data.fetch()
-        
-    data['degreeday'] = data.apply(lambda x: max((temp - x['tavg'])*sign, 0), axis=1)
-    degreedays = data.degreeday.sum() / gap_year
+
+    data['degreeday'] = data.apply(lambda x: max((x['tavg'] - Tbase) * sign, 0), axis=1)
+    degreedays = data.degreeday.sum() / period
     return degreedays
 
-def degree_hours(ZIP: str, mode: str, basetemp: int, setback: int=None, hours: list=[9,17], weekend: list=[]) -> float:
+def degree_hours(ZIP: str, mode: str, basetemp: int=65, setback: int=None, schedule: tuple=((9,17),)*5+((0,0),)*2, period: int=4) -> float:
     """
     Automatically calculate degree hours based on hourly data
     The result is usually higher than degreedays.net
@@ -67,8 +73,9 @@ def degree_hours(ZIP: str, mode: str, basetemp: int, setback: int=None, hours: l
     :param mode: "heating" or "cooling" as string
     :param basetemp (optional): Base temperature as integer, default is 65 degF
     :param setback (optional): Setback temperature as integer, default is None (eqauls to base temperature)
-    :param hours (optional): Operating hours as list of integer, default is [9, 17] (9am to 5pm)
-    :param weekend (optional): List of weekend schedule as list, default is []. Example: [5,6] (Saturday and Sunday)
+    :param schedule (optional): Weekly operating hours as a tuple of 7 tuples of 2 integers, default is 9am-5pm, Mon-Fri
+    For example, ((0,24),(0,24),(0,24),(9,17),(9,17),(0,0),(0,0)) is 24 hrs, Mon-Wed, 9am-5pm, Thu-Fri, holiday, Sat-Sun
+    :param period (optional): Number of years of historical data as integer, default is 4
     :return: Degree hours as float
     """
     from meteostat import Stations, Hourly, units
@@ -81,7 +88,7 @@ def degree_hours(ZIP: str, mode: str, basetemp: int, setback: int=None, hours: l
     if len(ZIP) != 5:
         raise Exception("ZIP code must be 5 digits")
     
-    # sign is 1 or -1 or throw error
+    # select mode or throw error
     if mode == "cooling":
         sign = 1
     elif mode == "heating":
@@ -95,34 +102,37 @@ def degree_hours(ZIP: str, mode: str, basetemp: int, setback: int=None, hours: l
     if basetemp < 32 or basetemp > 212:
         raise Exception("Base temperature must be between 32 and 212 degF")
     
-    # if setback is not an integer
+    # if setback is provided
     if setback != None:
         if type(setback) != int:
             raise Exception("Setback temperature must be an integer")
         if setback < 32 or setback > 212:
             raise Exception("Setback temperature must be between 32 and 212 degF")
-    
-    # if hours is not a list of 2 integers between 0 and 23
-    if type(hours) != list:
-        raise Exception("Operating hours must be a list of 2 integers between 0 and 23")
-    if len(hours) != 2:
-        raise Exception("Operating hours must be a list of 2 integers between 0 and 23")
-    for hour in hours:
-        if type(hour) != int:
-            raise Exception("Operating hours must be a list of 2 integers between 0 and 23")
-        if hour < 0 or hour > 23:
-            raise Exception("Operating hours must be a list of 2 integers between 0 and 23")
-        if hours[0] >= hours[1]:
-            raise Exception("Opening hour must be earlier than closing hour")
-        
-    # if weekend is not a list of integers bewteen 0 and 6
-    if type(weekend) != list:
-        raise Exception("Weekend must be a list of integers between 0 and 6")
-    for day in weekend:
-        if type(day) != int:
-            raise Exception("Weekend must be a list of integers between 0 and 6")
-        if day < 0 or day > 6:
-            raise Exception("Weekend must be a list of integers between 0 and 6")
+    else:
+        setback = basetemp
+
+    # Validate schedule
+    if type(schedule) != tuple:
+        raise Exception("Schedule must be a tuple")
+    if len(schedule) != 7:
+        raise Exception("Schedule must be a tuple of 7 tuples")
+    for i in range(7):
+        if type(schedule[i]) != tuple:
+            raise Exception("Schedule must be a tuple of 7 tuples")
+        if len(schedule[i]) != 2:
+            raise Exception("Schedule must be a tuple of 7 tuples of 2 integers")
+        if type(schedule[i][0]) != int or type(schedule[i][1]) != int:
+            raise Exception("Schedule must be a tuple of 7 tuples of 2 integers")
+        if schedule[i][0] < 0 or schedule[i][1] > 24:
+            raise Exception("Invalid schedule")
+        if schedule[i][0] > schedule[i][1]:
+            raise Exception("Operating hours must be earlier than closing hours")
+            
+    # if period is not a positive integer between 1 and 20
+    if type(period) != int:
+        raise Exception("Gap year must be a integer")
+    if period < 1 or period > 20:
+        raise Exception("Gap year must be between 1 and 20")
 
     # Get coordinate from ZIP code
     location = pgeocode.Nominatim('us').query_postal_code(ZIP)
@@ -131,8 +141,7 @@ def degree_hours(ZIP: str, mode: str, basetemp: int, setback: int=None, hours: l
     station = Stations().nearby(location.latitude, location.longitude).fetch(1).index[0]
 
     # 4 years of data, by default
-    gap_year = 4
-    starttime = datetime(datetime.now().year - gap_year, 1, 1)
+    starttime = datetime(datetime.now().year - period, 1, 1)
     endtime = datetime(datetime.now().year - 1, 12, 31, 23, 59)
 
     # Get hourly data
@@ -143,21 +152,15 @@ def degree_hours(ZIP: str, mode: str, basetemp: int, setback: int=None, hours: l
     #data = data.interpolate()
     data = data.fetch()
 
-    # Add a column for set temperature and set it to base temperature
     data['Tbase'] = basetemp
-
-    # If setback temperature is provided, override numbers
-    if type(setback) == int:
-        # Override time outside weekday hours
-        data['hour'] = data.index.hour
-        data['Tbase'] = data.apply(lambda x: setback if (x['hour'] <= hours[0] or x['hour'] >= hours[1]) else x['Tbase'], axis=1)
-        # Override time on weekend
-        for holiday in weekend:
-            data['day'] = data.index.weekday
-            data['Tbase'] = data.apply(lambda x: setback if (x['day'] == holiday) else x['Tbase'], axis=1)
+    data['day'] = data.index.dayofweek
+    data['hour'] = data.index.hour
+    for day in range(7):
+        data.loc[(data['day'] == day) & (data['hour'] < schedule[day][0]), 'Tbase'] = setback
+        data.loc[(data['day'] == day) & (data['hour'] >= schedule[day][1]), 'Tbase'] = setback
 
     data['degreehour'] = data.apply(lambda x: max((x['temp'] - x['Tbase'])*sign, 0), axis=1)
-    degreehours = data.degreehour.sum() / gap_year
+    degreehours = data.degreehour.sum() / period
     return degreehours
 
 def validate_arc(ARC):
