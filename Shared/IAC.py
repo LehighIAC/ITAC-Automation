@@ -71,7 +71,7 @@ def degree_days(ZIP: str, mode: str, basetemp: int, setback: int=None, hours: li
     station = Stations().nearby(location.latitude, location.longitude).fetch(1).index[0]
 
     # 4 years of data, by default
-    gap_year = 1
+    gap_year = 4
     starttime = datetime(datetime.now().year - gap_year, 1, 1)
     endtime = datetime(datetime.now().year - 1, 12, 31, 23, 59)
 
