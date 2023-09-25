@@ -2,9 +2,10 @@
 This script is used to generate the IAC recommendation for Install Solar Panels.
 """
 
-import json5, sys, os
+import json5, sys, os, locale
 from docx import Document
 from easydict import EasyDict
+from docx.enum.text import WD_ALIGN_PARAGRAPH
 from python_docx_replace import docx_replace, docx_blocks
 sys.path.append('..') 
 from Shared.IAC import *
@@ -49,6 +50,9 @@ try:
     response = requests.request('GET', 'https://developer.nrel.gov/api/pvwatts/v8.json', params=parameters)
     PVresults = response.json()
     iac.ES = round(PVresults.get('outputs').get('ac_annual'))
+    # read solard_monthly and ac_monthly
+    solard_monthly = PVresults.get('outputs').get('solrad_monthly')
+    ac_monthly = PVresults.get('outputs').get('ac_monthly')
 except:
     print('PVWatts API error. Please look up the annual energy savings manually on PVWatts website')
     # input number
@@ -81,6 +85,22 @@ doc = Document(template)
 
 # Replacing keys
 docx_replace(doc, **iac)
+
+# Set local to US
+locale.setlocale(locale.LC_ALL, 'en_US')
+# Fill in the second table
+table = doc.tables[1]
+for i in range(12):
+    table.cell(i+1, 1).text = str(round(solard_monthly[i],2))
+    table.cell(i+1, 1).paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.RIGHT
+    table.cell(i+1, 2).text = locale.format_string('%d',round(ac_monthly[i]), grouping=True)
+    table.cell(i+1, 2).paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.RIGHT
+table.cell(13, 1).text = str(round(sum(solard_monthly)/12,2))
+table.cell(13, 1).paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.RIGHT
+table.cell(13, 1).paragraphs[0].runs[0].bold = True
+table.cell(13, 2).text = locale.format_string('%d',round(sum(ac_monthly)), grouping=True)
+table.cell(13, 2).paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.RIGHT
+table.cell(13, 2).paragraphs[0].runs[0].bold = True
 
 # This is an AAR by default
 filename = 'AAR'+iac.AR+'.docx'
