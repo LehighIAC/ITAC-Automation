@@ -3,14 +3,14 @@
 """
 
 
-def degree_days(ZIP: str, mode: str, Tbase: int=65, period: int=4) -> float:
+def degree_days(ZIP: str, mode: str, Tbase: int=65, history: int=4) -> float:
     """
     Automatically calculate degree days based on daily average temperature
     The result should be equal to degreedays.net
     :param ZIP: ZIP code as string
     :param mode: "heating" or "cooling" as string
     :param Tbase (optional): Base temperature as integer, default is 65 (degF)
-    :param period (optional): Number of years of historical data as integer, default is 4
+    :param history (optional): Number of years of historical data as integer, default is 4
     :return: Degree days as float
     """
     # if ZIP code is invalid
@@ -33,19 +33,19 @@ def degree_days(ZIP: str, mode: str, Tbase: int=65, period: int=4) -> float:
     if Tbase < 32 or Tbase > 212:
         raise Exception("Base temperature must be between 32 and 212 degF")
     
-    # if period is not a positive integer between 1 and 5
-    if type(period) != int:
-        raise Exception("No. of years must be a integer")
-    if period < 1 or period > 5:
-        raise Exception("No. of years must be between 1 and 5")
+    # if history is not a positive integer between 1 and 5
+    if type(history) != int:
+        raise Exception("History must be a integer")
+    if history < 1 or history > 5:
+        raise Exception("History must be between 1 and 5")
     
-    data = weather_data(ZIP, "daily", period)
+    data = weather_data(ZIP, "daily", history)
 
     data['degreeday'] = data.apply(lambda x: max((x['tavg'] - Tbase) * sign, 0), axis=1)
-    degreedays = data.degreeday.sum() / period
+    degreedays = data.degreeday.sum() / history
     return degreedays
 
-def degree_hours(ZIP: str, mode: str, basetemp: int=65, setback: int=None, schedule: tuple=((9,17),)*5+((0,0),)*2, period: int=4) -> float:
+def degree_hours(ZIP: str, mode: str, basetemp: int=65, setback: int=None, schedule: tuple=((9,17),)*5+((0,0),)*2, history: int=4) -> float:
     """
     Automatically calculate degree hours based on hourly data
     The result is usually higher than degreedays.net
@@ -55,7 +55,7 @@ def degree_hours(ZIP: str, mode: str, basetemp: int=65, setback: int=None, sched
     :param setback (optional): Setback temperature as integer, default is None (eqauls to base temperature)
     :param schedule (optional): Weekly operating hours as a tuple of 7 tuples of 2 integers, default is 9am-5pm, Mon.-Fri. 
     For example, ((0,24),(0,24),(0,24),(9,17),(9,17),(0,0),(0,0)) is 24 hrs, Mon-Wed, 9am-5pm, Thu-Fri, holiday, Sat-Sun
-    :param period (optional): Number of years of historical data as integer, default is 4
+    :param history (optional): Number of years of historical data as integer, default is 4
     :return: Degree hours as float
     """
     # if ZIP code is invalid
@@ -104,45 +104,46 @@ def degree_hours(ZIP: str, mode: str, basetemp: int=65, setback: int=None, sched
         if schedule[i][0] > schedule[i][1]:
             raise Exception("Operating hours must be earlier than closing hours")
         
-    # if period is not a positive integer between 1 and 5
-    if type(period) != int:
-        raise Exception("No. of years must be a integer")
-    if period < 1 or period > 5:
-        raise Exception("No. of years must be between 1 and 5")
+    # if history is not a positive integer between 1 and 5
+    if type(history) != int:
+        raise Exception("History must be a integer")
+    if history < 1 or history > 5:
+        raise Exception("History must be between 1 and 5")
 
-    data = weather_data(ZIP, "hourly", period)
-    print('fetched data')
+    data = weather_data(ZIP, "hourly", history)
     data['Tbase'] = basetemp
     data['day'] = data.index.dayofweek
     data['hour'] = data.index.hour
     for day in range(7):
         data.loc[(data['day'] == day) & (data['hour'] < schedule[day][0]), 'Tbase'] = setback
         data.loc[(data['day'] == day) & (data['hour'] >= schedule[day][1]), 'Tbase'] = setback
-    print('Calculated')
     data['degreehour'] = data.apply(lambda x: max((x['temp'] - x['Tbase'])*sign, 0), axis=1)
-    degreehours = data.degreehour.sum() / period
+    degreehours = data.degreehour.sum() / history
     return degreehours
 
-def weather_data(ZIP, mode: str, period: int):
+def weather_data(ZIP, mode: str, history: int):
     """
     Get raw weather data from meteostat
     :param ZIP: ZIP code as string
     :param mode: "daily" or "hourly" as string
-    :param period: Number of years of historical data as integer
+    :param history: Number of years of historical data as integer
     :return: Pandas DataFrame
     """
     from meteostat import Point, Hourly, Daily, units
     from datetime import datetime
-    import pgeocode
+    import numpy, pgeocode
 
     # Get coordinate from ZIP code
     location = pgeocode.Nominatim('us').query_postal_code(ZIP)
+    # Invalid ZIP code
+    if numpy.isnan(location.latitude) or numpy.isnan(location.longitude):
+        raise Exception("ZIP code not found")
     Point.method = 'nearest'
     plant = Point(location.latitude, location.longitude)
 
-    # Get daily data from 2023-period to 2022
+    # Get daily data from history to 2022
     # As of Sep 2023, most stations doesn't have daily data after Apr 2022.
-    starttime = datetime(2023 - period, 1, 1)
+    starttime = datetime(2023 - history, 1, 1)
     endtime = datetime(2022, 12, 31, 23, 59)
 
     # fetch data
