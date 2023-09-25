@@ -33,11 +33,11 @@ def degree_days(ZIP: str, mode: str, Tbase: int=65, period: int=4) -> float:
     if Tbase < 32 or Tbase > 212:
         raise Exception("Base temperature must be between 32 and 212 degF")
     
-    # if period is not a positive integer between 1 and 20
+    # if period is not a positive integer between 1 and 5
     if type(period) != int:
-        raise Exception("Gap year must be a integer")
-    if period < 1 or period > 20:
-        raise Exception("Gap year must be between 1 and 20")
+        raise Exception("No. of years must be a integer")
+    if period < 1 or period > 5:
+        raise Exception("No. of years must be between 1 and 5")
     
     data = weather_data(ZIP, "daily", period)
 
@@ -103,22 +103,22 @@ def degree_hours(ZIP: str, mode: str, basetemp: int=65, setback: int=None, sched
             raise Exception("Invalid schedule")
         if schedule[i][0] > schedule[i][1]:
             raise Exception("Operating hours must be earlier than closing hours")
-            
-    # if period is not a positive integer between 1 and 20
+        
+    # if period is not a positive integer between 1 and 5
     if type(period) != int:
-        raise Exception("Gap year must be a integer")
-    if period < 1 or period > 20:
-        raise Exception("Gap year must be between 1 and 20")
+        raise Exception("No. of years must be a integer")
+    if period < 1 or period > 5:
+        raise Exception("No. of years must be between 1 and 5")
 
     data = weather_data(ZIP, "hourly", period)
-
+    print('fetched data')
     data['Tbase'] = basetemp
     data['day'] = data.index.dayofweek
     data['hour'] = data.index.hour
     for day in range(7):
         data.loc[(data['day'] == day) & (data['hour'] < schedule[day][0]), 'Tbase'] = setback
         data.loc[(data['day'] == day) & (data['hour'] >= schedule[day][1]), 'Tbase'] = setback
-
+    print('Calculated')
     data['degreehour'] = data.apply(lambda x: max((x['temp'] - x['Tbase'])*sign, 0), axis=1)
     degreehours = data.degreehour.sum() / period
     return degreehours
@@ -131,29 +131,29 @@ def weather_data(ZIP, mode: str, period: int):
     :param period: Number of years of historical data as integer
     :return: Pandas DataFrame
     """
-    from meteostat import Stations, Hourly, Daily, units
+    from meteostat import Point, Hourly, Daily, units
     from datetime import datetime
     import pgeocode
 
     # Get coordinate from ZIP code
     location = pgeocode.Nominatim('us').query_postal_code(ZIP)
+    Point.method = 'nearest'
+    plant = Point(location.latitude, location.longitude)
 
-    # Get closest weather station
-    station = Stations().nearby(location.latitude, location.longitude).fetch(1).index[0]
-
-    # 4 years of data, by default
-    starttime = datetime(datetime.now().year - period, 1, 1)
-    endtime = datetime(datetime.now().year - 1, 12, 31, 23, 59)
+    # Get daily data from 2023-period to 2022
+    # As of Sep 2023, most stations doesn't have daily data after Apr 2022.
+    starttime = datetime(2023 - period, 1, 1)
+    endtime = datetime(2022, 12, 31, 23, 59)
 
     # fetch data
     if mode == "daily":
-        data = Daily(station, starttime, endtime)
+        data = Daily(plant, starttime, endtime)
     elif mode == "hourly":
-        data = Hourly(station, starttime, endtime)
+        data = Hourly(plant, starttime, endtime)
     else:
         raise Exception("Mode must be 'daily' or 'hourly'")
-    data = data.convert(units.imperial)
-    data = data.normalize()
+    data.convert(units.imperial)
+    data.normalize()
     # https://github.com/meteostat/meteostat-python/issues/130
     #data = data.interpolate()
     data = data.fetch()
