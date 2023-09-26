@@ -27,7 +27,7 @@ conda activate iac
 ```
 ### Install the Following Packages:
 ```
-conda install json5 numpy pandas openpyxl requests
+conda install json5 numpy pandas"<2" openpyxl requests
 conda install -c conda-forge python-docx docxcompose easydict latex2mathml num2words pgeocode
 pip install python-docx-replace meteostat
 ```

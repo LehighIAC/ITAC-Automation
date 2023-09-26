@@ -155,8 +155,7 @@ def weather_data(ZIP, mode: str, history: int):
         raise Exception("Mode must be 'daily' or 'hourly'")
     data.convert(units.imperial)
     data.normalize()
-    # https://github.com/meteostat/meteostat-python/issues/130
-    #data = data.interpolate()
+    data = data.interpolate()
     data = data.fetch()
     return data
 
