@@ -1,6 +1,6 @@
 """
 GUI of degree days/hours calculator
-Optimized for Windows
+Optimized for macOS
 Requires Internet connection
 Weather data source: meteostat.net
 """
@@ -67,7 +67,7 @@ def calculate():
         popup.mainloop()
     
 def updatewidget():
-    resultlabel.set("    "+Mode.get()+ " " + CalcType.get() + ":")
+    resultlabel.set(Mode.get()+ " " + CalcType.get() + ":")
     if CalcType.get() == "Degree Days":
         # disable setback temp
         entry_setback.config(state='disabled')
@@ -118,12 +118,12 @@ pad = 5
 
 # Left frame
 frame_left = tk.Frame(window)
-leftw1=12
-leftw2=12
+leftw1=10
+leftw2=10
 Address = tk.StringVar()
 Address.set("Bethlehem, PA")
 tk.Label(frame_left, text="ZIP Code", width=leftw1, anchor='w').grid(row=0, column=0, pady=pad)
-tk.Label(frame_left, textvariable=Address, width=leftw1+leftw2-1, anchor='e').grid(row=1, column=0, columnspan=2, pady=pad)
+tk.Label(frame_left, textvariable=Address, width=leftw1+leftw2, anchor='e').grid(row=1, column=0, columnspan=2, pady=pad)
 tk.Label(frame_left, text="Mode", width=leftw1, anchor='w').grid(rowspan=2, column=0, pady=pad)
 tk.Label(frame_left, text="Base Temp.", width=leftw1, anchor='w').grid(row=4, column=0, pady=pad)
 tk.Label(frame_left, text="Setback Temp.", width=leftw1, anchor='w').grid(row=5, column=0, pady=pad)
@@ -137,9 +137,9 @@ entry_zip.grid(row=0, column=1, pady=pad, sticky='w')
 
 Mode = tk.StringVar()
 Mode.set("Cooling")
-radiocool = tk.Radiobutton(frame_left, text="Cooling", variable=Mode, value="Cooling", command=updatewidget, width=leftw2-4, anchor='w')
+radiocool = tk.Radiobutton(frame_left, text="Cooling", variable=Mode, value="Cooling", command=updatewidget, width=leftw2, anchor='w')
 radiocool.grid(row=2, column=1, sticky='w')
-radioheat = tk.Radiobutton(frame_left, text="Heating", variable=Mode, value="Heating", command=updatewidget, width=leftw2-4, anchor='w')
+radioheat = tk.Radiobutton(frame_left, text="Heating", variable=Mode, value="Heating", command=updatewidget, width=leftw2, anchor='w')
 radioheat.grid(row=3, column=1, sticky='w')
 
 entry_basetemp = tk.Entry(frame_left, width=leftw2)
@@ -154,14 +154,14 @@ drop_options = ["1 year","2 years","3 years","4 years","5 years"]
 drop_clicked = tk.StringVar()
 drop_clicked.set("4 years")
 drop_history = tk.OptionMenu(frame_left, drop_clicked, *drop_options)
-drop_history.config(width=leftw2-6, anchor='w')
+drop_history.config(width=leftw2-4, anchor='w')
 drop_history.grid(row=6, column=1, pady=pad, sticky='w')
 
 CalcType = tk.StringVar()
 CalcType.set("Degree Hours")
-radioday = tk.Radiobutton(frame_left, text="Deg. Days", variable=CalcType, value="Degree Days", command=updatewidget, width=leftw2-4, anchor='w')
+radioday = tk.Radiobutton(frame_left, text="Deg. Days", variable=CalcType, value="Degree Days", command=updatewidget, width=leftw2, anchor='w')
 radioday.grid(row=7, column=1, sticky='w')
-radiohour = tk.Radiobutton(frame_left, text="Deg. Hours", variable=CalcType, value="Degree Hours", command=updatewidget, width=leftw2-4, anchor='w')
+radiohour = tk.Radiobutton(frame_left, text="Deg. Hours", variable=CalcType, value="Degree Hours", command=updatewidget, width=leftw2, anchor='w')
 radiohour.grid(row=8, column=1, sticky='w')
 
 frame_left.pack(side='left', padx=2*pad, pady=pad)
@@ -190,14 +190,14 @@ for i in range(7):
     start_var.set("9")
     start_list.append(start_var)
     dropdown_start = tk.OptionMenu(frame_right, start_var, *hours)
-    dropdown_start.config(width=2)
+    dropdown_start.config(width=1)
     dropdown_start.grid(row=2, column=i+1)
     # End time entry
     end_var = tk.StringVar()
     end_var.set("17")
     end_list.append(end_var)
     dropdown_end = tk.OptionMenu(frame_right, end_var, *hours)
-    dropdown_end.config(width=2)
+    dropdown_end.config(width=1)
     dropdown_end.grid(row=3, column=i+1)
     # 24 hr check box
     allday_var = tk.IntVar()
@@ -211,17 +211,17 @@ for i in range(7):
     checkbox_holiday.grid(row=5, column=i+1)
 
 # Calculate botton
-button_calc = tk.Button(frame_right, text ="Calculate", width=10, command = calculate)
+button_calc = tk.Button(frame_right, text ="Calculate", width=6, command = calculate)
 button_calc.grid(row=6, column=1, columnspan=2, pady=pad)
 
 # Result label
 resultlabel= tk.StringVar()
-resultlabel.set("    Cooling Degree Hours:")
+resultlabel.set("Cooling Degree Hours:")
 label_result = tk.Label(frame_right, textvariable = resultlabel)
 label_result.grid(row=6, column=3, columnspan=3, pady=pad, sticky='w')
 
 # Result textbox
-text_result = tk.Text(frame_right, state='disabled', height=1, width=12)
+text_result = tk.Text(frame_right, state='disabled', height=1, width=10)
 text_result.grid(row=6, column=6, columnspan=2, pady=pad, sticky="we")
 
 # Data source label
