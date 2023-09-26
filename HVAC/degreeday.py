@@ -5,7 +5,7 @@ Weather data source: meteostat.net
 """
 
 import tkinter as tk
-import sys, webbrowser
+import sys, pgeocode, webbrowser
 sys.path.append('..')
 from Shared.IAC import degree_days, degree_hours
 
@@ -13,6 +13,8 @@ def calculate():
     try:
         # get the values from the GUI
         zipcode = entry_zip.get()
+        location = pgeocode.Nominatim('us').query_postal_code(zipcode)
+        Address.set(location.place_name + ', ' + location.state_code)
         mode = Mode.get().lower()
         calctype = CalcType.get().lower().split()[1]
         basetemp = entry_basetemp.get()
@@ -64,14 +66,14 @@ def calculate():
         popup.mainloop()
     
 def updatewidget():
-    resultlabel.set(Mode.get()+ " " + CalcType.get() + ":")
+    resultlabel.set("    "+Mode.get()+ " " + CalcType.get() + ":")
     if CalcType.get() == "Degree Days":
         # disable setback temp
         entry_setback.config(state='disabled')
         # disable all schedule grid widgets
         for i in range(7):
             for j in range(4):
-                frame_schedule.grid_slaves(row=j+1,column=i+1)[0].config(state='disabled')
+                frame_right.grid_slaves(row=j+2,column=i+1)[0].config(state='disabled')
     else:
         # enable setback temp
         entry_setback.config(state='normal')
@@ -80,10 +82,10 @@ def updatewidget():
 
 def check_hours():
     for i in range(7):
-        dropdown_start = frame_schedule.grid_slaves(row=1,column=i+1)[0]
-        dropdown_end = frame_schedule.grid_slaves(row=2,column=i+1)[0]
-        check_allday = frame_schedule.grid_slaves(row=3,column=i+1)[0]
-        check_holiday = frame_schedule.grid_slaves(row=4,column=i+1)[0]
+        dropdown_start = frame_right.grid_slaves(row=2,column=i+1)[0]
+        dropdown_end = frame_right.grid_slaves(row=3,column=i+1)[0]
+        check_allday = frame_right.grid_slaves(row=4,column=i+1)[0]
+        check_holiday = frame_right.grid_slaves(row=5,column=i+1)[0]
         # if the check_allday box is checked
         if allday_list[i].get() == 1:
             # disable other dropdowns
@@ -115,103 +117,64 @@ pad = 5
 
 # Left frame
 frame_left = tk.Frame(window)
+leftw1=12
+leftw2=12
+Address = tk.StringVar()
+Address.set("Bethlehem, PA")
+tk.Label(frame_left, text="ZIP Code", width=leftw1, anchor='w').grid(row=0, column=0, pady=pad)
+tk.Label(frame_left, textvariable=Address, width=leftw1+leftw2-1, anchor='e').grid(row=1, column=0, columnspan=2, pady=pad)
+tk.Label(frame_left, text="Mode", width=leftw1, anchor='w').grid(rowspan=2, column=0, pady=pad)
+tk.Label(frame_left, text="Base Temp.", width=leftw1, anchor='w').grid(row=4, column=0, pady=pad)
+tk.Label(frame_left, text="Setback Temp.", width=leftw1, anchor='w').grid(row=5, column=0, pady=pad)
+tk.Label(frame_left, text="History", width=leftw1, anchor='w').grid(row=6, column=0, pady=pad)
+tk.Label(frame_left, text="Method", width=leftw1, anchor='w').grid(rowspan=2, column=0, pady=pad)
 
-# ZIP frame
-frame_zip = tk.Frame(frame_left, width=20)
-# ZIP code lable
-label_zip = tk.Label(frame_zip, text="ZIP Code", width=10, anchor='w')
-label_zip.pack(side='left')
-# ZIP code entry
-entry_zip = tk.Entry(frame_zip,width=10)
+
+entry_zip = tk.Entry(frame_left, width=leftw2)
 entry_zip.insert(0, "18015")
-entry_zip.pack(side='right')
-frame_zip.pack(padx=pad, pady=pad)
+entry_zip.grid(row=0, column=1, pady=pad, sticky='w')
 
-# Mode frame
-frame_mode = tk.Frame(frame_left)
-# Mode lable
-label_mode = tk.Label(frame_mode, text="Mode", width=10, anchor='w')
-label_mode.pack(side='left')
-# Radio button frame
-frame_radio1 = tk.Frame(frame_mode)
-# Mode radio buttons
 Mode = tk.StringVar()
 Mode.set("Cooling")
-radiocool = tk.Radiobutton(frame_radio1, text="Cooling", variable=Mode, value="Cooling", command=updatewidget, width=10)
-radiocool.pack(side='top')
-radioheat = tk.Radiobutton(frame_radio1, text="Heating", variable=Mode, value="Heating", command=updatewidget, width=10)
-radioheat.pack(side='bottom')
-frame_radio1.pack(side='right')
-frame_mode.pack(padx=pad, pady=pad)
+radiocool = tk.Radiobutton(frame_left, text="Cooling", variable=Mode, value="Cooling", command=updatewidget, width=leftw2-4, anchor='w')
+radiocool.grid(row=2, column=1, sticky='w')
+radioheat = tk.Radiobutton(frame_left, text="Heating", variable=Mode, value="Heating", command=updatewidget, width=leftw2-4, anchor='w')
+radioheat.grid(row=3, column=1, sticky='w')
 
-# Base temp frame
-frame_basetemp = tk.Frame(frame_left)
-# Base temp lable
-label_basetemp = tk.Label(frame_basetemp, text="Base Temp.", width=10, anchor='w')
-label_basetemp.pack(side='left')
-# Base temp entry
-entry_basetemp = tk.Entry(frame_basetemp,width=10)
+entry_basetemp = tk.Entry(frame_left, width=leftw2)
 entry_basetemp.insert(0, "65")
-entry_basetemp.pack(side='right')
-frame_basetemp.pack(padx=pad, pady=pad)
+entry_basetemp.grid(row=4, column=1, pady=pad, sticky='w')
 
-# Setback temp frame
-frame_setback = tk.Frame(frame_left)
-# Setback temp lable
-label_setback = tk.Label(frame_setback, text="Setback Temp.", width=10, anchor='w')
-label_setback.pack(side='left')
-# Setback temp entry
-entry_setback = tk.Entry(frame_setback,width=10)
+entry_setback = tk.Entry(frame_left, width=leftw2)
 entry_setback.insert(0, "65")
-entry_setback.pack(side='right')
-frame_setback.pack(padx=pad, pady=pad)
+entry_setback.grid(row=5, column=1, pady=pad, sticky='w')
 
-# History frame
-frame_history = tk.Frame(frame_left)
-# History lable
-label_history = tk.Label(frame_history, text="History", width=10, anchor='w')
-label_history.pack(side='left')
-# History dropdown menu
 drop_options = ["1 year","2 years","3 years","4 years","5 years"]
 drop_clicked = tk.StringVar()
 drop_clicked.set("4 years")
-drop_history = tk.OptionMenu(frame_history, drop_clicked, *drop_options)
-drop_history.config(width=6, anchor='w')
-drop_history.pack(side='right')
-frame_history.pack(padx=pad, pady=pad)
+drop_history = tk.OptionMenu(frame_left, drop_clicked, *drop_options)
+drop_history.config(width=leftw2-6, anchor='w')
+drop_history.grid(row=6, column=1, pady=pad, sticky='w')
 
-# Calculation type frame
-frame_type = tk.Frame(frame_left)
-# Calculation type lable
-label_dayhour = tk.Label(frame_type, text="Calc. Type", width=10, anchor='w')
-label_dayhour.pack(side='left')
-# Radiobutton frame
-frame_radio2 = tk.Frame(frame_type)
-# Calculation type radio buttons
 CalcType = tk.StringVar()
 CalcType.set("Degree Hours")
-radioday = tk.Radiobutton(frame_radio2, text="Deg. Days", variable=CalcType, value="Degree Days", command=updatewidget, width=10, anchor='w')
-radioday.pack(side='top')
-hourmode = tk.StringVar()
-radiohour = tk.Radiobutton(frame_radio2, text="Deg. Hours", variable=CalcType, value="Degree Hours", command=updatewidget, width=10, anchor='w')
-radiohour.pack(side='bottom')
-frame_radio2.pack(side='right')
-frame_type.pack(padx=pad, pady=pad)
+radioday = tk.Radiobutton(frame_left, text="Deg. Days", variable=CalcType, value="Degree Days", command=updatewidget, width=leftw2-4, anchor='w')
+radioday.grid(row=7, column=1, sticky='w')
+radiohour = tk.Radiobutton(frame_left, text="Deg. Hours", variable=CalcType, value="Degree Hours", command=updatewidget, width=leftw2-4, anchor='w')
+radiohour.grid(row=8, column=1, sticky='w')
 
-frame_left.pack(side='left', padx=pad)
+frame_left.pack(side='left', padx=2*pad, pady=pad)
 
 # Right frame
 frame_right = tk.Frame(window)
-label_schedule = tk.Label(frame_right, text="Thermostat Programming Schedule")
-label_schedule.pack()
 
-# Schedule frame
-frame_schedule = tk.Frame(frame_right)
-tk.Label(frame_schedule, text="", width=5).grid(row=0, column=0, pady=pad)
-tk.Label(frame_schedule, text="Start", width=5, anchor='w').grid(row=1, column=0, pady=pad)
-tk.Label(frame_schedule, text="End", width=5, anchor='w').grid(row=2, column=0, pady=pad)
-tk.Label(frame_schedule, text="All Day", width=5, anchor='w').grid(row=3, column=0, pady=pad)
-tk.Label(frame_schedule, text="Holiday", width=5, anchor='w').grid(row=4, column=0, pady=pad)
+rightw1=6
+tk.Label(frame_right, text="Thermostat Programming Schedule").grid(row=0, columnspan=8, pady=pad)
+tk.Label(frame_right, text="Start", width=rightw1, anchor='w').grid(row=2, column=0, pady=pad)
+tk.Label(frame_right, text="End", width=rightw1, anchor='w').grid(row=3, column=0, pady=pad)
+tk.Label(frame_right, text="All Day", width=rightw1, anchor='w').grid(row=4, column=0, pady=pad)
+tk.Label(frame_right, text="Holiday", width=rightw1, anchor='w').grid(row=5, column=0, pady=pad)
+
 days=['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 hours=list(range(0,25))
 start_list = []
@@ -220,59 +183,57 @@ allday_list = []
 holiday_list = []
 for i in range(7):
     # Day label
-    tk.Label(frame_schedule, text=days[i], width=5, anchor='w').grid(row=0, column=i+1)
+    tk.Label(frame_right, text=days[i]).grid(row=1, column=i+1)
     # Start time entry
     start_var = tk.StringVar()
     start_var.set("9")
     start_list.append(start_var)
-    dropdown_start = tk.OptionMenu(frame_schedule, start_var, *hours)
-    dropdown_start.config(width=1)
-    dropdown_start.grid(row=1, column=i+1)
+    dropdown_start = tk.OptionMenu(frame_right, start_var, *hours)
+    dropdown_start.config(width=2)
+    dropdown_start.grid(row=2, column=i+1)
     # End time entry
     end_var = tk.StringVar()
     end_var.set("17")
     end_list.append(end_var)
-    dropdown_end = tk.OptionMenu(frame_schedule, end_var, *hours)
-    dropdown_end.config(width=1)
-    dropdown_end.grid(row=2, column=i+1)
+    dropdown_end = tk.OptionMenu(frame_right, end_var, *hours)
+    dropdown_end.config(width=2)
+    dropdown_end.grid(row=3, column=i+1)
     # 24 hr check box
     allday_var = tk.IntVar()
     allday_list.append(allday_var)
-    checkbox_allday = tk.Checkbutton(frame_schedule, variable=allday_var, width=2, command=check_hours)
-    checkbox_allday.grid(row=3, column=i+1)
+    checkbox_allday = tk.Checkbutton(frame_right, variable=allday_var, command=check_hours)
+    checkbox_allday.grid(row=4, column=i+1)
     # holiday check box
     holiday_var = tk.IntVar()
     holiday_list.append(holiday_var)
-    checkbox_holiday = tk.Checkbutton(frame_schedule, variable=holiday_var, width=2, command=check_hours)
-    checkbox_holiday.grid(row=4, column=i+1)
-frame_schedule.pack(side='top')
+    checkbox_holiday = tk.Checkbutton(frame_right, variable=holiday_var, command=check_hours)
+    checkbox_holiday.grid(row=5, column=i+1)
 
-# Result frame
-frame_result = tk.Frame(frame_right)
 # Calculate botton
-button_calc = tk.Button(frame_result, text ="Calculate", width=6, command = calculate)
-button_calc.pack(side='left')
-# Result textbox
-text_result = tk.Text(frame_result, state='disabled', width=8, height=1)
-text_result.pack(side='right')
+button_calc = tk.Button(frame_right, text ="Calculate", width=10, command = calculate)
+button_calc.grid(row=6, column=1, columnspan=2, pady=pad)
+
 # Result label
 resultlabel= tk.StringVar()
-resultlabel.set("Cooling Degree Hours:")
-label_result = tk.Label(frame_result, textvariable = resultlabel, width=18)
-label_result.pack(side='right')
-frame_result.pack()
+resultlabel.set("    Cooling Degree Hours:")
+label_result = tk.Label(frame_right, textvariable = resultlabel)
+label_result.grid(row=6, column=3, columnspan=3, pady=pad, sticky='w')
 
-# Copyright label
-label_copyright = tk.Label(frame_right, text="© 2023 Lehigh University Industrial Assessment Center", fg="blue", cursor="hand2")
-label_copyright.pack()
-# hyperlink to iac.lehigh.edu
-label_copyright.bind("<Button-1>", lambda e: webbrowser.open_new_tab("https://luiac.cc.lehigh.edu"))
+# Result textbox
+text_result = tk.Text(frame_right, state='disabled', height=1, width=12)
+text_result.grid(row=6, column=6, columnspan=2, pady=pad, sticky="we")
 
 # Data source label
 label_datasource = tk.Label(frame_right, text="Weather Data Source: Meteostat.net", fg="blue", cursor="hand2")
-label_datasource.pack()
 # hyperlink to meteostat.net/en
 label_datasource.bind("<Button-1>", lambda e: webbrowser.open_new_tab("https://meteostat.net/en"))
+label_datasource.grid(row=7, columnspan=8, pady=pad)
 
-frame_right.pack(side='right', padx=pad, pady=pad)
+# Copyright label
+label_copyright = tk.Label(frame_right, text="© 2023 Lehigh University Industrial Assessment Center", fg="blue", cursor="hand2")
+# hyperlink to iac.lehigh.edu
+label_copyright.bind("<Button-1>", lambda e: webbrowser.open_new_tab("https://luiac.cc.lehigh.edu"))
+label_copyright.grid(row=8, columnspan=8)
+
+frame_right.pack(side='right', padx=2*pad, pady=pad)
 window.mainloop()
