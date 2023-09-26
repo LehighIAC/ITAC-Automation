@@ -1,6 +1,6 @@
 # IAC-Automation
 Automated Python script for Lehigh University Industrial Assessment Center
-## Guide for new IAC members:
+## Guide for New IAC Members:
 0. Of course, you need to have Microsoft Office installed.
    
 1. Install [VS code](https://code.visualstudio.com/download), [Anaconda](https://www.anaconda.com/download), [Github Desktop](https://desktop.github.com), and [git](https://gitforwindows.org/) (all default).
@@ -20,19 +20,19 @@ Automated Python script for Lehigh University Industrial Assessment Center
 8. After reviewing the code, The IAC Admin can apporove and merge your proposed changes.
 
 ## Setting up Python environment:
-### Open Anaconda Terminal, or VS Code terminal.
+### Open Anaconda Terminal, or VS Code Terminal.
 ```
 conda create -n iac python=3.8 
 conda activate iac 
 ```
-### Install the following packages:
+### Install the Following Packages:
 ```
 conda install json5 numpy pandas openpyxl requests
 conda install -c conda-forge python-docx docxcompose easydict latex2mathml num2words pgeocode
 pip install python-docx-replace meteostat
 ```
 `conda` always has the highest priority. If not available, install packages from `conda-forge`. Don't install from `pip` unless you have to, otherwise there might be dependency issue.
-### Config VS Code environment
+### Configure VS Code Environment
 In VS Code, press Ctrl+Shift+P, search `Python: Select Interpreter` and select the `iac` environment you just created.
 ### NOTE: TO REMOVE THIS ENVIRONMENT
 ```
@@ -53,14 +53,18 @@ Is it suggested to work on a copy of this reposiotry when generating an IAC repo
 3. Run `Compiler.py` to compile the final report.
 4. Fill the rest of the information manually.
 
-### Requirements of AR files:
+### Requirements of AR Files:
 1. No requirement for filename, as long as it's `.docx`
 2. Doesn't matter if the file is made from Python template, Excel template, or by hand. Please break external links if you used Excel templates.
 3. The title text should always be "AR x: Title" or "AAR x: Title". Case insensitive. In outline view the title should always be **level 1**.
 4. If there's any other type of energy savings, the unit should be `MMBtu`.
 5. All sub titles, such as "Recommend Actions", "Anticipated Savings" should always be **body text** in outline view. Then set it to **bold, 1.5x line spacing, and 6pt spacing before paragraph**. Otherwise the automatic table of contents will be broken.
 
-## Supported AR templates
+## Degree Days/Hours Calculator
+The GUI degree days/hours calculator is written in tkinter. It requires Internet to fetch hourly weather data.
+![GUI](Report/degree.png)
+
+## Supported AR Templates
 
 ### Boiler
 Recover Exhaust Gas Heat
