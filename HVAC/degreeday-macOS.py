@@ -14,8 +14,6 @@ def calculate():
     try:
         # get the values from the GUI
         zipcode = entry_zip.get()
-        location = pgeocode.Nominatim('us').query_postal_code(zipcode)
-        Address.set(location.place_name + ', ' + location.state_code)
         mode = Mode.get().lower()
         calctype = CalcType.get().lower().split()[1]
         basetemp = entry_basetemp.get()
@@ -52,6 +50,9 @@ def calculate():
         # format result to integer with thousand separator
         text_result.insert(tk.END, "{:,}".format(int(result)))
         text_result.config(state='disabled')
+        # Update the address label
+        location = pgeocode.Nominatim('us').query_postal_code(zipcode)
+        Address.set(location.place_name + ', ' + location.state_code)
     except:
         # show a pop-up window if there is an error
         popup = tk.Tk()
