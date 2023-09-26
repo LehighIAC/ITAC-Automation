@@ -17,7 +17,7 @@ def calculate():
         calctype = CalcType.get().lower().split()[1]
         basetemp = entry_basetemp.get()
         setback = entry_setback.get()
-        history = int(drop_clicked.get())
+        history = int(drop_clicked.get().split()[0])
         if basetemp.isdigit():
             basetemp = int(entry_basetemp.get())
         else:
@@ -168,9 +168,9 @@ frame_history = tk.Frame(frame_left)
 label_history = tk.Label(frame_history, text="History", width=10, anchor='w')
 label_history.pack(side='left')
 # History dropdown menu
-drop_options = ["1","2","3","4","5"]
+drop_options = ["1 year","2 years","3 years","4 years","5 years"]
 drop_clicked = tk.StringVar()
-drop_clicked.set("4")
+drop_clicked.set("4 years")
 drop_history = tk.OptionMenu(frame_history, drop_clicked, *drop_options)
 drop_history.config(width=6, anchor='w')
 drop_history.pack(side='right')
