@@ -5,7 +5,7 @@ Weather data source: meteostat.net
 """
 
 import tkinter as tk
-import sys
+import sys, webbrowser
 sys.path.append('..')
 from Shared.IAC import degree_days, degree_hours
 
@@ -19,11 +19,11 @@ def calculate():
         setback = entry_setback.get()
         history = int(drop_clicked.get().split()[0])
         if basetemp.isdigit():
-            basetemp = int(entry_basetemp.get())
+            basetemp = int(basetemp)
         else:
             raise Exception("Base temperature must be a valid integer")
         if setback.isdigit():
-            setback = int(entry_setback.get())
+            setback = int(setback)
         else:
             raise Exception("Setback temperature must be a valid interger")
         # schedule is a tuple of 7 tuples, each tuple is a pair of start and end time
@@ -37,7 +37,7 @@ def calculate():
                 schedule.append((0,0))
             else:
                 schedule.append((start,end))
-        # convert schedule to a tuple of tuples
+        # convert from list to tuple
         schedule = tuple(schedule)
         # call functions from IAC.py
         if calctype == "hours":
@@ -46,16 +46,18 @@ def calculate():
             result = degree_days(zipcode, mode, basetemp, history)
         text_result.config(state='normal')
         text_result.delete('1.0', tk.END)
-        # format result to integer with thousands separator
+        # format result to integer with thousand separator
         text_result.insert(tk.END, "{:,}".format(int(result)))
         text_result.config(state='disabled')
     except:
         # show a pop-up window if there is an error
         popup = tk.Tk()
+        # center the pop-up window
+        popup.eval('tk::PlaceWindow . center')
         popup.wm_title("Error")
         # The error message is the exception message
-        label = tk.Label(popup, text=sys.exc_info()[1], font=('Arial', 14))
-        label.pack(side="top", fill="x", pady=10)
+        label = tk.Label(popup, text=sys.exc_info()[1])
+        label.pack(side="top", fill="x", padx=pad)
         # close the pop-up window
         button = tk.Button(popup, text="OK", command = popup.destroy)
         button.pack()
@@ -105,13 +107,15 @@ def check_hours():
 
 # initialize GUI
 window = tk.Tk()
-outpad = 10
-inpad = 5
+# Center the window
+window.eval('tk::PlaceWindow . center')
 # GUI title
-label_iac = tk.Label(window, text="IAC Degree Days/Hours Calculator", font=('Arial', 24))
-label_iac.pack()
+window.title("IAC Degree Days/Hours Calculator")
+pad = 5
+
 # Left frame
-frame_left = tk.Frame(window, highlightbackground="gray", highlightthickness=1)
+frame_left = tk.Frame(window)
+
 # ZIP frame
 frame_zip = tk.Frame(frame_left, width=20)
 # ZIP code lable
@@ -121,7 +125,7 @@ label_zip.pack(side='left')
 entry_zip = tk.Entry(frame_zip,width=10)
 entry_zip.insert(0, "18015")
 entry_zip.pack(side='right')
-frame_zip.pack(padx=inpad, pady=inpad)
+frame_zip.pack(padx=pad, pady=pad)
 
 # Mode frame
 frame_mode = tk.Frame(frame_left)
@@ -138,7 +142,7 @@ radiocool.pack(side='top')
 radioheat = tk.Radiobutton(frame_radio1, text="Heating", variable=Mode, value="Heating", command=updatewidget, width=10)
 radioheat.pack(side='bottom')
 frame_radio1.pack(side='right')
-frame_mode.pack(padx=inpad, pady=inpad)
+frame_mode.pack(padx=pad, pady=pad)
 
 # Base temp frame
 frame_basetemp = tk.Frame(frame_left)
@@ -149,7 +153,7 @@ label_basetemp.pack(side='left')
 entry_basetemp = tk.Entry(frame_basetemp,width=10)
 entry_basetemp.insert(0, "65")
 entry_basetemp.pack(side='right')
-frame_basetemp.pack(padx=inpad, pady=inpad)
+frame_basetemp.pack(padx=pad, pady=pad)
 
 # Setback temp frame
 frame_setback = tk.Frame(frame_left)
@@ -160,7 +164,7 @@ label_setback.pack(side='left')
 entry_setback = tk.Entry(frame_setback,width=10)
 entry_setback.insert(0, "65")
 entry_setback.pack(side='right')
-frame_setback.pack(padx=inpad, pady=inpad)
+frame_setback.pack(padx=pad, pady=pad)
 
 # History frame
 frame_history = tk.Frame(frame_left)
@@ -174,7 +178,7 @@ drop_clicked.set("4 years")
 drop_history = tk.OptionMenu(frame_history, drop_clicked, *drop_options)
 drop_history.config(width=6, anchor='w')
 drop_history.pack(side='right')
-frame_history.pack(padx=inpad, pady=inpad)
+frame_history.pack(padx=pad, pady=pad)
 
 # Calculation type frame
 frame_type = tk.Frame(frame_left)
@@ -192,22 +196,22 @@ hourmode = tk.StringVar()
 radiohour = tk.Radiobutton(frame_radio2, text="Deg. Hours", variable=CalcType, value="Degree Hours", command=updatewidget, width=10, anchor='w')
 radiohour.pack(side='bottom')
 frame_radio2.pack(side='right')
-frame_type.pack(padx=inpad, pady=inpad)
+frame_type.pack(padx=pad, pady=pad)
 
-frame_left.pack(side='left',padx=outpad, pady=outpad)
+frame_left.pack(side='left', padx=pad)
 
 # Right frame
-frame_right = tk.Frame(window, width=20, highlightbackground="gray", highlightthickness=1)
+frame_right = tk.Frame(window)
+label_schedule = tk.Label(frame_right, text="Thermostat Programming Schedule")
+label_schedule.pack()
 
 # Schedule frame
-label_schedule = tk.Label(frame_right, text="Thermostat Programming Schedule", font=('Arial', 20))
-label_schedule.pack()
 frame_schedule = tk.Frame(frame_right)
-tk.Label(frame_schedule, text="", width=5).grid(row=0, column=0, pady=inpad)
-tk.Label(frame_schedule, text="Start", width=5, anchor='w').grid(row=1, column=0, pady=inpad)
-tk.Label(frame_schedule, text="End", width=5, anchor='w').grid(row=2, column=0, pady=inpad)
-tk.Label(frame_schedule, text="All Day", width=5, anchor='w').grid(row=3, column=0, pady=inpad)
-tk.Label(frame_schedule, text="Holiday", width=5, anchor='w').grid(row=4, column=0, pady=inpad)
+tk.Label(frame_schedule, text="", width=5).grid(row=0, column=0, pady=pad)
+tk.Label(frame_schedule, text="Start", width=5, anchor='w').grid(row=1, column=0, pady=pad)
+tk.Label(frame_schedule, text="End", width=5, anchor='w').grid(row=2, column=0, pady=pad)
+tk.Label(frame_schedule, text="All Day", width=5, anchor='w').grid(row=3, column=0, pady=pad)
+tk.Label(frame_schedule, text="Holiday", width=5, anchor='w').grid(row=4, column=0, pady=pad)
 days=['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 hours=list(range(0,25))
 start_list = []
@@ -216,7 +220,7 @@ allday_list = []
 holiday_list = []
 for i in range(7):
     # Day label
-    tk.Label(frame_schedule, text=days[i], width=5, anchor='w').grid(row=0, column=i+1, pady=inpad)
+    tk.Label(frame_schedule, text=days[i], width=5, anchor='w').grid(row=0, column=i+1)
     # Start time entry
     start_var = tk.StringVar()
     start_var.set("9")
@@ -241,23 +245,34 @@ for i in range(7):
     holiday_list.append(holiday_var)
     checkbox_holiday = tk.Checkbutton(frame_schedule, variable=holiday_var, width=2, command=check_hours)
     checkbox_holiday.grid(row=4, column=i+1)
-frame_schedule.pack(side='top',padx=inpad, pady=inpad)
+frame_schedule.pack(side='top')
 
+# Result frame
 frame_result = tk.Frame(frame_right)
 # Calculate botton
-button_calc = tk.Button(frame_result, text ="Calculate", width=6, command = calculate, font=('Arial', 18))
+button_calc = tk.Button(frame_result, text ="Calculate", width=6, command = calculate)
 button_calc.pack(side='left')
 # Result textbox
-text_result = tk.Text(frame_result, state='disabled', width=8, height=1, font=('Arial', 18))
+text_result = tk.Text(frame_result, state='disabled', width=8, height=1)
 text_result.pack(side='right')
 # Result label
 resultlabel= tk.StringVar()
 resultlabel.set("Cooling Degree Hours:")
-label_result = tk.Label(frame_result, textvariable = resultlabel, width=18, font=('Arial', 18))
+label_result = tk.Label(frame_result, textvariable = resultlabel, width=18)
 label_result.pack(side='right')
-frame_result.pack(padx=inpad, pady=inpad)
+frame_result.pack()
 
-label_copyright = tk.Label(frame_right, text="© 2023 Lehigh University Industrial Assessment Center")
+# Copyright label
+label_copyright = tk.Label(frame_right, text="© 2023 Lehigh University Industrial Assessment Center", fg="blue", cursor="hand2")
 label_copyright.pack()
-frame_right.pack(side='right', padx=outpad, pady=outpad)
+# hyperlink to iac.lehigh.edu
+label_copyright.bind("<Button-1>", lambda e: webbrowser.open_new_tab("https://luiac.cc.lehigh.edu"))
+
+# Data source label
+label_datasource = tk.Label(frame_right, text="Weather Data Source: Meteostat.net", fg="blue", cursor="hand2")
+label_datasource.pack()
+# hyperlink to meteostat.net/en
+label_datasource.bind("<Button-1>", lambda e: webbrowser.open_new_tab("https://meteostat.net/en"))
+
+frame_right.pack(side='right', padx=pad, pady=pad)
 window.mainloop()
