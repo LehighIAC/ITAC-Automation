@@ -59,11 +59,7 @@ Is it suggested to work on a copy of this reposiotry when generating an IAC repo
 3. The title text should always be "AR x: Title" or "AAR x: Title". Case insensitive. In outline view the title should always be **level 1**.
 4. If there's any other type of energy savings, the unit should be `MMBtu`.
 5. All sub titles, such as "Recommend Actions", "Anticipated Savings" should always be **body text** in outline view. Then set it to **bold, 1.5x line spacing, and 6pt spacing before paragraph**. Otherwise the automatic table of contents will be broken.
-
-## Degree Days/Hours Calculator
-The GUI degree days/hours calculator is written in tkinter. It requires Internet to fetch hourly weather data.
-![GUI](Report/degree.png)
-
+6. 
 ## Supported AR Templates
 
 ### Boiler
