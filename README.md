@@ -2,12 +2,16 @@
 Automated Python script for Lehigh University Industrial Assessment Center
 ## Guide for New IAC Members
 0. Of course, you need to have Microsoft Office installed.
-   
+### Windows
 1. Install [VS code](https://code.visualstudio.com/download), [Anaconda](https://www.anaconda.com/download), [Github Desktop](https://desktop.github.com), and [git](https://gitforwindows.org/) (all default).
+### macOS
+0. Install [homebrew](https://brew.sh)
+
+1. ```brew install --cask visual-studio-code anaconda github```
 
 2. In VS Code, go to `Extensions`(Ctrl+Shift+X), install `Python` (from Microsoft) and `JSON5 syntax` from mrmlnc.
 
-3. Register a GitHRememberub account with your Lehigh email, then **fork** the [main repository](https://github.com/BrushXue/IAC-Automation). It will make a copy under your account.
+3. Register a GitHub account with your Lehigh email, then **fork** the [main repository](https://github.com/BrushXue/IAC-Automation). It will make a copy under your account.
 
 4. Sign in GitHub Desktop, **clone your fork** (not the main repository) to the local computer. The fork should be under your username,
 
@@ -27,7 +31,7 @@ An automated template is usually made of 3 parts:
 ### Preparations to make an automated template
 1. Make .json5 database by writing detailed comments, including description, unit, data type(int, float, str or list), and default value(if available). The key name could be abbreviation such as "ES", as long as it's consistent with the word document.
 2. Clean up word document formatting. In rare scenario, the document could be a legacy .doc file with .docx extension. You need to copy all the text and paste it into a new document.
-3. Replace numbers/strings with tags, example: `${ES}`. Make sure to adjust the formatting of the tag, as the format will be perserved.
+3. Replace numbers/strings with tags, example: `${ES}`. Make sure to adjust the formatting of the tag, as the format will be preserved.
 ### Making an automated Python template
 1. Read .json5 databases and convert it to `EasyDict`. Then you can easily access the variable by `iac.ES` instead of `iac['ES']`.
 2. Perform calculations. Remember to keep the data type consistent which means you'll use `round()` frequently.
@@ -36,7 +40,7 @@ An automated template is usually made of 3 parts:
 5. Replace keys with `docx_replace()`.
 6. Save file and print caveats if requires manual operations.
 ### Equations
-Currently, `python-docx-replace` doesn't support replacing keys in Word equations. If possible please use regular text instead of equations. If the equation is unaviodable, the workaround is to write the equation in LaTeX then convert it to Word equation and insert it to tags like `#ESEqn`. Check the Lighting template for examples.
+Currently, `python-docx-replace` doesn't support replacing keys in Word equations. If possible please use regular text instead of equations. If the equation is unavoidable, the workaround is to write the equation in LaTeX then convert it to Word equation and insert it to tags like `#ESEqn`. Check the Lighting template for examples.
 ### Lookup table
 Make a numpy array with table values, then use `np.interp` to get the result.
 ### Table
