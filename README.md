@@ -11,7 +11,7 @@ Automated Python script for Lehigh University Industrial Assessment Center
 
 2. In VS Code, go to `Extensions`(Ctrl+Shift+X), install `Python` (from Microsoft) and `JSON5 syntax` from mrmlnc.
 
-3. Register a GitHub account with your Lehigh email, then **fork** the [main repository](https://github.com/BrushXue/IAC-Automation). It will make a copy under your account.
+3. Register a GitHub account with your Lehigh email, then **fork** the [main repository](https://github.com/LehighIAC/IAC-Automation/tree/main). It will make a copy under your account.
 
 4. Sign in GitHub Desktop, **clone your fork** (not the main repository) to the local computer. The fork should be under your username,
 
