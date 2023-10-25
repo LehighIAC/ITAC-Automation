@@ -64,6 +64,8 @@ Is it suggested to work on a copy of this reposiotry when generating an IAC repo
 5. All sub titles, such as "Recommend Actions", "Anticipated Savings" should always be **body text** in outline view. Then set it to **bold, 1.5x line spacing, and 6pt spacing before paragraph**. Otherwise the automatic table of contents will be broken.
 
 ## Template development
+**Always make changes in the `develop` branch**!
+
 An automated template is usually made of 3 parts:
 1. A .docx template with tags to be replaced.
 2. A .json5 database with input numbers and strings.
