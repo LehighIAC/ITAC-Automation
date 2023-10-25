@@ -23,36 +23,6 @@ Automated Python script for Lehigh University Industrial Assessment Center
 
 8. After reviewing the code, The IAC Admin can approve and merge your proposed changes.
 
-## Template development
-An automated template is usually made of 3 parts:
-1. A .docx template with tags to be replaced.
-2. A .json5 database with input numbers and strings.
-3. A .py template with calculation and formatting.
-### Preparations to make an automated template
-1. Make .json5 database by writing detailed comments, including description, unit, data type(int, float, str or list), and default value(if available). The key name could be abbreviation such as "ES", as long as it's consistent with the word document.
-2. Clean up word document formatting. In rare scenario, the document could be a legacy .doc file with .docx extension. You need to copy all the text and paste it into a new document.
-3. Replace numbers/strings with tags, example: `${ES}`. Make sure to adjust the formatting of the tag, as the format will be preserved.
-### Making an automated Python template
-1. Read .json5 databases and convert it to `EasyDict`. Then you can easily access the variable by `iac.ES` instead of `iac['ES']`.
-2. Perform calculations. Remember to keep the data type consistent which means you'll use `round()` frequently.
-3. Format strings. Everything needs to be formatted as strings before replacing. Thousand separator is required. Currency needs to be formatted with $ sign.
-4. Import the .docx template.
-5. Replace keys with `docx_replace()`.
-6. Save file and print caveats if requires manual operations.
-### Equations
-Currently, `python-docx-replace` doesn't support replacing keys in Word equations. If possible please use regular text instead of equations. If the equation is unavoidable, the workaround is to write the equation in LaTeX then convert it to Word equation and insert it to tags like `#ESEqn`. Check the Lighting template for examples.
-### Lookup table
-Make a numpy array with table values, then use `np.interp` to get the result.
-### Table
-If there's any table that needs to be filled with calculated numbers, do the following:
-
-If the table has fixed length, simply access the table and fill in texts.
-
-If the table has variable length, make more reserved lines in the word template, then fill in texts and delete empty lines.
-
-See Repair Leaks template for examples. 
-### Blocks
-The .docx can have pre-defined blocks with XML tags. E.g. starts with `<AAR>` and ends with `</AAR>`. Then you may choose to enable/disable the block with `docx_blocks()`
 ## Setting up Python environment
 ### Open Anaconda Terminal, or VS Code Terminal.
 ```
@@ -86,14 +56,44 @@ Is it suggested to work on a copy of this reposiotry when generating an IAC repo
 2. Copy all AR files(if you have any from other sources) into `ARs` directory.
 3. Run `Compiler.py` to compile the final report.
 4. Fill the rest of the information manually.
-
 ### Requirements of AR Files:
 1. No requirement for filename, as long as it's `.docx`
 2. Doesn't matter if the file is made from Python template, Excel template, or by hand. Please break external links if you used Excel templates.
 3. The title text should always be "AR x: Title" or "AAR x: Title". Case insensitive. In outline view the title should always be **level 1**.
 4. If there's any other type of energy savings, the unit should be `MMBtu`.
 5. All sub titles, such as "Recommend Actions", "Anticipated Savings" should always be **body text** in outline view. Then set it to **bold, 1.5x line spacing, and 6pt spacing before paragraph**. Otherwise the automatic table of contents will be broken.
-6. 
+
+## Template development
+An automated template is usually made of 3 parts:
+1. A .docx template with tags to be replaced.
+2. A .json5 database with input numbers and strings.
+3. A .py template with calculation and formatting.
+### Preparations to make an automated template
+1. Make .json5 database by writing detailed comments, including description, unit, data type(int, float, str or list), and default value(if available). The key name could be abbreviation such as "ES", as long as it's consistent with the word document.
+2. Clean up word document formatting. In rare scenario, the document could be a legacy .doc file with .docx extension. You need to copy all the text and paste it into a new document.
+3. Replace numbers/strings with tags, example: `${ES}`. Make sure to adjust the formatting of the tag, as the format will be preserved.
+### Making an automated Python template
+1. Read .json5 databases and convert it to `EasyDict`. Then you can easily access the variable by `iac.ES` instead of `iac['ES']`.
+2. Perform calculations. Remember to keep the data type consistent which means you'll use `round()` frequently.
+3. Format strings. Everything needs to be formatted as strings before replacing. Thousand separator is required. Currency needs to be formatted with $ sign.
+4. Import the .docx template.
+5. Replace keys with `docx_replace()`.
+6. Save file and print caveats if requires manual operations.
+### Equations
+Currently, `python-docx-replace` doesn't support replacing keys in Word equations. If possible please use regular text instead of equations. If the equation is unavoidable, the workaround is to write the equation in LaTeX then convert it to Word equation and insert it to tags like `#ESEqn`. Check the Lighting template for examples.
+### Lookup table
+Make a numpy array with table values, then use `np.interp` to get the result.
+### Table
+If there's any table that needs to be filled with calculated numbers, do the following:
+
+If the table has fixed length, simply access the table and fill in texts.
+
+If the table has variable length, make more reserved lines in the word template, then fill in texts and delete empty lines.
+
+See Repair Leaks template for examples. 
+### Blocks
+The .docx can have pre-defined blocks with XML tags. E.g. starts with `<AAR>` and ends with `</AAR>`. Then you may choose to enable/disable the block with `docx_blocks()`
+
 ## Supported AR Templates
 
 ### Boiler
