@@ -1,5 +1,5 @@
 """
-This script is used to generate the IAC recommendation for Repair Leaks in Compressed Air Lines.
+This script is used to generate the IAC recommendation for Reduce Compressor Set Pressure.
 """
 
 import json5, sys, os
