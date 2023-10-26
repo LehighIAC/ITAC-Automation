@@ -164,6 +164,7 @@ def add_eqn(doc, tag: str, eqn_input):
     if found_tag == False:
         # Throw error if tag is not found 
         raise Exception("Tag "+ tag +" not found")
+    
 def latex2word(latex_input: str):
     """
     Convert LaTeX equation to Word equation
@@ -206,3 +207,10 @@ def payback(ACS: float, IC: float) -> str:
     if PB > 1.0:
         PBstr = PBstr + "s"
     return PBstr
+
+def caveat(info: str):
+    """
+    Print caveats with highlighting
+    :param info: information to be printed
+    """
+    print("\033[94m\033[103m{}\033[0m\033[0m".format(info))

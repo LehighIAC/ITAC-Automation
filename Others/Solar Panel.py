@@ -107,4 +107,4 @@ filename = 'AAR'+iac.AR+'.docx'
 doc.save(os.path.join('..', 'ARs', filename))
 
 # Caveats
-print("Please check if the grabbed info is correct.")
+caveat("Please check if the grabbed info is correct.")

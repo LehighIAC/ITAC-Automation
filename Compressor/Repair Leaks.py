@@ -116,4 +116,4 @@ filename = 'AR'+iac.AR+'.docx'
 doc.save(os.path.join('..', 'ARs', filename))
 
 # Caveats
-print("Please change implementation cost references if necessary.")
+caveat("Please change implementation cost references if necessary.")
