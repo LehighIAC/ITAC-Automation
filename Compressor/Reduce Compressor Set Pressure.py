@@ -23,7 +23,7 @@ iac.POW = 1-((iac.RCP+AP)/AP**((k-1)/(k*iac.N))-1)/((iac.CCP+AP)/AP**((k-1)/(k*i
 iac.POW = int(iac.POW*1000)/10
 
 # energy savings
-iac.ES = int(iac.HP * iac.OH * iac.LF * iac.RF * 0.746 * iac.POW / iac.ETA)
+iac.ES = int(iac.HP * iac.OH * iac.LF * iac.RF * 0.746 * (iac.POW / 100) / iac.ETA)
 
 # demand saving
 iac.DS = int(iac.ES * iac.CF * 12 / iac.OH)
