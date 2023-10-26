@@ -53,14 +53,14 @@ iac = grouping_num(iac)
 # Import docx template
 doc = Document('Recover Exhaust Gas Heat.docx')
 
-# Replacing keys
-docx_replace(doc, **iac)
-
 # Add equations
 # Requires double backslash / curly bracket for LaTeX characters
 NGSEqn = '\\frac{{ {0} \\times {1} \\times 60 \\times {2} \\times ({3} - {4}) \\times {5} \\times {6} }} {{ \\mathrm{{1,000,000}} }}' \
     .format(iac.CFM, iac.RHO, iac.CP, iac.TI, iac.TO, iac.ETA, iac.OH)
-add_eqn(doc, '#NGSEqn', NGSEqn)
+add_eqn(doc, iac, '${NGSEqn}', NGSEqn)
+
+# Replacing keys
+docx_replace(doc, **iac)
 
 # Save file as AR*.docx
 filename = 'AR'+iac.AR+'.docx'

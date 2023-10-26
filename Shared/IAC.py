@@ -142,10 +142,11 @@ def add_image(doc, tag: str, image_path: str, wd):
         # Throw error if tag is not found 
         raise Exception("Tag "+ tag +" not found")
 
-def add_eqn(doc, tag: str, eqn_input):
+def add_eqn(doc, iac:dict, tag: str, eqn_input):
     """
     Add equation to Word document, search for eqn in doc and replace with eqn_input
     :param doc: Document
+    :param iac: EasyDict
     :param tag: Equation tag as string
     :param eqn_input: Word Equation object
     :return: None
@@ -156,7 +157,7 @@ def add_eqn(doc, tag: str, eqn_input):
     found_tag = False
     for p in doc.paragraphs:
         if tag in p.text:
-            p.text = p.text.replace(tag, '')
+            iac[tag.strip('${}')] = ''
             word_math = latex2word(eqn_input)
             p._element.append(word_math)
             found_tag = True

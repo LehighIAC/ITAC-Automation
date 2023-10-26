@@ -82,7 +82,7 @@ An automated template is usually made of 3 parts:
 5. Replace keys with `docx_replace()`.
 6. Save file and print caveats if requires manual operations.
 ### Equations
-Currently, `python-docx-replace` doesn't support replacing keys in Word equations. If possible please use regular text instead of equations. If the equation is unavoidable, the workaround is to write the equation in LaTeX then convert it to Word equation and insert it to tags like `#ESEqn`. Check the Lighting template for examples.
+Currently, `python-docx-replace` doesn't support replacing keys in Word equations. If possible please use regular text instead of equations. If the equation is unavoidable, the workaround is to write the equation in LaTeX then convert it to Word equation and insert it to empty tags like `${ESEqn}`. Check the Lighting template for examples.
 ### Lookup table
 Make a numpy array with table values, then use `np.interp` to get the result.
 ### Table
