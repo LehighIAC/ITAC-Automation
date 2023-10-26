@@ -1,0 +1,26 @@
+{
+// AR No., integer
+AR: 1,
+// Current compressor operating pressure, psi, integer
+CCP: 120,
+// Recommended compressor operating pressure, psi, integer
+RCP: 90,
+// Pressure requirement, psi, integer
+REQ: 80,
+// Number of stages, integer, default 1
+N: 1,
+// Horsepower of compressors, HP, integer
+HP: 15,
+// Annual operating hours , integer
+OH: 3744,
+// Load Factor, float
+LF: 0.6,
+// Run time as fraction of operating time, float
+RF: 1.0,
+// Efficiency of compressor, float
+ETA: 0.85,
+// Coincidence factor, float, default 1.0
+CF: 1.0,
+// implementation cost, $, integer
+IC: 100,
+}
