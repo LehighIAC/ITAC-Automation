@@ -8,7 +8,6 @@ from easydict import EasyDict
 from python_docx_replace import docx_replace, docx_blocks
 sys.path.append('..')
 from Shared.IAC import *
-import numpy as np
 
 # Load config file and convert everything to EasyDict
 jsonDict = json5.load(open('Reduce Compressor Set Pressure.json5'))
@@ -20,7 +19,7 @@ AP = 14.7
 k = 1.4
 iac.POW = 1-((iac.RCP+AP)/AP**((k-1)/(k*iac.N))-1)/((iac.CCP+AP)/AP**((k-1)/(k*iac.N))-1)
 # 1 decimal point percent
-iac.POW = int(iac.POW*1000)/10
+iac.POW = round(iac.POW*100,1)
 
 # energy savings
 iac.ES = int(iac.HP * iac.OH * iac.LF * iac.RF * 0.746 * (iac.POW / 100) / iac.ETA)
@@ -53,8 +52,8 @@ doc = Document('Reduce Compressor Set Pressure.docx')
 
 # Add equations
 # Requires double backslash / curly bracket for LaTeX characters
-POWEqn = '\\frac{{ \\left( \\frac{{ {0} + 14.7}}{{14.7}} \\right)^{{\\left( \\frac{{1.4-1}}{{1.4\\times 1}} \\right)}}-1}}{{ \\left( \\frac{{ {1} + 14.7}}{{14.7}} \\right)^{{\\left( \\frac{{1.4-1}}{{1.4\\times 1}} \\right)}}-1}}' \
-    .format(iac.RCP, iac.CCP)
+POWEqn = '\\frac{{ \\left( \\frac{{ {0} + 14.7}}{{14.7}} \\right)^{{\\left( \\frac{{1.4-1}}{{1.4\\times {1} }} \\right)}}-1}}{{ \\left( \\frac{{ {2} + 14.7}}{{14.7}} \\right)^{{\\left( \\frac{{1.4-1}}{{1.4\\times {3} }} \\right)}}-1}}' \
+    .format(iac.RCP, iac.N, iac.CCP, iac.N)
 add_eqn(doc, iac, '${POWEqn}', POWEqn)
 
 # Replacing keys
