@@ -19,7 +19,7 @@ AP = 14.7
 k = 1.4
 
 # Calculating Power reduction
-iac.POW = 1-((iac.RCP+AP)/AP**((k-1)/(k*iac.N))-1)/((iac.CCP+AP)/AP**((k-1)/(k*iac.N))-1)
+iac.POW = 1-(((iac.RCP+AP)/AP)**((k-1)/(k*iac.N))-1)/(((iac.CCP+AP)/AP)**((k-1)/(k*iac.N))-1)
 # 1 decimal point percent
 iac.POW = round(iac.POW*100,1)
 
