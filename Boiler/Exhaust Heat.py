@@ -27,6 +27,7 @@ CpList = np.array([0.2802, 0.251, 0.1791, 0.1739, 0.1726, 0.1716, 0.1713, 0.1712
 iac.CP = round(np.interp(iac.TI, TCpList, CpList).item(),3)
 
 # Calculations
+iac.OH = int(iac.HR * iac.DY * iac.WK)
 iac.NGS = round(iac.CFM * iac.RHO * 60 * iac.CP * (iac.TI - iac.TO) * iac.ETA * iac.OH / 1e6)
 iac.CS = round(iac.NGS * iac.NGC)
 iac.ES = round(-iac.HP * 0.746 * iac.OH)

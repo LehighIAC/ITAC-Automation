@@ -1,6 +1,12 @@
 {
 // AR No., integer
 AR: 1,
+// hours per day, float (allows half hours)
+HR: 8.0,
+// days per week, float (allows half day on weekends)
+DY: 5.0,
+// weeks per year, int
+WK: 52,
 // Current compressor operating pressure, psi, integer
 CCP: 120,
 // Recommended compressor operating pressure, psi, integer
@@ -11,8 +17,6 @@ REQ: 80,
 N: 1,
 // Horsepower of compressors, HP, integer
 HP: 15,
-// Annual operating hours , integer
-OH: 3744,
 // Load Factor, float
 LF: 0.6,
 // Run time as fraction of operating time, float

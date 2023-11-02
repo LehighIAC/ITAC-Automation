@@ -1,6 +1,12 @@
 {
 // AR No., integer
 AR: 1,
+// hours per day, float (allows half hours)
+HR: 8.0,
+// days per week, float (allows half day on weekends)
+DY: 5.0,
+// weeks per year, int
+WK: 52,
 // Ultrasonic leak detector cost $, integer
 USLD: 1000,
 
@@ -51,22 +57,4 @@ NL4: 6,
 NL5: 3,
 // Number of 1/4 in leaks, integer
 NL6: 0,
-
-// Constants, DO NOT CHANGE
-// Atmosphere psia
-PA: 14.7,
-// Isentropic sonic volumetric flow constant
-C1: 28.37,
-// Conversion constant; sec/min
-C2: 60.0,
-// Coefficient of discharge for square edged orifice
-CD: 0.8,
-// Conversion constant; in2/ft2
-C3: 144.0,
-// Specific heat ratio of air
-k: 1.4,
-// Conversion constant; HP.min/ft.lb
-C4: 3.03e-5,
-// Conversion factor; kW/HP
-C5: 0.746,
 }

@@ -14,13 +14,17 @@ jsonDict = json5.load(open('Reduce Compressor Set Pressure.json5'))
 jsonDict.update(json5.load(open(os.path.join('..', 'Utility.json5'))))
 iac = EasyDict(jsonDict)
 
-# Calculating Power reduction
+# Constants
 AP = 14.7
 k = 1.4
+
+# Calculating Power reduction
 iac.POW = 1-((iac.RCP+AP)/AP**((k-1)/(k*iac.N))-1)/((iac.CCP+AP)/AP**((k-1)/(k*iac.N))-1)
 # 1 decimal point percent
 iac.POW = round(iac.POW*100,1)
 
+# Opearting Hours
+iac.OH = iac.HR * iac.DY * iac.WK
 # energy savings
 iac.ES = int(iac.HP * iac.OH * iac.LF * iac.RF * 0.746 * (iac.POW / 100) / iac.ETA)
 
