@@ -26,15 +26,15 @@ iac.POW = round(iac.POW*100,1)
 # Opearting Hours
 iac.OH = iac.HR * iac.DY * iac.WK
 # energy savings
-iac.ES = int(iac.HP * iac.OH * iac.LF * iac.RF * 0.746 * (iac.POW / 100) / iac.ETA)
+iac.ES = round(iac.HP * iac.OH * iac.LF * iac.RF * 0.746 * (iac.POW / 100) / iac.ETA)
 
 # demand saving
-iac.DS = int(iac.ES * iac.CF * 12 / iac.OH)
+iac.DS = round(iac.ES * iac.CF * 12 / iac.OH)
 
 # electricity cost savings
-iac.ECS = int(iac.ES * iac.EC)
+iac.ECS = round(iac.ES * iac.EC)
 # demand cost savings
-iac.DCS = int(iac.DS * iac.DC)
+iac.DCS = round(iac.DS * iac.DC)
 
 iac.ACS = iac.ECS + iac.DCS
 
