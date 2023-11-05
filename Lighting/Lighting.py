@@ -8,57 +8,70 @@ from easydict import EasyDict
 from python_docx_replace import docx_replace, docx_blocks
 sys.path.append('..') 
 from Shared.IAC import *
+from docxcompose.composer import Composer
+import numpy as np
+# import locale
+# locale.setlocale(locale.LC_ALL, 'en_US')
 
 # Load config file and convert everything to EasyDict
 jsonDict = json5.load(open('Lighting.json5'))
 jsonDict.update(json5.load(open(os.path.join('..', 'Utility.json5'))))
 iac = EasyDict(jsonDict)
 
+# Validate all lists
+N = iac.N
+for i in iac:
+    if isinstance(iac[i], list):
+        # If the length is not N, throw an error
+        if len(iac[i]) != N:
+            raise Exception('Length of {0} is not {1}.'.format(i, N))
+
 # Calculations
-# Area 1
-iac.ES1 = round((iac.CN1 * iac.CFW1 * iac.COH1 - iac.PN1 * iac.PFW1 * iac.POH1) / 1000.0)
-iac.DS1 = round((iac.CN1 * iac.CFW1 - iac.PN1 * iac.PFW1) * iac.CF1 * 12.0 / 1000.0)
-iac.BC1 = round(iac.PN1 * iac.BP1)
-# Area 2
-iac.ES2 = round((iac.CN2 * iac.CFW2 * iac.COH2 - iac.PN2 * iac.PFW2 * iac.POH2) / 1000.0)
-iac.DS2 = round((iac.CN2 * iac.CFW2 - iac.PN2 * iac.PFW2) * iac.CF2 * 12.0 / 1000.0)
-iac.BC2 = round(iac.PN2 * iac.BP2)
-# Area 3
-iac.ES3 = round((iac.CN3 * iac.CFW3 * iac.COH3 - iac.PN3 * iac.PFW3 * iac.POH3) / 1000.0)
-iac.DS3 = round((iac.CN3 * iac.CFW3 - iac.PN3 * iac.PFW3) * iac.CF3 * 12.0 / 1000.0)
-iac.BC3 = round(iac.PN3 * iac.BP3)
-# Savings
-iac.ES = iac.ES1 + iac.ES2 + iac.ES3
-iac.DS = iac.DS1 + iac.DS2 + iac.DS3
-iac.ECS = round(iac.ES * iac.EC)
-iac.DCS = round(iac.DS * iac.DC)
-iac.ACS = iac.ECS + iac.DCS
-# Implementation
+# Covert to numpy array for element-wise operations
+nplist = ['CN', 'CPR', 'CHR', 'CDY', 'CWK', 'PN', 'PPR', 'PHR', 'PDY', 'PWK', 'BP', 'BL', 'CF']
+for i in nplist:
+    iac[i] = np.array(iac[i])
+
+# Calculate operating hours
+iac.COH = iac.CHR * iac.CDY * iac.CWK
+iac.POH = iac.PHR * iac.PDY * iac.PWK
+# Calculate electricity savings
+iac.ESi = np.rint((iac.CN * iac.CPR * iac.COH - iac.PN * iac.PPR * iac.POH) / 1000.0).astype(np.int64)
+iac.ES = np.sum(iac.ESi)
+iac.ECS = np.rint(iac.ES * iac.EC).astype(np.int64)
+# Calculate demand savings
+iac.DSi = np.rint((iac.CN * iac.CPR - iac.PN * iac.PPR) * iac.CF * 12.0 / 1000.0).astype(np.int64)
+iac.DS = np.sum(iac.DSi)
+iac.DCS = np.rint(iac.DS * iac.DC).astype(np.int64)
+
+# Calculate bulb cost
+iac.BCi = np.rint(iac.PN * iac.BP).astype(np.int64)
+iac.BC = np.sum(iac.BCi)
+# Calculate labor cost
+iac.LCi = np.rint(iac.CN * iac.BL).astype(np.int64)
+iac.LC = np.sum(iac.LCi)
+# Calculate implementation cost
+iac.LN = np.sum(iac.CN)
 iac.MSC = iac.MSN * iac.MSPL
-iac.BC = iac.BC1 + iac.BC2 + iac.BC3
-iac.CN = iac.CN1 + iac.CN2 + iac.CN3
-iac.LC = iac.BL1 * iac.CN1 + iac.BL2 * iac.CN2 + iac.BL3 * iac.CN3
 iac.IC = iac.MSC + iac.BC + iac.LC
+iac.ACS = iac.ECS + iac.DCS
+
 # Rebate
 iac.RB = round(iac.ES * iac.RR)
 iac.MRB = min(iac.RB, iac.IC/2)
 iac.MIC = iac.IC - iac.MRB
-iac.PB = payback(iac.ACS, iac.MIC)
+iac.PB = payback(iac.ACS.item(), iac.MIC.item())
 
 # Combine words
-AREAS = []
-AREAS.append(iac.AREA1)
-if iac.FLAG2:
-    AREAS.append(iac.AREA2)
-if iac.FLAG3:
-    AREAS.append(iac.AREA3)
-iac.AREAS = combine_words(AREAS)
+iac.AREAS = combine_words(iac.AREA)
+# Take an example of the previous area
+iac.PREV1 = iac.PREV[0]
 
-# Motion sensors flag
+# Motion sensor
 if iac.MSN == 0:
-    MSFLAG = False
+    MS = False
 else:
-    MSFLAG = True
+    MS = True
 
 ## Format strings
 # set electricity cost / rebate to 3 digits accuracy
@@ -66,53 +79,99 @@ iac = dollar(['EC', 'RR'],iac,3)
 # set the natural gas and demand to 2 digits accuracy
 iac = dollar(['NGC', 'DC'],iac,2)
 # set the rest to integer
-varList = ['LR', 'MSPL', 'BL1', 'BL2', 'BL3', 'BP1', 'BP2', 'BP3', 'ECS', 'DCS', 'ACS', 'MSC', 'BC', 'LC', 'IC', 'RB', 'MRB', 'MIC']
+varList = ['LR', 'MSPL', 'ECS', 'DCS', 'ACS', 'MSC', 'BC', 'LC', 'IC', 'RB', 'MRB', 'MIC']
 iac = dollar(varList,iac,0)
 # Format all numbers to string with thousand separator
 iac = grouping_num(iac)
 
-# Import docx template
-doc = Document('Switch to LED lighting.docx')
+# Create document for each area
+for i in range(N):
+    iacsub = EasyDict()
+    iacsub.i = str(i+1)
+    # For any list or ndarray in iac, add corresponding values to iacsub
+    for j in iac:
+       if isinstance(iac[j], list) or isinstance(iac[j], np.ndarray):
+           iacsub[j] = iac[j][i]
 
-# Add equations
-# Requires double backslash / curly bracket for LaTeX characters
-ES1Eqn = '\\frac{{ {0} \\times {1} \\times {2} - {3} \\times {4} \\times {5} }} {{ \\mathrm{{1,000}} }}' \
-    .format(iac.CN1, iac.CFW1, iac.COH1, iac.PN1, iac.PFW1, iac.POH1)
-add_eqn(doc, iac, '${ES1Eqn}', ES1Eqn)
+    # Import docx template 2
+    doc = Document('Switch to LED lighting 2.docx')
 
-DS1Eqn = '\\frac{{ ({0} \\times {1} - {2} \\times {3}) \\times {4} \\times 12 }} {{ \\mathrm{{1,000}} }}' \
-    .format(iac.CN1, iac.CFW1, iac.PN1, iac.PFW1, iac.CF1)
-add_eqn(doc, iac, '${DS1Eqn}', DS1Eqn)
+    # Add equations
+    ESDef = '\\frac{{ CN_{0} \\times CPR_{1} \\times COH_{2} - PN_{3} \\times PPR_{4} \\times POH_{5} }} {{ C_1 }}' \
+    .format(iacsub.i, iacsub.i, iacsub.i, iacsub.i, iacsub.i, iacsub.i)
+    add_eqn(doc, iacsub, '${ESDef}', ESDef)
 
-ES2Eqn = '\\frac{{ {0} \\times {1} \\times {2} - {3} \\times {4} \\times {5} }} {{ \\mathrm{{1,000}} }}' \
-    .format(iac.CN2, iac.CFW2, iac.COH2, iac.PN2, iac.PFW2, iac.POH2)
-add_eqn(doc, iac, '${ES2Eqn}', ES2Eqn)
+    ESEqn = '\\frac{{ {0} \\times {1} \\times {2} - {3} \\times {4} \\times {5} }} {{ \\mathrm{{1,000}} }}' \
+    .format(iacsub.CN, iacsub.CPR, iacsub.COH, iacsub.PN, iacsub.PPR, iacsub.POH)
+    add_eqn(doc, iacsub, '${ESEqn}', ESEqn)
 
-DS2Eqn = '\\frac{{ ({0} \\times {1} - {2} \\times {3}) \\times {4} \\times 12 }} {{ \\mathrm{{1,000}} }}' \
-    .format(iac.CN2, iac.CFW2, iac.PN2, iac.PFW2, iac.CF2)
-add_eqn(doc, iac, '${DS2Eqn}', DS2Eqn)
+    DSDef = '\\frac{{ (CN_{0} \\times CPR_{1} - PN_{2} \\times PPR_{3}) \\times CF_{4} \\times 12 }} {{ C_1 }}' \
+    .format(iacsub.i, iacsub.i, iacsub.i, iacsub.i, iacsub.i)
+    add_eqn(doc, iacsub, '${DSDef}', DSDef)
 
-ES3Eqn = '\\frac{{ {0} \\times {1} \\times {2} - {3} \\times {4} \\times {5} }} {{ \\mathrm{{1,000}} }}' \
-    .format(iac.CN3, iac.CFW3, iac.COH3, iac.PN3, iac.PFW3, iac.POH3)
-add_eqn(doc, iac, '${ES3Eqn}', ES3Eqn)
+    DSEqn = '\\frac{{ ({0} \\times {1} - {2} \\times {3}) \\times {4} \\times 12 }} {{ \\mathrm{{1,000}} }}' \
+    .format(iacsub.CN, iacsub.CPR, iacsub.PN, iacsub.PPR, iacsub.CF)
+    add_eqn(doc, iacsub, '${DSEqn}', DSEqn)
 
-DS3Eqn = '\\frac{{ ({0} \\times {1} - {2} \\times {3}) \\times {4} \\times 12 }} {{ \\mathrm{{1,000}} }}' \
-    .format(iac.CN3, iac.CFW3, iac.PN3, iac.PFW3, iac.CF3)
-add_eqn(doc, iac, '${DS3Eqn}', DS3Eqn)
+    # Replacing keys
+    docx_replace(doc, **iacsub)
+    # Save file as temp*.docx
+    doc.save('temp'+iacsub.i+'.docx')
 
+# Import docx template 1
+doc = Document('Switch to LED lighting 1.docx')
 # Replacing keys
 docx_replace(doc, **iac)
+# Save file as temp0.docx
+doc.save('temp0.docx')
 
-# Remove empty blocks
-docx_blocks(doc, area1 = (iac.FLAG2 or iac.FLAG3))
-docx_blocks(doc, area2 = iac.FLAG2)
-docx_blocks(doc, area3 = iac.FLAG3)
-docx_blocks(doc, ms = MSFLAG)
+# Assemble ESSum and ESSum
+iac.ESSum = iac.ESi[0] + ' kWh/yr'
+iac.DSSum = iac.DSi[0] + ' kW/yr'
+for i in range(1,N):
+    iac.ESSum += ' + ' + iac.ESi[i] + ' kWh/yr'
+    iac.DSSum += ' + ' + iac.DSi[i] + ' kW/yr'
 
-# Save file as AR*.docx
-filename = 'AR'+iac.AR+'.docx'
-doc.save(os.path.join('..', 'ARs', filename))
+# Import docx template 3
+doc = Document('Switch to LED lighting 3.docx')
+# Motion sensors block
+docx_blocks(doc, ms = MS)
+# Multi areas block
+if N == 1:
+    docx_blocks(doc, single = True)
+    docx_blocks(doc, multi = False)
+else:
+    docx_blocks(doc, single = False)
+    docx_blocks(doc, multi = True)
+iac.INSTALL = []
+for i in range(N):
+    tmpstr = f"a {iac.PPR[i]} W linear LED bulb "
+    tmpstr += f"costs about {iac.BP[i]} plus "
+    tmpstr += f"{iac.BL[i]} labor to install"
+    # captialize the first letter of the first sentence
+    if i==0:
+        tmpstr = tmpstr[0].capitalize() + tmpstr[1:]
+    iac.INSTALL.append(tmpstr)
+iac.INSTALL = combine_words(iac.INSTALL)
+# Replacing keys
+docx_replace(doc, **iac)
+# Save file as temp0.docx
+doc.save('temp'+str(N+1)+'.docx')
+
+# Combine all docx files
+master = Document("temp0.docx")
+composer = Composer(master)
+for i in range(N+1):
+    doc_temp = Document('temp'+str(i+1)+'.docx')
+    composer.append(doc_temp)
+filename = "AR" + iac.AR + ".docx"
+composer.save(os.path.join("..", "ARs", filename))
+# delete temp files
+for i in range(N+2):
+    filename = 'temp'+str(i)+'.docx'
+    os.remove(filename)
 
 # Caveats
 caveat("Please manually change the font size of equations to 16.")
+caveat("Please manually change the equation font back to upright.")
 caveat("Please change implementation cost references if necessary.")

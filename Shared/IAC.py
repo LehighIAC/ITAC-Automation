@@ -51,14 +51,22 @@ def grouping_num(dic: dict) -> dict:
     :param dic: EasyDict
     :return: Dictionary with keys in thousand separator
     """
-    import locale
+    import locale, numpy
     # set locale to US
     locale.setlocale(locale.LC_ALL, 'en_US')
     for key in dic.keys():
-        if type(dic[key]) == int:
+        if type(dic[key]) == int or type(dic[key]) == numpy.int64:
             dic[key] = locale.format_string('%d', dic[key], grouping=True)
-        elif type(dic[key]) == float:
+        elif type(dic[key]) == float or type(dic[key]) == numpy.float64:
             dic[key] = locale.format_string('%g', dic[key], grouping=True)
+        # if dic[key] is a ndarray
+        elif type(dic[key]) == numpy.ndarray:
+            dic[key] = dic[key].tolist()
+            for i in range(len(dic[key])):
+                if type(dic[key][i]) == int:
+                    dic[key][i] = locale.format_string('%d', dic[key][i], grouping=True)
+                elif type(dic[key][i]) == float:
+                    dic[key][i] = locale.format_string('%g', dic[key][i], grouping=True)
         else:
             pass
     return dic
