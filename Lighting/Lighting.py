@@ -10,15 +10,13 @@ sys.path.append('..')
 from Shared.IAC import *
 from docxcompose.composer import Composer
 import numpy as np
-# import locale
-# locale.setlocale(locale.LC_ALL, 'en_US')
 
 # Load config file and convert everything to EasyDict
 jsonDict = json5.load(open('Lighting.json5'))
 jsonDict.update(json5.load(open(os.path.join('..', 'Utility.json5'))))
 iac = EasyDict(jsonDict)
 
-# Validate all lists
+# Validate the length of all lists
 N = iac.N
 for i in iac:
     if isinstance(iac[i], list):
@@ -93,7 +91,7 @@ for i in range(N):
        if isinstance(iac[j], list) or isinstance(iac[j], np.ndarray):
            iacsub[j] = iac[j][i]
 
-    # Import docx template 2
+    # Import individual area template
     doc = Document('Switch to LED lighting 2.docx')
 
     # Add equations
@@ -115,10 +113,10 @@ for i in range(N):
 
     # Replacing keys
     docx_replace(doc, **iacsub)
-    # Save file as temp*.docx
+    # Save file as temp{i}.docx
     doc.save('temp'+iacsub.i+'.docx')
 
-# Import docx template 1
+# Import opening template
 doc = Document('Switch to LED lighting 1.docx')
 # Replacing keys
 docx_replace(doc, **iac)
@@ -132,7 +130,7 @@ for i in range(1,N):
     iac.ESSum += ' + ' + iac.ESi[i] + ' kWh/yr'
     iac.DSSum += ' + ' + iac.DSi[i] + ' kW/yr'
 
-# Import docx template 3
+# Import ending template
 doc = Document('Switch to LED lighting 3.docx')
 # Motion sensors block
 docx_blocks(doc, ms = MS)
@@ -155,7 +153,7 @@ for i in range(N):
 iac.INSTALL = combine_words(iac.INSTALL)
 # Replacing keys
 docx_replace(doc, **iac)
-# Save file as temp0.docx
+# Save file as temp{N+1}.docx
 doc.save('temp'+str(N+1)+'.docx')
 
 # Combine all docx files
@@ -172,6 +170,6 @@ for i in range(N+2):
     os.remove(filename)
 
 # Caveats
+caveat("Please manually change the font of equations to upright.")
 caveat("Please manually change the font size of equations to 16.")
-caveat("Please manually change the equation font back to upright.")
 caveat("Please change implementation cost references if necessary.")
