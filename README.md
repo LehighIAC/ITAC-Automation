@@ -99,13 +99,14 @@ The .docx can have pre-defined blocks with XML tags. E.g. starts with `<AAR>` an
 ## Supported AR Templates
 
 ### Boiler
-Recover Exhaust Gas Heat
+* Recover Exhaust Gas Heat
 
 ### Compressor
-Repair Leaks in Compressed Air Lines
+* Repair Leaks in Compressed Air Lines
+* Reduce Compressor Set Pressure
 
 ### Lighting
-Switch to LED lighting
+* Switch to LED lighting
 
 ### Others
-Install Solar Panel (fully automated using PVWatts API)
+* Install Solar Panel (fully automated using PVWatts API)
