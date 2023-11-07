@@ -1,7 +1,6 @@
 {
   // AR Num, integer
   AR: 1,
-
   // Motor Type, string
   MT: "oven blowers",
   // Horsepower of motor, integer
@@ -20,8 +19,12 @@
   EX: 85,
   // Proposed efficiency of motor with VFD %, integer
   PR: 85,
-  // Estimated cost savings, integer
-  ECS: 2490,
-  //
-  DCS: 2302,
+  // Proposed demand usage, integer
+  PDU: 38,
+  // Demand usage difference, integer
+  DUD: 15,
+  // Normal Cost of VFD, integer
+  NC: 9000,
+  // Extra Installation cost, integer
+  EIC: 12500,
 }

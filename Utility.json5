@@ -1,38 +1,38 @@
 {
-// Fuel Type, string
-FuelType: "Natural Gas",
-// Fuel Unit, string
-FuelUnit: "Mcf",
-// Fuel Cost $/MMBtu, float
-FC: 2.95,
-// Natural Gas Cost(for compatibility) $/MMBtu, float
-NGC: 2.95,
-// Electricity Cost $/kWh, float
-EC: 0.081,
-// Demand Cost $/kW, float
-DC: 4.22,
-// Labor Rate $/hour, integer
-LR: 40,
-// Rebate Rate $/kWh, float
-RR: 0.075,
-// Start month, string
-StartMo: "Jul 22",
-// End month, string
-EndMo: "Jun 23",
-// Total Electricity kWh, integer
-TotalEkWh: 17622865,
-// Total Electricity MMBtu, integer
-TotalEBtu: 182210,
-// Total demand kW, integer
-TotalDkW: 33494,
-// Total Electricity Cost, integer
-TotalECost: 1560550,
-// Total Fuel MMBtu, integer
-TotalFBtu: 392327,
-// Total Fuel Cost, integer
-TotalFCost: 1158864,
-// Total Energy MMBtu, integer
-TotalBtu: 574536,
-// Total Energy Cost, integer
-TotalCost: 2719414,
+  // Fuel Type, string
+  FuelType: "Natural Gas",
+  // Fuel Unit, string
+  FuelUnit: "Mcf",
+  // Fuel Cost $/MMBtu, float
+  FC: 2.95,
+  // Natural Gas Cost(for compatibility) $/MMBtu, float
+  NGC: 2.95,
+  // Electricity Cost $/kWh, float 0.081 orig
+  EC: 0.057,
+  // Demand Cost $/kW, float 4.22
+  DC: 12.79,
+  // Labor Rate $/hour, integer
+  LR: 40,
+  // Rebate Rate $/kWh, float
+  RR: 0.075,
+  // Start month, string
+  StartMo: "Jul 22",
+  // End month, string
+  EndMo: "Jun 23",
+  // Total Electricity kWh, integer
+  TotalEkWh: 17622865,
+  // Total Electricity MMBtu, integer
+  TotalEBtu: 182210,
+  // Total demand kW, integer
+  TotalDkW: 33494,
+  // Total Electricity Cost, integer
+  TotalECost: 1560550,
+  // Total Fuel MMBtu, integer
+  TotalFBtu: 392327,
+  // Total Fuel Cost, integer
+  TotalFCost: 1158864,
+  // Total Energy MMBtu, integer
+  TotalBtu: 574536,
+  // Total Energy Cost, integer
+  TotalCost: 2719414,
 }
