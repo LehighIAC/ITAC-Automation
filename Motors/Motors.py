@@ -57,31 +57,13 @@ iac = grouping_num(iac)
 # Import docx template
 doc = Document('Install VFD on Electric Motor Template.docx')
 
-# # Add equations
-# # Requires double backslash / curly bracket for LaTeX characters
-# ES1Eqn = '\\frac{{ {0} \\times {1} \\times {2} - {3} \\times {4} \\times {5} }} {{ \\mathrm{{1,000}} }}' \
-#     .format(iac.CN1, iac.CFW1, iac.COH1, iac.PN1, iac.PFW1, iac.POH1)
-# add_eqn(doc, iac, '${ES1Eqn}', ES1Eqn)
+# Add equations
+# Requires double backslash / curly bracket for LaTeX characters
+CEUEqn = '\\frac{{ {0} \\times 0.746\\times {1}\\%\\times {2}}}{{ {3}\\% }}'.format(iac.HP, iac.LF, iac.OHE, iac.EX)
+add_eqn(doc, iac, '${CEUEqn}', CEUEqn)
 
-# DS1Eqn = '\\frac{{ ({0} \\times {1} - {2} \\times {3}) \\times {4} \\times 12 }} {{ \\mathrm{{1,000}} }}' \
-#     .format(iac.CN1, iac.CFW1, iac.PN1, iac.PFW1, iac.CF1)
-# add_eqn(doc, iac, '${DS1Eqn}', DS1Eqn)
-
-# ES2Eqn = '\\frac{{ {0} \\times {1} \\times {2} - {3} \\times {4} \\times {5} }} {{ \\mathrm{{1,000}} }}' \
-#     .format(iac.CN2, iac.CFW2, iac.COH2, iac.PN2, iac.PFW2, iac.POH2)
-# add_eqn(doc, iac, '${ES2Eqn}', ES2Eqn)
-
-# DS2Eqn = '\\frac{{ ({0} \\times {1} - {2} \\times {3}) \\times {4} \\times 12 }} {{ \\mathrm{{1,000}} }}' \
-#     .format(iac.CN2, iac.CFW2, iac.PN2, iac.PFW2, iac.CF2)
-# add_eqn(doc, iac, '${DS2Eqn}', DS2Eqn)
-
-# ES3Eqn = '\\frac{{ {0} \\times {1} \\times {2} - {3} \\times {4} \\times {5} }} {{ \\mathrm{{1,000}} }}' \
-#     .format(iac.CN3, iac.CFW3, iac.COH3, iac.PN3, iac.PFW3, iac.POH3)
-# add_eqn(doc, iac, '${ES3Eqn}', ES3Eqn)
-
-# DS3Eqn = '\\frac{{ ({0} \\times {1} - {2} \\times {3}) \\times {4} \\times 12 }} {{ \\mathrm{{1,000}} }}' \
-#     .format(iac.CN3, iac.CFW3, iac.PN3, iac.PFW3, iac.CF3)
-# add_eqn(doc, iac, '${DS3Eqn}', DS3Eqn)
+PEUEqn = '\\frac{{ {0} \\times 0.746\\times {1}\\%\\times {2}}}{{ {3}\\% }}'.format(iac.HP, iac.FRT, iac.OHP, iac.PR)
+add_eqn(doc, iac, '${PEUEqn}', PEUEqn)
 
 # Replacing keys
 docx_replace(doc, **iac)
