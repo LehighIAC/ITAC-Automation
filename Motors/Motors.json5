@@ -1,30 +1,32 @@
 {
   // AR Num, integer
   AR: 1,
-  // Motor Type, string
+  // Motor location, string
   MT: "oven blowers",
   // Horsepower of motor, integer
   HP: 60,
-  // Existing operating hours of motor, integer
-  OHE: 2912,
-  // Proposed operating hours of motor, integer
-  OHP: 2912,
-  // Load Factor %, integer
-  LF: 100,
-  // Power consumption of motor with VFD %, integer
-  FR: 90,
-  // Power consumption of motor with VFD % from table, integer
-  FRT: 73,
-  // Existing efficiency of motor %, integer
-  EX: 85,
-  // Proposed efficiency of motor with VFD %, integer
-  PR: 85,
-  // Proposed demand usage, integer
-  PDU: 38,
-  // Demand usage difference, integer
-  DUD: 15,
-  // Normal Cost of VFD, integer
-  NC: 9000,
-  // Extra Installation cost, integer
-  EIC: 12500,
+  // Existing hours per day, float (allows half hours)
+  EHR: 8.0,
+  // Existing days per week, float (allows half day on weekends)
+  EDY: 7.0,
+  // Existing weeks per year, int
+  EWK: 52,
+  // Proposed hours per day, float (allows half hours)
+  PHR: 8.0,
+  // Proposed days per week, float (allows half day on weekends)
+  PDY: 7.0,
+  // Proposed weeks per year, int
+  PWK: 52,
+  // Load Fraction, %, int
+  LF: 90,
+  // Existing efficiency of motor, float
+  ETAE: 0.85,
+  // Proposed efficiency of motor with VFD, float
+  ETAP: 0.85,
+  // Coincidence Factor
+  CF: 1.0,
+  // Cost of VFD, integer
+  VFD: 9000,
+  //Additional installation cost, integer
+  AIC: 12500,
 }
