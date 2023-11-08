@@ -11,7 +11,7 @@ from Shared.IAC import *
 import numpy as np
 
 # Load config file and convert everything to EasyDict
-jsonDict = json5.load(open('Motors.json5'))
+jsonDict = json5.load(open('Install VFD on Electric Motor.json5'))
 jsonDict.update(json5.load(open(os.path.join('..', 'Utility.json5'))))
 iac = EasyDict(jsonDict)
 
@@ -68,7 +68,7 @@ iac = dollar(varList,iac,0)
 iac = grouping_num(iac)
 
 # Import docx template
-doc = Document('Install VFD on Electric Motor Template.docx')
+doc = Document('Install VFD on Electric Motor.docx')
 
 # Add equations
 # Requires double backslash / curly bracket for LaTeX characters
