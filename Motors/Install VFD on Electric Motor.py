@@ -20,28 +20,20 @@ Load = np.linspace(20, 100, num=17)
 VFD = np.array([5, 6, 8, 11, 14, 17, 21, 26, 32, 38, 44, 50, 57, 64, 73, 86, 105])
 
 ## Calculations
-# Existing operating hours
-iac.EOH = iac.EHR * iac.EDY * iac.EWK
-# Proposed operating hours
-iac.POH = iac.PHR * iac.PDY * iac.PWK
-# Current power consumption
-iac.CPC = 100
-# Proposed power consumption
-iac.PPC = round(np.interp(iac.LF, Load, VFD).item())
-# Current Demand Usage
-iac.CDU = round((iac.HP * 0.746 * iac.CPC / 100) / iac.ETAE)
-# Proposed Demand Usage
-iac.PDU = round((iac.HP * 0.746 * iac.PPC / 100) / iac.ETAP)
-# Current time weighted energy usage for a given motor
-iac.CEU = round(iac.CDU * iac.EOH)
-# Projected time weighted energy usage for a given motor
-iac.PEU = round(iac.PDU * iac.POH)
+# Operating hours
+iac.OH = iac.HR * iac.DY * iac.WK
+# Power FRaction with VFD
+iac.FR = round(np.interp(iac.LF, Load, VFD).item())
+# Current Power Draw
+iac.CPD = round((iac.HP * 0.746) / (iac.ETAE/100))
+# Proposed Power Draw
+iac.PPD = round((iac.HP * 0.746 * (iac.FR/100)) / (iac.ETAP/100))
 
 ## Savings
 # Annual Energy Savings
-iac.ES = iac.CEU - iac.PEU
+iac.ES = (iac.CPD - iac.PPD) * iac.OH
 # Annual Demand Savings
-iac.DS = (iac.CDU - iac.PDU) * 12 * iac.CF
+iac.DS = (iac.CPD - iac.PPD) * (iac.CF/100) * 12
 # Estimated Cost Savings
 iac.ECS = round(iac.ES * iac.EC)
 # Demand Cost Savings
@@ -53,6 +45,7 @@ iac.IC = iac.VFD + iac.AIC
 
 ## Rebate
 iac.RB = round(iac.RR * iac.ES)
+iac.MRB = max(iac.RB, iac.IC/2)
 iac.MIC = iac.IC - iac.RB
 iac.PB = payback(iac.ACS, iac.MIC)
 
@@ -62,21 +55,13 @@ iac = dollar(['EC', 'RR'],iac,3)
 # set demand to 2 digits accuracy
 iac = dollar(['DC'],iac,2)
 # set the rest to integer
-varList = ['ACS', 'ECS', 'DCS', 'VFD', 'AIC', 'IC', 'MIC', 'RB']
+varList = ['ACS', 'ECS', 'DCS', 'VFD', 'AIC', 'IC', 'RB', 'MRB', 'MIC']
 iac = dollar(varList,iac,0)
 # Format all numbers to string with thousand separator
 iac = grouping_num(iac)
 
 # Import docx template
 doc = Document('Install VFD on Electric Motor.docx')
-
-# Add equations
-# Requires double backslash / curly bracket for LaTeX characters
-CEUEqn = '\\frac{{ {0} \\times 0.746\\times {1}\\%\\times {2}}}{{ {3} }}'.format(iac.HP, iac.CPC, iac.EOH, iac.ETAE)
-add_eqn(doc, iac, '${CEUEqn}', CEUEqn)
-
-PEUEqn = '\\frac{{ {0} \\times 0.746\\times {1}\\%\\times {2}}}{{ {3} }}'.format(iac.HP, iac.PPC, iac.POH, iac.ETAP)
-add_eqn(doc, iac, '${PEUEqn}', PEUEqn)
 
 # Replacing keys
 docx_replace(doc, **iac)
@@ -86,5 +71,4 @@ filename = 'AR'+str(iac.AR)+'.docx'
 doc.save(os.path.join('..', 'ARs', filename))
 
 # Caveats
-caveat("Please manually change the font size of equations to 16.")
 caveat("Please change implementation cost references if necessary.")

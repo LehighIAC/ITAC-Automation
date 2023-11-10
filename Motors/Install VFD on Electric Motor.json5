@@ -5,26 +5,20 @@
   MT: "oven blowers",
   // Horsepower of motor, integer
   HP: 60,
-  // Existing hours per day, float (allows half hours)
-  EHR: 8.0,
-  // Existing days per week, float (allows half day on weekends)
-  EDY: 7.0,
-  // Existing weeks per year, int
-  EWK: 52,
-  // Proposed hours per day, float (allows half hours)
-  PHR: 8.0,
-  // Proposed days per week, float (allows half day on weekends)
-  PDY: 7.0,
-  // Proposed weeks per year, int
-  PWK: 52,
+  // hours per day, float (allows half hours)
+  HR: 8.0,
+  // days per week, float (allows half day on weekends)
+  DY: 7.0,
+  // weeks per year, int
+  WK: 52,
   // Load Fraction, %, int
   LF: 90,
-  // Existing efficiency of motor, float
-  ETAE: 0.85,
-  // Proposed efficiency of motor with VFD, float
-  ETAP: 0.85,
-  // Coincidence Factor
-  CF: 1.0,
+  // Existing efficiency of motor, %, int
+  ETAE: 85,
+  // Proposed efficiency of motor with VFD, %, int
+  ETAP: 85,
+  // Coincidence Factor, %, int
+  CF: 100,
   // Cost of VFD, integer
   VFD: 9000,
   //Additional installation cost, integer
