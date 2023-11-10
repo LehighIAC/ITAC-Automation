@@ -40,6 +40,6 @@ PWK: [52,52,52],
 BP: [10,10,60],
 // Labor per bulb $, list of integers
 BL: [20,20,100],
-// Coincidence Factor, list of floats, default 1.0
-CF: [1.0,1.0,0.8],
+// Coincidence Factor, %, list of intergers, default 100
+CF: [100,100,80],
 }

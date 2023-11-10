@@ -12,7 +12,7 @@ from docxcompose.composer import Composer
 import numpy as np
 
 # Load config file and convert everything to EasyDict
-jsonDict = json5.load(open('Lighting.json5'))
+jsonDict = json5.load(open('Switch to LED lighting.json5'))
 jsonDict.update(json5.load(open(os.path.join('..', 'Utility.json5'))))
 iac = EasyDict(jsonDict)
 
@@ -38,7 +38,7 @@ iac.ESi = np.rint((iac.CN * iac.CPR * iac.COH - iac.PN * iac.PPR * iac.POH) / 10
 iac.ES = np.sum(iac.ESi)
 iac.ECS = np.rint(iac.ES * iac.EC).astype(np.int64)
 # Calculate demand savings
-iac.DSi = np.rint((iac.CN * iac.CPR - iac.PN * iac.PPR) * iac.CF * 12.0 / 1000.0).astype(np.int64)
+iac.DSi = np.rint((iac.CN * iac.CPR - iac.PN * iac.PPR) * (iac.CF/100) * 12.0 / 1000.0).astype(np.int64)
 iac.DS = np.sum(iac.DSi)
 iac.DCS = np.rint(iac.DS * iac.DC).astype(np.int64)
 
@@ -93,23 +93,6 @@ for i in range(N):
 
     # Import individual area template
     doc = Document('Switch to LED lighting 2.docx')
-
-    # Add equations
-    ESDef = '\\frac{{ CN_{0} \\times CPR_{1} \\times COH_{2} - PN_{3} \\times PPR_{4} \\times POH_{5} }} {{ C_1 }}' \
-    .format(iacsub.i, iacsub.i, iacsub.i, iacsub.i, iacsub.i, iacsub.i)
-    add_eqn(doc, iacsub, '${ESDef}', ESDef)
-
-    ESEqn = '\\frac{{ {0} \\times {1} \\times {2} - {3} \\times {4} \\times {5} }} {{ \\mathrm{{1,000}} }}' \
-    .format(iacsub.CN, iacsub.CPR, iacsub.COH, iacsub.PN, iacsub.PPR, iacsub.POH)
-    add_eqn(doc, iacsub, '${ESEqn}', ESEqn)
-
-    DSDef = '\\frac{{ (CN_{0} \\times CPR_{1} - PN_{2} \\times PPR_{3}) \\times CF_{4} \\times 12 }} {{ C_1 }}' \
-    .format(iacsub.i, iacsub.i, iacsub.i, iacsub.i, iacsub.i)
-    add_eqn(doc, iacsub, '${DSDef}', DSDef)
-
-    DSEqn = '\\frac{{ ({0} \\times {1} - {2} \\times {3}) \\times {4} \\times 12 }} {{ \\mathrm{{1,000}} }}' \
-    .format(iacsub.CN, iacsub.CPR, iacsub.PN, iacsub.PPR, iacsub.CF)
-    add_eqn(doc, iacsub, '${DSEqn}', DSEqn)
 
     # Replacing keys
     docx_replace(doc, **iacsub)
@@ -170,6 +153,4 @@ for i in range(N+2):
     os.remove(filename)
 
 # Caveats
-caveat("Please manually change the font of equations to upright.")
-caveat("Please manually change the font size of equations to 16.")
 caveat("Please change implementation cost references if necessary.")
