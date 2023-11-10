@@ -70,6 +70,23 @@ An automated template is usually made of 3 parts:
 1. A .docx template with tags to be replaced.
 2. A .json5 database with input numbers and strings.
 3. A .py template with calculation and formatting.
+### Standardized template
+For electricity:
+1. Calculate current power draw CPD in kW
+2. Calculate proposed power draw PPD in kW
+3. Calculate electricity savings ES = CPD * Operating Hours - PPD * Opearting Hours, in kWh/yr
+4. Calculate demand savings DS = (CPD - PPD) * Coincidence Factor %/month * 12 months/year, in kW/yr
+
+For natural gas:
+
+5. Calculate natural gas savings NGS (or any other fuel) in MMBtu/yr
+
+Overall:
+
+6. Calculate annnal cost savings ACS = sum(energy savings * unit price), in $
+
+* Use linear equations as much as possible.
+* Make sure all physics units can be properly cancelled (also use that as a validation of your template).
 ### Preparations to make an automated template
 1. Make .json5 database by writing detailed comments, including description, unit, data type(int, float, str or list), and default value(if available). The key name could be abbreviation such as "ES", as long as it's consistent with the word document.
 2. Clean up word document formatting. In rare scenario, the document could be a legacy .doc file with .docx extension. You need to copy all the text and paste it into a new document.

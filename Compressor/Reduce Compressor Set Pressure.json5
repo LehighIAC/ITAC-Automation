@@ -19,8 +19,6 @@ N: 1,
 HP: 15,
 // Load Factor, %, integer
 LF: 60,
-// Run time as fraction of operating time, %, integer
-RF: 100,
 // Efficiency of compressor, %, integer
 ETA: 85,
 // Coincidence factor, %, integer, default 100

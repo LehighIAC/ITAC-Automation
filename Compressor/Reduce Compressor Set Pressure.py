@@ -24,7 +24,7 @@ iac.POW = 1-(((iac.RCP+AP)/AP)**((k-1)/(k*iac.N))-1)/(((iac.CCP+AP)/AP)**((k-1)/
 iac.POW = round(iac.POW*100,1)
 
 # Power Draw Reduction
-iac.PDR = iac.HP * 0.746 * (iac.LF/100) * (iac.RF/100)  * (iac.POW/100) / (iac.ETA/100)
+iac.PDR = iac.HP * 0.746 * (iac.LF/100) * (iac.POW/100) / (iac.ETA/100)
 # round to 2 significant digits
 iac.PDR = round(iac.PDR, -int(math.floor(math.log10(abs(iac.PDR))))+2)
 
