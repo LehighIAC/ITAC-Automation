@@ -2,9 +2,9 @@
   // AR Num, integer
   AR: 1,
   // Air Tank, boolean
-  TANK: True,
+  TANK: true,
   // Air Tank Price, int
-  ATP: 5000
+  ATP: 5000,
   // Horsepower of motor, integer
   HP: 300,
   // hours per day, float (allows half hours)
