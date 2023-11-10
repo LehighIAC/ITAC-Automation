@@ -51,14 +51,22 @@ def grouping_num(dic: dict) -> dict:
     :param dic: EasyDict
     :return: Dictionary with keys in thousand separator
     """
-    import locale
+    import locale, numpy
     # set locale to US
     locale.setlocale(locale.LC_ALL, 'en_US')
     for key in dic.keys():
-        if type(dic[key]) == int:
+        if type(dic[key]) == int or type(dic[key]) == numpy.int64:
             dic[key] = locale.format_string('%d', dic[key], grouping=True)
-        elif type(dic[key]) == float:
+        elif type(dic[key]) == float or type(dic[key]) == numpy.float64:
             dic[key] = locale.format_string('%g', dic[key], grouping=True)
+        # if dic[key] is a ndarray
+        elif type(dic[key]) == numpy.ndarray:
+            dic[key] = dic[key].tolist()
+            for i in range(len(dic[key])):
+                if type(dic[key][i]) == int:
+                    dic[key][i] = locale.format_string('%d', dic[key][i], grouping=True)
+                elif type(dic[key][i]) == float:
+                    dic[key][i] = locale.format_string('%g', dic[key][i], grouping=True)
         else:
             pass
     return dic
@@ -142,10 +150,11 @@ def add_image(doc, tag: str, image_path: str, wd):
         # Throw error if tag is not found 
         raise Exception("Tag "+ tag +" not found")
 
-def add_eqn(doc, tag: str, eqn_input):
+def add_eqn(doc, iac:dict, tag: str, eqn_input):
     """
     Add equation to Word document, search for eqn in doc and replace with eqn_input
     :param doc: Document
+    :param iac: EasyDict
     :param tag: Equation tag as string
     :param eqn_input: Word Equation object
     :return: None
@@ -156,7 +165,7 @@ def add_eqn(doc, tag: str, eqn_input):
     found_tag = False
     for p in doc.paragraphs:
         if tag in p.text:
-            p.text = p.text.replace(tag, '')
+            iac[tag.strip('${}')] = ''
             word_math = latex2word(eqn_input)
             p._element.append(word_math)
             found_tag = True
@@ -164,6 +173,7 @@ def add_eqn(doc, tag: str, eqn_input):
     if found_tag == False:
         # Throw error if tag is not found 
         raise Exception("Tag "+ tag +" not found")
+    
 def latex2word(latex_input: str):
     """
     Convert LaTeX equation to Word equation
@@ -206,3 +216,10 @@ def payback(ACS: float, IC: float) -> str:
     if PB > 1.0:
         PBstr = PBstr + "s"
     return PBstr
+
+def caveat(info: str):
+    """
+    Print caveats with highlighting
+    :param info: information to be printed
+    """
+    print("\033[94m\033[103m{}\033[0m\033[0m".format(info))

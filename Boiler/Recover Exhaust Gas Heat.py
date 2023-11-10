@@ -5,13 +5,13 @@ This script is used to generate the IAC recommendation for Recover Exhaust Gas H
 import json5, sys, os
 from docx import Document
 from easydict import EasyDict
-from python_docx_replace import docx_replace, docx_blocks
+from python_docx_replace import docx_replace
 sys.path.append('..') 
 from Shared.IAC import *
 import numpy as np
 
 # Load config file and convert everything to EasyDict
-jsonDict = json5.load(open('Exhaust Heat.json5'))
+jsonDict = json5.load(open('Recover Exhaust Gas Heat.json5'))
 jsonDict.update(json5.load(open(os.path.join('..', 'Utility.json5'))))
 iac = EasyDict(jsonDict)
 
@@ -27,14 +27,16 @@ CpList = np.array([0.2802, 0.251, 0.1791, 0.1739, 0.1726, 0.1716, 0.1713, 0.1712
 iac.CP = round(np.interp(iac.TI, TCpList, CpList).item(),3)
 
 # Calculations
-iac.NGS = round(iac.CFM * iac.RHO * 60 * iac.CP * (iac.TI - iac.TO) * iac.ETA * iac.OH / 1e6)
-iac.CS = round(iac.NGS * iac.NGC)
-iac.ES = round(-iac.HP * 0.746 * iac.OH)
-iac.DS = round(-iac.HP * 0.746 * 12)
-iac.ECS = round(iac.ES * iac.EC)
-iac.DCS = round(iac.DS * iac.DC)
-iac.PFC = iac.ECS + iac.DCS
-iac.ACS = iac.CS + iac.PFC
+iac.OH = int(iac.HR * iac.DY * iac.WK)
+iac.NGS = round(iac.CFM * iac.RHO * 60 * iac.CP * (iac.TI - iac.TO) * (iac.ETA / 100) * iac.OH / 1e6)
+iac.EU = round(iac.HP * 0.746 * iac.OH)
+iac.DU = round(iac.HP * 0.746 * 12 * (iac.CF / 100))
+iac.NGCS = round(iac.NGS * iac.NGC)
+iac.EUC = round(iac.EU * iac.EC)
+iac.DUC = round(iac.DU * iac.DC)
+iac.ES = -iac.EU
+iac.DS = -iac.DU
+iac.ACS = iac.NGCS - iac.EUC - iac.DUC
 
 # Implementation
 iac.PB = payback(iac.ACS, iac.IC)
@@ -45,7 +47,7 @@ iac = dollar(['EC'],iac,3)
 # set the natural gas and demand to 2 digits accuracy
 iac = dollar(['NGC', 'DC'],iac,2)
 # set the rest to integer
-varList = ['LR', 'CS', 'ECS', 'DCS', 'PFC', 'IC', 'ACS']
+varList = ['LR', 'NGCS', 'EUC', 'DUC', 'ACS', 'IC']
 iac = dollar(varList,iac,0)
 # Format all numbers to string with thousand separator
 iac = grouping_num(iac)
@@ -56,16 +58,9 @@ doc = Document('Recover Exhaust Gas Heat.docx')
 # Replacing keys
 docx_replace(doc, **iac)
 
-# Add equations
-# Requires double backslash / curly bracket for LaTeX characters
-NGSEqn = '\\frac{{ {0} \\times {1} \\times 60 \\times {2} \\times ({3} - {4}) \\times {5} \\times {6} }} {{ \\mathrm{{1,000,000}} }}' \
-    .format(iac.CFM, iac.RHO, iac.CP, iac.TI, iac.TO, iac.ETA, iac.OH)
-add_eqn(doc, '#NGSEqn', NGSEqn)
-
 # Save file as AR*.docx
 filename = 'AR'+iac.AR+'.docx'
 doc.save(os.path.join('..', 'ARs', filename))
 
 # Caveats
-print("Please manually change the font size of equations to 16.")
-print("Please change implementation cost references if necessary.")
+caveat("Please modify highlighted region if necessary.")

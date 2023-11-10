@@ -1,0 +1,45 @@
+{
+// AR No., integer
+AR: 1,
+// Number of motion sensors, integer
+MSN: 0,
+// Part + labor per motion serson $, integer
+MSPL: 50,
+
+// This template supports arbitraty number of areas.
+// Number of areas, integer, should be consistent with length of lists.
+N: 3,
+// Area 1 name, list of strings
+AREA: ['production area 1','production area 2','production area 3'],
+// Previous bulb type, list of strings
+PREV: ['T-8 bulbs','T-8 bulbs','metal halides'],
+
+// Number of current bulbs, list of integers
+CN: [36,24,12],
+// Power rating of current bulbs W, list of floats
+CPR: [32,32,250],
+// Hours per day of current bulbs, list of floats
+CHR: [8,8,12],
+// Days per week of current bulbs, list of floats
+CDY: [5,5,7],
+// Weeks per year of current bulbs, list of floats
+CWK: [52,52,52],
+
+// Number of proposed bulbs, list of integers
+PN: [30,24,12],
+// Power rating of proposed bulbs W, list of floats
+PPR: [16,16,80],
+// Hours per day of proposed bulbs, list of floats
+PHR: [8,8,12],
+// Days per week of proposed bulbs, list of floats
+PDY: [5,5,7],
+// Weeks per year of current bulbs, list of floats
+PWK: [52,52,52],
+
+// Unit price of proposed bulbs $, float
+BP: [10,10,60],
+// Labor per bulb $, list of integers
+BL: [20,20,100],
+// Coincidence Factor, %, list of intergers, default 100
+CF: [100,100,80],
+}

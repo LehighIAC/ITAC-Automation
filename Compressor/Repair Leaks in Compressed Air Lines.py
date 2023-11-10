@@ -13,13 +13,24 @@ from num2words import num2words
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 
 # Load config file and convert everything to EasyDict
-jsonDict = json5.load(open('Repair Leaks.json5'))
+jsonDict = json5.load(open('Repair Leaks in Compressed Air Lines.json5'))
 jsonDict.update(json5.load(open(os.path.join('..', 'Utility.json5'))))
 iac = EasyDict(jsonDict)
 
+# Constants
+PA = 14.7 # Atmosphere, psia
+C1 = 28.37 # Isentropic sonic volumetric flow constant
+C2 = 60.0 # Conversion constant; sec/min
+C3 = 144.0 # Conversion constant; in2/ft2
+C4 = 3.03e-5 # Conversion constant; HP.min/ft.lb
+C5 = 0.746 # Conversion factor; kW/HP
+CD = 0.8 # Coefficient of discharge for square edged orifice
+k = 1.4 # Specific heat ratio of air
+
 # Calculations
-iac.RT = round(iac.PA / iac.P0, 4)
-iac.VF0 = np.pi / 4 * (iac.T0 + 460) * iac.P1 / iac.PA * iac.C1 * iac.C2 * iac.CD / iac.C3 / np.sqrt(iac.T1 + 460)
+iac.OH = iac.HR * iac.DY * iac.WK
+iac.RT = round(PA / iac.P0, 4)
+iac.VF0 = np.pi / 4 * (iac.T0 + 460) * iac.P1 / PA * C1 * C2 * CD / C3 / np.sqrt(iac.T1 + 460)
 # Number of leaks
 NL = np.array([iac.NL1, iac.NL2, iac.NL3, iac.NL4, iac.NL5, iac.NL6])
 # Leak diameters
@@ -29,12 +40,12 @@ LS = ["1/64", "1/32", "1/16", "1/8", "3/16", "1/4"]
 # Flow rate (cfm)
 FR = LD * LD * iac.VF0
 # Power Loss (hp)
-PL = iac.PA * iac.C3 * FR * iac.k/(iac.k-1.0) * iac.N * iac.C4 * \
-    (np.power(iac.P0/float(iac.PA),(iac.k-1.0)/(iac.k*iac.N)) - 1.0) / (iac.EA * iac.EM)
+PL = PA * C3 * FR * k/(k-1.0) * iac.N * C4 * \
+    (np.power(iac.P0/PA,(k-1.0)/(k*iac.N)) - 1.0) / ((iac.EA/100) * (iac.EM/100))
 # Demand Loss (kW/yr)
-DL = PL * iac.C5 * iac.CF * 12
+DL = PL * C5 * (iac.CF/100) * 12
 # Energy Loss (kWh/yr)
-EL = PL * iac.C5 * iac.OH
+EL = PL * C5 * iac.OH
 # Leak Cost ($/yr)
 LC = DL * iac.DC + EL * iac.EC
 # Add Table 2
@@ -116,4 +127,4 @@ filename = 'AR'+iac.AR+'.docx'
 doc.save(os.path.join('..', 'ARs', filename))
 
 # Caveats
-print("Please change implementation cost references if necessary.")
+caveat("Please change implementation cost references if necessary.")

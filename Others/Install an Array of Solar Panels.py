@@ -12,7 +12,7 @@ from Shared.IAC import *
 import requests, datetime
 
 # Load config file and convert everything to EasyDict
-jsonDict = json5.load(open('Solar Panel.json5'))
+jsonDict = json5.load(open('Install an Array of Solar Panels.json5'))
 jsonDict.update(json5.load(open(os.path.join('..', 'Utility.json5'))))
 iac = EasyDict(jsonDict)
 
@@ -60,8 +60,8 @@ except:
 
 iac.ACSel = round(iac.ES * iac.EC)
 iac.credits = round(iac.ES / 1000)
-iac.ACSsu = round(iac.AMV * iac.credits)
-iac.ACS = iac.ACSel + iac.ACSsu
+iac.ACSsr = round(iac.AMV * iac.credits)
+iac.ACS = iac.ACSel + iac.ACSsr
 
 # Implementation cost
 iac.IC = round(iac.CAP * iac.PPW * 1000)
@@ -76,7 +76,7 @@ iac = dollar(['EC'],iac,3)
 # set the natural gas and demand to 2 digits accuracy
 iac = dollar(['NGC', 'DC', 'PPW'],iac,2)
 # set the rest to integer
-varList = ['LR', 'MIC', 'IC', 'ITC', 'AMV', 'ACSel', 'ACSsu', 'ACS']
+varList = ['LR', 'MIC', 'IC', 'ITC', 'AMV', 'ACSel', 'ACSsr', 'ACS']
 iac = dollar(varList,iac,0)
 # Format all numbers to string with thousand separator
 iac = grouping_num(iac)
@@ -107,4 +107,4 @@ filename = 'AAR'+iac.AR+'.docx'
 doc.save(os.path.join('..', 'ARs', filename))
 
 # Caveats
-print("Please check if the grabbed info is correct.")
+caveat("Please check if the grabbed info is correct.")

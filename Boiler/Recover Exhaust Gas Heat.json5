@@ -1,0 +1,24 @@
+{
+// AR No., integer
+AR: 1,
+// hours per day, float (allows half hours)
+HR: 8.0,
+// days per week, float (allows half day on weekends)
+DY: 5.0,
+// weeks per year, int
+WK: 52,
+// Flow rate, cfm, float
+CFM: 6500,
+// Inlet temp degF, integer
+TI: 330,
+// Outlet temp degF, integer
+TO: 280,
+// Fan horsepower, HP, float
+HP: 3,
+// Heat Exchanger efficiency, %, integer
+ETA: 80,
+// Coindicende Factor, %, integer
+CF: 100,
+// Implementation Cost$, integer
+IC: 10000,
+}
