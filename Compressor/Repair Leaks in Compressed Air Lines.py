@@ -13,7 +13,7 @@ from num2words import num2words
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 
 # Load config file and convert everything to EasyDict
-jsonDict = json5.load(open('Repair Leaks.json5'))
+jsonDict = json5.load(open('Repair Leaks in Compressed Air Lines.json5'))
 jsonDict.update(json5.load(open(os.path.join('..', 'Utility.json5'))))
 iac = EasyDict(jsonDict)
 
@@ -41,9 +41,9 @@ LS = ["1/64", "1/32", "1/16", "1/8", "3/16", "1/4"]
 FR = LD * LD * iac.VF0
 # Power Loss (hp)
 PL = PA * C3 * FR * k/(k-1.0) * iac.N * C4 * \
-    (np.power(iac.P0/PA,(k-1.0)/(k*iac.N)) - 1.0) / (iac.EA * iac.EM)
+    (np.power(iac.P0/PA,(k-1.0)/(k*iac.N)) - 1.0) / ((iac.EA/100) * (iac.EM/100))
 # Demand Loss (kW/yr)
-DL = PL * C5 * iac.CF * 12
+DL = PL * C5 * (iac.CF/100) * 12
 # Energy Loss (kWh/yr)
 EL = PL * C5 * iac.OH
 # Leak Cost ($/yr)

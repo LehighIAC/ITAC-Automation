@@ -21,8 +21,8 @@ USLD: 1000,
 
 // Compressor Type, string
 CT: "Screw",
-// Adiabatic efficienty of compressor, float
-EA: 0.82,
+// Adiabatic efficienty of compressor, %, integer
+EA: 82,
 // Number of stages, integer
 N: 1,
 // Leak location, string
@@ -38,12 +38,12 @@ P0: 110,
 P1: 80,
 // Compressor horsepower HP, integer
 HP: 250,
-// Motor efficienty, float
-EM: 0.9,
+// Motor efficienty, %, integer
+EM: 90,
 // Operating hours, integer
 OH: 8736,
-// Coincidence factor, float
-CF: 1.0,
+// Coincidence factor, %, integer
+CF: 100,
 
 // Number of 1/64 in leaks, integer
 NL1: 0,
