@@ -15,8 +15,10 @@ TI: 330,
 TO: 280,
 // Fan horsepower, HP, float
 HP: 3,
-// Heat Exchanger efficiency, float
-ETA: 0.80,
+// Heat Exchanger efficiency, %, integer
+ETA: 80,
+// Coindicende Factor, %, integer
+CF: 100,
 // Implementation Cost$, integer
 IC: 10000,
 }
