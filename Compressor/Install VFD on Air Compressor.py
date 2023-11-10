@@ -1,5 +1,5 @@
 """
-This script is used to generate the IAC recommendation for Installing VFD on Electric Motors
+This script is used to generate the IAC recommendation for Installing VFD on Air Compressor
 """
 
 import json5, sys, os
@@ -41,10 +41,10 @@ iac.DCS = round(iac.DS * iac.DC)
 # Total Cost Savings
 iac.ACS = iac.ECS + iac.DCS
 # Total Installation Cost
-# if (iac.tank == True):
-#   iac.IC = iac.VFD + iac.AIC + iac.ATP
-# else:
-#   iac.IC = iac.VFD + iac.AIC
+if (iac.TANK == True):
+  iac.IC = iac.VFD + iac.AIC + iac.ATP
+else:
+  iac.IC = iac.VFD + iac.AIC
 
 ## Rebate
 iac.RB = round(iac.RR * iac.ES)

@@ -2,7 +2,7 @@
   // AR Num, integer
   AR: 1,
   // Air Tank, boolean
-  tank: True,
+  TANK: True,
   // Air Tank Price, int
   ATP: 5000
   // Horsepower of motor, integer
