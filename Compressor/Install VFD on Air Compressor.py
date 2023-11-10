@@ -17,7 +17,7 @@ iac = EasyDict(jsonDict)
 
 ## VFD table
 Load = np.linspace(20, 100, num=17)
-VFD = np.array([5, 6, 8, 11, 14, 17, 21, 26, 32, 38, 44, 50, 57, 64, 73, 86, 105])
+VFD = np.array([25, 28, 33, 38, 42, 47, 52, 57, 61, 65, 70, 75, 80, 85, 90, 95, 105])
 
 ## Calculations
 # Operating hours
@@ -41,7 +41,10 @@ iac.DCS = round(iac.DS * iac.DC)
 # Total Cost Savings
 iac.ACS = iac.ECS + iac.DCS
 # Total Installation Cost
-iac.IC = iac.VFD + iac.AIC
+# if (iac.tank == True):
+#   iac.IC = iac.VFD + iac.AIC + iac.ATP
+# else:
+#   iac.IC = iac.VFD + iac.AIC
 
 ## Rebate
 iac.RB = round(iac.RR * iac.ES)
@@ -61,7 +64,7 @@ iac = dollar(varList,iac,0)
 iac = grouping_num(iac)
 
 # Import docx template
-doc = Document('Install VFD on Electric Motor.docx')
+doc = Document('Install VFD on Air Compressor.docx')
 
 # Replacing keys
 docx_replace(doc, **iac)
