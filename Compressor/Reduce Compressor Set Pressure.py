@@ -2,7 +2,7 @@
 This script is used to generate the IAC recommendation for Reduce Compressor Set Pressure.
 """
 
-import json5, sys, os
+import json5, sys, os, math
 from docx import Document
 from easydict import EasyDict
 from python_docx_replace import docx_replace, docx_blocks
@@ -23,19 +23,23 @@ iac.POW = 1-(((iac.RCP+AP)/AP)**((k-1)/(k*iac.N))-1)/(((iac.CCP+AP)/AP)**((k-1)/
 # 1 decimal point percent
 iac.POW = round(iac.POW*100,1)
 
+# Power Draw Reduction
+iac.PDR = iac.HP * 0.746 * (iac.LF/100) * (iac.RF/100)  * (iac.POW/100) / (iac.ETA/100)
+# round to 2 significant digits
+iac.PDR = round(iac.PDR, -int(math.floor(math.log10(abs(iac.PDR))))+2)
+
 # Opearting Hours
 iac.OH = iac.HR * iac.DY * iac.WK
-# energy savings
-iac.ES = round(iac.HP * iac.OH * iac.LF * iac.RF * 0.746 * (iac.POW / 100) / iac.ETA)
 
-# demand saving
-iac.DS = round(iac.ES * iac.CF * 12 / iac.OH)
+# Energy Savings
+iac.ES = round(iac.PDR * iac.OH)
 
-# electricity cost savings
+# Demand Savings
+iac.DS = round(iac.PDR * (iac.CF/100) * 12)
+
+# Cost savings
 iac.ECS = round(iac.ES * iac.EC)
-# demand cost savings
 iac.DCS = round(iac.DS * iac.DC)
-
 iac.ACS = iac.ECS + iac.DCS
 
 iac.PB  = payback(iac.ACS, iac.IC)
