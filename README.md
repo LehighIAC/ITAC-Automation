@@ -83,7 +83,7 @@ For natural gas:
 
 Overall:
 
-1. Calculate annnal cost savings ACS = sum(energy savings * unit price), in $
+6. Calculate annnal cost savings ACS = sum(energy savings * unit price), in $
 
 * Use linear equations as much as possible.
 * Make sure all physics units can be properly cancelled (also use that as a validation of your template).
