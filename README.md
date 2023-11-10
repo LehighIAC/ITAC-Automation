@@ -102,11 +102,14 @@ The .docx can have pre-defined blocks with XML tags. E.g. starts with `<AAR>` an
 * Recover Exhaust Gas Heat
 
 ### Compressor
-* Repair Leaks in Compressed Air Lines
 * Reduce Compressor Set Pressure
+* Repair Leaks in Compressed Air Lines
 
 ### Lighting
-* Switch to LED lighting
+* Switch to LED lighting (supports any number of areas)
+
+### Motors
+* Install VFD on Electric Motor (Single Motor)
 
 ### Others
 * Install Solar Panel (fully automated using PVWatts API)
