@@ -1,7 +1,7 @@
 {
 // AAR No., typically this is an AAR, integer
 AR: 1,
-// State, PA or NJ, string
+// State, "PA" or "NJ", string
 ST: "PA",
 // Zip Code of the plant, string
 ZIP: "18015",
