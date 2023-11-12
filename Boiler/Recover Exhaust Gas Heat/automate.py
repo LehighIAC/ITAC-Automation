@@ -6,13 +6,15 @@ import json5, sys, os
 from docx import Document
 from easydict import EasyDict
 from python_docx_replace import docx_replace
-sys.path.append('..') 
+sys.path.append(os.path.join('..', '..')) 
 from Shared.IAC import *
 import numpy as np
 
-# Load config file and convert everything to EasyDict
-jsonDict = json5.load(open('Recover Exhaust Gas Heat.json5'))
-jsonDict.update(json5.load(open(os.path.join('..', 'Utility.json5'))))
+# Load utility cost
+jsonDict = json5.load(open(os.path.join('..', '..', 'Utility.json5')))
+# Load database
+jsonDict.update(json5.load(open('database.json5')))
+# Convert to easydict
 iac = EasyDict(jsonDict)
 
 # Interpolation
@@ -53,14 +55,14 @@ iac = dollar(varList,iac,0)
 iac = grouping_num(iac)
 
 # Import docx template
-doc = Document('Recover Exhaust Gas Heat.docx')
+doc = Document('template.docx')
 
 # Replacing keys
 docx_replace(doc, **iac)
 
 # Save file as AR*.docx
 filename = 'AR'+iac.AR+'.docx'
-doc.save(os.path.join('..', 'ARs', filename))
+doc.save(os.path.join('..', '..', 'ARs', filename))
 
 # Caveats
 caveat("Please modify highlighted region if necessary.")
