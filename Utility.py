@@ -6,7 +6,7 @@ Save statistics to Utility.json5
 import os, re, openpyxl
 
 # Read Energy Charts.xlsx
-wb = openpyxl.load_workbook('Energy Charts.xlsx', data_only=True)
+wb = openpyxl.load_workbook(os.path.join('Energy Charts' ,'Energy Charts.xlsx'), data_only=True)
 # Get Raw Data worksheet
 ws = wb['Raw Data']
 
