@@ -5,13 +5,15 @@ This script is used to generate the IAC recommendation for Reduce Compressor Set
 import json5, sys, os, math
 from docx import Document
 from easydict import EasyDict
-from python_docx_replace import docx_replace, docx_blocks
-sys.path.append('..')
+from python_docx_replace import docx_replace
+sys.path.append(os.path.join('..', '..'))
 from Shared.IAC import *
 
-# Load config file and convert everything to EasyDict
-jsonDict = json5.load(open('Reduce Compressor Set Pressure.json5'))
-jsonDict.update(json5.load(open(os.path.join('..', 'Utility.json5'))))
+# Load utility cost
+jsonDict = json5.load(open(os.path.join('..', '..', 'Utility.json5')))
+# Load database
+jsonDict.update(json5.load(open('database.json5')))
+# Convert to easydict
 iac = EasyDict(jsonDict)
 
 # Constants
@@ -56,7 +58,7 @@ iac = dollar(varList,iac,0)
 iac = grouping_num(iac)
 
 # Import docx template
-doc = Document('Reduce Compressor Set Pressure.docx')
+doc = Document('template.docx')
 
 # Add equations
 # Requires double backslash / curly bracket for LaTeX characters
@@ -68,7 +70,7 @@ add_eqn(doc, iac, '${POWEqn}', POWEqn)
 docx_replace(doc, **iac)
 
 filename = 'AR'+iac.AR+'.docx'
-doc.save(os.path.join('..', 'ARs', filename))
+doc.save(os.path.join('..', '..', 'ARs', filename))
 
 # Caveats
 caveat("Please manually change the font size of equations to 16.")
