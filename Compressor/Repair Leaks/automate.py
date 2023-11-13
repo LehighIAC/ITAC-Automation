@@ -5,16 +5,18 @@ This script is used to generate the IAC recommendation for Repair Leaks in Compr
 import json5, sys, os
 from docx import Document
 from easydict import EasyDict
-from python_docx_replace import docx_replace, docx_blocks
-sys.path.append('..')
+from python_docx_replace import docx_replace
+sys.path.append(os.path.join('..', '..'))
 from Shared.IAC import *
 import numpy as np
 from num2words import num2words
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 
-# Load config file and convert everything to EasyDict
-jsonDict = json5.load(open('Repair Leaks in Compressed Air Lines.json5'))
-jsonDict.update(json5.load(open(os.path.join('..', 'Utility.json5'))))
+# Load utility cost
+jsonDict = json5.load(open(os.path.join('..', '..', 'Utility.json5')))
+# Load database
+jsonDict.update(json5.load(open('database.json5')))
+# Convert to easydict
 iac = EasyDict(jsonDict)
 
 # Constants
@@ -85,7 +87,7 @@ iac = dollar(varList,iac,0)
 iac = grouping_num(iac)
 
 # Import docx template
-doc = Document('Repair Leaks in Compressed Air Lines.docx')
+doc = Document('template.docx')
 
 # Replacing keys
 docx_replace(doc, **iac)
@@ -124,7 +126,7 @@ for i in reversed(range(NL.size)):
         table3._tbl.remove(table3.rows[i+1]._tr)
 
 filename = 'AR'+iac.AR+'.docx'
-doc.save(os.path.join('..', 'ARs', filename))
+doc.save(os.path.join('..', '..', 'ARs', filename))
 
 # Caveats
 caveat("Please change implementation cost references if necessary.")
