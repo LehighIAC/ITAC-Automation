@@ -47,7 +47,7 @@ iac.IC = iac.VFD + iac.AIC
 
 ## Rebate
 iac.RB = round(iac.RR * iac.ES)
-iac.MRB = max(iac.RB, iac.IC/2)
+iac.MRB = min(iac.RB, iac.IC/2)
 iac.MIC = iac.IC - iac.RB
 iac.PB = payback(iac.ACS, iac.MIC)
 
