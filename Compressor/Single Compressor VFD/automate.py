@@ -6,13 +6,15 @@ import json5, sys, os
 from docx import Document
 from easydict import EasyDict
 from python_docx_replace import docx_replace, docx_blocks
-sys.path.append('..') 
+sys.path.append(os.path.join('..', '..')) 
 from Shared.IAC import *
 import numpy as np
 
-# Load config file and convert everything to EasyDict
-jsonDict = json5.load(open('Install VFD on Air Compressor.json5'))
-jsonDict.update(json5.load(open(os.path.join('..', 'Utility.json5'))))
+# Load utility cost
+jsonDict = json5.load(open(os.path.join('..', '..', 'Utility.json5')))
+# Load database
+jsonDict.update(json5.load(open('database.json5')))
+# Convert to easydict
 iac = EasyDict(jsonDict)
 
 ## VFD table
@@ -48,8 +50,8 @@ else:
 
 ## Rebate
 iac.RB = round(iac.RR * iac.ES)
-iac.MRB = max(iac.RB, iac.IC/2)
-iac.MIC = iac.IC - iac.RB
+iac.MRB = min(iac.RB, iac.IC/2)
+iac.MIC = iac.IC - iac.MRB
 iac.PB = payback(iac.ACS, iac.MIC)
 
 ## Format strings
@@ -64,14 +66,16 @@ iac = dollar(varList,iac,0)
 iac = grouping_num(iac)
 
 # Import docx template
-doc = Document('Install VFD on Air Compressor.docx')
+doc = Document('template.docx')
 
 # Replacing keys
 docx_replace(doc, **iac)
 
+docx_blocks(doc, TANK=iac.TANK)
+
 # Save file as AR*.docx
 filename = 'AR'+str(iac.AR)+'.docx'
-doc.save(os.path.join('..', 'ARs', filename))
+doc.save(os.path.join('..', '..', 'ARs', filename))
 
 # Caveats
 caveat("Please change implementation cost references if necessary.")
