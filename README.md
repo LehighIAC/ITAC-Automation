@@ -46,13 +46,13 @@ conda remove --name iac --all
 Is it suggested to work on a copy of this reposiotry when generating an IAC report.
 ### Energy Charts
 1. Edit `Energy Charts.xlsx`. Select `fuel type` ,`fuel unit` and start month, then edit raw data (if copying from other spreadsheet, copy values only). The formatting is fully automatic and shouldn't be touched.
-2. Save the workbook as `Web Page (.htm)` format (DO NOT change the name, all images will be in `Energy Charts.fld` folder). This is the only stable way to save all charts as images.
+2. Save the workbook as `Web Page (.htm)` format in the same directory. DO NOT change the filename, all images will be  kept in `Energy Charts.fld` folder. Currently  this is the only stable way to save all charts as images.
 3. Run `Utility.py` to extract data from the spreadsheet.
 ### Assessment Recommendations
 1. Edit `.json5` database of any specific AR. Make sure the data type is matching the description.
 2. Run the corresponding `.py` file. The output will be saved in `ARs` directory. Follow the instructions of the script if there's anything you need to adjust manually.
 ### Compiling Report
-1. Fill plant information in `Info.json5`.
+1. Fill plant information in `Compiler.json5`.
 2. Copy all AR files(if you have any from other sources) into `ARs` directory.
 3. Run `Compiler.py` to compile the final report.
 4. Fill the rest of the information manually.
