@@ -59,7 +59,7 @@ Is it suggested to work on a copy of this reposiotry when generating an IAC repo
 ### Requirements of AR Files:
 1. No requirement for filename, as long as it's `.docx`
 2. Doesn't matter if the file is made from Python template, Excel template, or by hand. Please break external links if you used Excel templates.
-3. The title text should always be "AR x: Title" or "AAR x: Title". Case insensitive. In outline view the title should always be **level 1**.
+3. The title text should always be "AR x: Title" or "AAR x: Title". Case insensitive. In outline view the title should always be **level 1, 12pt**.
 4. If there's any other type of energy savings, the unit should be `MMBtu`.
 5. All sub titles, such as "Recommend Actions", "Anticipated Savings" should always be **body text** in outline view. Then set it to **bold, 1.5x line spacing, and 6pt spacing before paragraph**. Otherwise the automatic table of contents will be broken.
 
@@ -67,9 +67,9 @@ Is it suggested to work on a copy of this reposiotry when generating an IAC repo
 **Always make changes in the `develop` branch**!
 
 An automated template is usually made of 3 parts:
-1. A .docx template with tags to be replaced.
-2. A .json5 database with input numbers and strings.
-3. A .py template with calculation and formatting.
+1. `template.docx` with tags to be replaced.
+2. `database.json5` saving input numbers and strings.
+3. `automate.py` performing calculation and formatting.
 ### Standardized template
 For electricity:
 1. Calculate current power draw CPD in kW
@@ -87,19 +87,19 @@ Overall:
 
 * Use linear equations as much as possible.
 * Make sure all physics units can be properly cancelled (also use that as a validation of your template).
-### Preparations to make an automated template
+### Preparations
 1. Make .json5 database by writing detailed comments, including description, unit, data type(int, float, str or list), and default value(if available). The key name could be abbreviation such as "ES", as long as it's consistent with the word document.
 2. Clean up word document formatting. In rare scenario, the document could be a legacy .doc file with .docx extension. You need to copy all the text and paste it into a new document.
-3. Replace numbers/strings with tags, example: `${ES}`. Make sure to adjust the formatting of the tag, as the format will be preserved.
+3. Replace numbers/strings with tags, example: `${XX}`. Make sure to adjust the formatting of the tag, as the format will be preserved.
 ### Making an automated Python template
-1. Read .json5 databases and convert it to `EasyDict`. Then you can easily access the variable by `iac.ES` instead of `iac['ES']`.
+1. Read .json5 databases and convert it to `EasyDict`. Then you can easily access the variable by `iac.XX` instead of `iac['XX']`.
 2. Perform calculations. Remember to keep the data type consistent which means you'll use `round()` frequently.
 3. Format strings. Everything needs to be formatted as strings before replacing. Thousand separator is required. Currency needs to be formatted with $ sign.
 4. Import the .docx template.
 5. Replace keys with `docx_replace()`.
-6. Save file and print caveats if requires manual operations.
+6. Save file and print caveats if requires more manual operations.
 ### Equations
-Currently, `python-docx-replace` doesn't support replacing keys in Word equations. If possible please use regular text instead of equations. If the equation is unavoidable, the workaround is to write the equation in LaTeX then convert it to Word equation and insert it to empty tags like `${ESEqn}`. Check the Lighting template for examples.
+Currently, `python-docx-replace` doesn't support replacing keys in Word equations. If possible please use regular linear text instead of equations. If the equation is unavoidable, the workaround is to write the equation in LaTeX then convert it to Word equation and insert it to empty tags like `${XXEqn}`. Check the Reduce Set Pressure template for examples.
 ### Lookup table
 Make a numpy array with table values, then use `np.interp` to get the result.
 ### Table
@@ -111,7 +111,7 @@ If the table has variable length, make more reserved lines in the word template,
 
 See Repair Leaks template for examples. 
 ### Blocks
-The .docx can have pre-defined blocks with XML tags. E.g. starts with `<AAR>` and ends with `</AAR>`. Then you may choose to enable/disable the block with `docx_blocks()`
+The .docx can have pre-defined blocks with XML tags. E.g. starts with `<XX>` and ends with `</XX>`. Then you may choose to enable/disable the block with `docx_blocks()`
 
 ## Supported AR Templates
 
@@ -121,6 +121,7 @@ The .docx can have pre-defined blocks with XML tags. E.g. starts with `<AAR>` an
 ### Compressor
 * Reduce Compressor Set Pressure
 * Repair Leaks in Compressed Air Lines
+* Install VFD on Air Compressor (Single Motor)
 
 ### Lighting
 * Switch to LED lighting (supports any number of areas)
