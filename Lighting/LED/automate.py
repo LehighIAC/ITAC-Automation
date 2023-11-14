@@ -6,14 +6,16 @@ import json5, sys, os
 from docx import Document
 from easydict import EasyDict
 from python_docx_replace import docx_replace, docx_blocks
-sys.path.append('..') 
+sys.path.append(os.path.join('..', '..')) 
 from Shared.IAC import *
 from docxcompose.composer import Composer
 import numpy as np
 
-# Load config file and convert everything to EasyDict
-jsonDict = json5.load(open('Switch to LED lighting.json5'))
-jsonDict.update(json5.load(open(os.path.join('..', 'Utility.json5'))))
+# Load utility cost
+jsonDict = json5.load(open(os.path.join('..', '..', 'Utility.json5')))
+# Load database
+jsonDict.update(json5.load(open('database.json5')))
+# Convert to easydict
 iac = EasyDict(jsonDict)
 
 # Validate the length of all lists
@@ -92,19 +94,19 @@ for i in range(N):
            iacsub[j] = iac[j][i]
 
     # Import individual area template
-    doc = Document('Switch to LED lighting 2.docx')
+    doc = Document('template 2.docx')
 
     # Replacing keys
     docx_replace(doc, **iacsub)
     # Save file as temp{i}.docx
-    doc.save('temp'+iacsub.i+'.docx')
+    doc.save('tmp'+iacsub.i+'.docx')
 
 # Import opening template
-doc = Document('Switch to LED lighting 1.docx')
+doc = Document('template 1.docx')
 # Replacing keys
 docx_replace(doc, **iac)
 # Save file as temp0.docx
-doc.save('temp0.docx')
+doc.save('tmp0.docx')
 
 # Assemble ESSum and ESSum
 iac.ESSum = iac.ESi[0] + ' kWh/yr'
@@ -114,7 +116,7 @@ for i in range(1,N):
     iac.DSSum += ' + ' + iac.DSi[i] + ' kW/yr'
 
 # Import ending template
-doc = Document('Switch to LED lighting 3.docx')
+doc = Document('template 3.docx')
 # Motion sensors block
 docx_blocks(doc, ms = MS)
 # Multi areas block
@@ -137,19 +139,20 @@ iac.INSTALL = combine_words(iac.INSTALL)
 # Replacing keys
 docx_replace(doc, **iac)
 # Save file as temp{N+1}.docx
-doc.save('temp'+str(N+1)+'.docx')
+doc.save('tmp'+str(N+1)+'.docx')
 
 # Combine all docx files
-master = Document("temp0.docx")
+master = Document("tmp0.docx")
 composer = Composer(master)
 for i in range(N+1):
-    doc_temp = Document('temp'+str(i+1)+'.docx')
-    composer.append(doc_temp)
-filename = "AR" + iac.AR + ".docx"
-composer.save(os.path.join("..", "ARs", filename))
+    doc_tmp = Document('tmp'+str(i+1)+'.docx')
+    composer.append(doc_tmp)
+filename = 'AR'+str(iac.AR)+'.docx'
+composer.save(os.path.join('..', '..', 'ARs', filename))
+
 # delete temp files
 for i in range(N+2):
-    filename = 'temp'+str(i)+'.docx'
+    filename = 'tmp'+str(i)+'.docx'
     os.remove(filename)
 
 # Caveats

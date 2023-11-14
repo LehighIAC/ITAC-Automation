@@ -8,9 +8,9 @@
   // Natural Gas Cost(for compatibility) $/MMBtu, float
   NGC: 2.95,
   // Electricity Cost $/kWh, float 0.081 orig
-  EC: 0.057,
+  EC: 0.081,
   // Demand Cost $/kW, float 4.22
-  DC: 12.79,
+  DC: 4.22,
   // Labor Rate $/hour, integer
   LR: 40,
   // Rebate Rate $/kWh.1yr, float

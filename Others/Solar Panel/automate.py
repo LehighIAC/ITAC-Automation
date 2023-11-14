@@ -6,21 +6,24 @@ import json5, sys, os, locale
 from docx import Document
 from easydict import EasyDict
 from docx.enum.text import WD_ALIGN_PARAGRAPH
-from python_docx_replace import docx_replace, docx_blocks
-sys.path.append('..') 
+from python_docx_replace import docx_replace
+sys.path.append(os.path.join('..', '..')) 
 from Shared.IAC import *
 import requests, datetime
 
-# Load config file and convert everything to EasyDict
-jsonDict = json5.load(open('Install an Array of Solar Panels.json5'))
-jsonDict.update(json5.load(open(os.path.join('..', 'Utility.json5'))))
+# Load utility cost
+jsonDict = json5.load(open(os.path.join('..', '..', 'Utility.json5')))
+# Load database
+jsonDict.update(json5.load(open('database.json5')))
+# Convert to easydict
 iac = EasyDict(jsonDict)
 
+# Different template for PA/NJ
 if iac.ST == "PA":
-    template = "Install an Array of Solar Panels - PA.docx"
+    template = "template - PA.docx"
     iac.AMV = iac.AMVPA
 elif iac.ST == "NJ":
-    template = "Install an Array of Solar Panels - NJ.docx"
+    template = "template - NJ.docx"
     iac.AMV = iac.AMVNJ
 else:
     pass
@@ -104,7 +107,7 @@ table.cell(13, 2).paragraphs[0].runs[0].bold = True
 
 # This is an AAR by default
 filename = 'AAR'+iac.AR+'.docx'
-doc.save(os.path.join('..', 'ARs', filename))
+doc.save(os.path.join('..', '..', 'ARs', filename))
 
 # Caveats
 caveat("Please check if the grabbed info is correct.")

@@ -5,14 +5,16 @@ This script is used to generate the IAC recommendation for Installing VFD on Ele
 import json5, sys, os
 from docx import Document
 from easydict import EasyDict
-from python_docx_replace import docx_replace, docx_blocks
-sys.path.append('..') 
+from python_docx_replace import docx_replace
+sys.path.append(os.path.join('..', '..')) 
 from Shared.IAC import *
 import numpy as np
 
-# Load config file and convert everything to EasyDict
-jsonDict = json5.load(open('Install VFD on Electric Motor.json5'))
-jsonDict.update(json5.load(open(os.path.join('..', 'Utility.json5'))))
+# Load utility cost
+jsonDict = json5.load(open(os.path.join('..', '..', 'Utility.json5')))
+# Load database
+jsonDict.update(json5.load(open('database.json5')))
+# Convert to easydict
 iac = EasyDict(jsonDict)
 
 ## VFD table
@@ -45,7 +47,7 @@ iac.IC = iac.VFD + iac.AIC
 
 ## Rebate
 iac.RB = round(iac.RR * iac.ES)
-iac.MRB = max(iac.RB, iac.IC/2)
+iac.MRB = min(iac.RB, iac.IC/2)
 iac.MIC = iac.IC - iac.RB
 iac.PB = payback(iac.ACS, iac.MIC)
 
@@ -61,14 +63,14 @@ iac = dollar(varList,iac,0)
 iac = grouping_num(iac)
 
 # Import docx template
-doc = Document('Install VFD on Electric Motor.docx')
+doc = Document('template.docx')
 
 # Replacing keys
 docx_replace(doc, **iac)
 
 # Save file as AR*.docx
 filename = 'AR'+str(iac.AR)+'.docx'
-doc.save(os.path.join('..', 'ARs', filename))
+doc.save(os.path.join('..', '..', 'ARs', filename))
 
 # Caveats
 caveat("Please change implementation cost references if necessary.")

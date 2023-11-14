@@ -206,6 +206,12 @@ def payback(ACS: float, IC: float) -> str:
         raise Exception("Annual Cost Savings must be a number")
     if type(IC) != int and type(IC) != float:
         raise Exception("Implementation Cost must be a number")
+    # Immediate payback
+    if IC == 0:
+        return "Immediate"
+    # Infinite or negative payback
+    if ACS <= 0:
+        return "Infinite"
     PB = IC / ACS
     if PB <= 11.0 / 12.0:
         PB = math.ceil(PB * 12.0)
