@@ -1,0 +1,20 @@
+{
+  // AR No., integer
+  AR: 1,
+  // hours per day, float (allows half hours)
+  HR: 18.0,
+  // days per week, float (allows half day on weekends)
+  DY: 6.0,
+  // weeks per year, int
+  WK: 30,
+  // Horsepower of compressors, HP, integer
+  HP: 200,
+  // Load Factor fraction, %, integer
+  FR: 83,
+  // Electrical Energy turned into heat, %, integer
+  EC: 80,
+  // Efficiency of compressor, %, integer
+  EHR: 50,
+  // Natural Gas Cost, MMBtu, float
+  NC: 5.02,
+}
