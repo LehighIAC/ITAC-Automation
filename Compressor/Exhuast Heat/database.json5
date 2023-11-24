@@ -16,5 +16,7 @@
   // Efficiency of compressor, %, integer
   EHR: 50,
   // Natural Gas Cost, MMBtu, float
-  NC: 5.02,
+  NGC: 5.02,
+  // Implementation Cost, integer
+  IC: 2500,
 }
