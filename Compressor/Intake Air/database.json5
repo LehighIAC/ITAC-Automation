@@ -9,14 +9,14 @@
   WK: 30,
   // Horsepower of compressors, HP, integer
   HP: 200,
-  // Load Factor fraction, %, integer
+  // Average indoor temperature, degrees F, integer
+  IT: 70,
+  // Compressor power fraction, %, integer
   FR: 83,
-  // Electrical Energy turned into heat, %, integer
-  EC: 80,
   // Efficiency of compressor, %, integer
-  EHR: 50,
-  // Natural Gas Cost, MMBtu, float
-  NGC: 5.02,
-  // Implementation Cost, integer
-  IC: 2500,
+  EHR: 90,
+  // Coincidence Factor, %, integer
+  CF: 80,
+  // Conversion constant, months per year, integer
+  CC: 8,
 }
