@@ -11,12 +11,16 @@
   HP: 200,
   // Average indoor temperature, degrees F, integer
   IT: 70,
+  // Area Code for average outdoor temperature, ZIP, integer
+  OT: 18015,
   // Compressor power fraction, %, integer
-  FR: 83,
+  LF: 83,
   // Efficiency of compressor, %, integer
   EHR: 90,
   // Coincidence Factor, %, integer
   CF: 80,
   // Conversion constant, months per year, integer
   CC: 8,
+  // Implementation Cost, $, integer
+  IC: 4000,
 }

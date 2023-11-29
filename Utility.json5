@@ -7,9 +7,9 @@
   FC: 2.95,
   // Natural Gas Cost(for compatibility) $/MMBtu, float
   NGC: 2.95,
-  // Electricity Cost $/kWh, float 0.081 orig
+  // Electricity Cost $/kWh, float, default 0.081
   EC: 0.081,
-  // Demand Cost $/kW, float 4.22
+  // Demand Cost $/kW, float, default 4.22
   DC: 4.22,
   // Labor Rate $/hour, integer
   LR: 40,

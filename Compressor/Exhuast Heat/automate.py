@@ -29,7 +29,8 @@ iac.ACS = round(iac.NGS * iac.NGC)
 ## Rebate
 iac.PB = payback(iac.ACS, iac.IC)
 
-# set demand to 2 digits accuracy
+## Format strings
+# set to 2 digits accuracy
 iac = dollar(['NGC'],iac,2)
 # set the rest to integer
 varList = ['ACS', 'IC']
