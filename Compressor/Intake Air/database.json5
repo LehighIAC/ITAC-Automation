@@ -1,6 +1,8 @@
 {
   // AR No., integer
   AR: 1,
+  // ZIP code for average outdoor temperature, ZIP, string
+  ZIP: "18015",
   // hours per day, float (allows half hours)
   HR: 18.0,
   // days per week, float (allows half day on weekends)
@@ -10,17 +12,15 @@
   // Horsepower of compressors, HP, integer
   HP: 200,
   // Average indoor temperature, degrees F, integer
-  IT: 70,
-  // Area Code for average outdoor temperature, ZIP, integer
-  OT: 18015,
+  TI: 70,
   // Compressor power fraction, %, integer
-  LF: 83,
+  FR: 83,
   // Efficiency of compressor, %, integer
-  EHR: 90,
+  ETA: 90,
   // Coincidence Factor, %, integer
   CF: 80,
-  // Conversion constant, months per year, integer
-  CC: 8,
+  // Winter months per year, integer
+  C2: 8,
   // Implementation Cost, $, integer
   IC: 4000,
 }
