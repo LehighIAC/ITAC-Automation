@@ -125,6 +125,9 @@ The .docx can have pre-defined blocks with XML tags. E.g. starts with `<XX>` and
 * Repair Leaks in Compressed Air Lines
 * Install VFD on Air Compressor (Single Motor)
 
+### HVAC
+* Programmable Thermostat (based on degree hours)
+
 ### Lighting
 * Switch to LED lighting (supports any number of areas)
 
