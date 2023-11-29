@@ -8,7 +8,6 @@ from easydict import EasyDict
 from python_docx_replace import docx_replace, docx_blocks
 sys.path.append(os.path.join('..', '..')) 
 from Shared.IAC import *
-import numpy as np
 
 # Load utility cost
 jsonDict = json5.load(open(os.path.join('..', '..', 'Utility.json5')))

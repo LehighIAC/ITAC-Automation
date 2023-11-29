@@ -13,10 +13,8 @@
   FR: 83,
   // Electrical Energy turned into heat, %, integer
   EC: 80,
-  // Efficiency of compressor, %, integer
+  // Efficiency of heat recovery, %, integer
   EHR: 50,
-  // Natural Gas Cost, MMBtu, float
-  NGC: 5.02,
   // Implementation Cost, integer
   IC: 2500,
 }
