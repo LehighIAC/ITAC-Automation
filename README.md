@@ -32,8 +32,8 @@ conda activate iac
 ### Install the Following Packages
 ```
 conda install json5 numpy pandas"<2" openpyxl requests
-conda install -c conda-forge python-docx docxcompose easydict latex2mathml num2words
-pip install python-docx-replace
+conda install -c conda-forge python-docx docxcompose easydict latex2mathml num2words pgeocode
+pip install python-docx-replace meteostat
 ```
 `conda` always has the highest priority. If not available, install packages from `conda-forge`. Don't install from `pip` unless you have to, otherwise there might be dependency issue.
 ### Configure VS Code Environment
@@ -119,9 +119,14 @@ The .docx can have pre-defined blocks with XML tags. E.g. starts with `<XX>` and
 * Recover Exhaust Gas Heat
 
 ### Compressor
+* Draw Compressor Intake Air from Outside
+* Use Compressor Exhaust to Heat during Winter Months
 * Reduce Compressor Set Pressure
 * Repair Leaks in Compressed Air Lines
 * Install VFD on Air Compressor (Single Motor)
+
+### HVAC
+* Programmable Thermostat (based on degree hours)
 
 ### Lighting
 * Switch to LED lighting (supports any number of areas)
