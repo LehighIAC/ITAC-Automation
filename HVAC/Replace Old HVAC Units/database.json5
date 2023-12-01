@@ -14,17 +14,17 @@
   // Proposed EER, list of floats
   EERP: [15, 15],
   // Hours per day, float (allows half hours)
-  HR: 8,
+  HR: 24,
   // Days per week, float (allows half day on weekends)
-  DY: 5,
+  DY: 7,
   // Weeks per year, int
-  WK: 32,
+  WK: 30,
   // Load Factor, %, int
   LF: 80,
   // Coincident Factor, %, int
   CF: 80,
   // Conversion Factor, mo/yr for cooling season, float
-  CS: 8,
+  CS: 6,
   // Installation Cost per ton, $, int, default 1500
   UC: 1500,
 }
