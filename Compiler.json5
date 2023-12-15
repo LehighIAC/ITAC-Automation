@@ -34,7 +34,7 @@ LEAD: 'Justin Caspar',
 // Safety Student, string
 SAFE: 'Guanyang Xue',
 // Participants, list of strings
-PARTlist: ['Muhannad Altimemy', 'Tong Su', 'Orhan Kaya'],
+PARTlist: ['Muhannad Altimemy', 'Tong Su'],
 // Contributors, list of strings
-CONTlist: ['Muhannad Altimemy', 'Tong Su', 'Orhan Kaya', 'Justin Caspar', 'Guanyang Xue'],
+CONTlist: ['Muhannad Altimemy', 'Tong Su', 'Justin Caspar', 'Guanyang Xue'],
 }

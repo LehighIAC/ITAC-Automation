@@ -256,7 +256,9 @@ iac = dollar(['EC'],iac,3)
 # set the natural gas and demand to 2 digits accuracy
 iac = dollar(['DC', 'FC'],iac,2)
 # set the rest to integer
-varList = ['ARACS', 'ARIC', 'AARACS', 'AARIC', 'TotalECost', 'TotalFCost', 'TotalCost']
+varList = ['ARACS', 'ARIC', 'TotalECost', 'TotalFCost', 'TotalCost']
+if AAR:
+    varList.extend(['AARACS', 'AARIC'])
 iac = dollar(varList,iac,0)
 # Format all numbers to string with thousand separator
 iac = grouping_num(iac)
