@@ -52,18 +52,31 @@ for ARdoc in ARList:
     print(ARdoc)
     doc = Document(os.path.join('ARs', ARdoc))
     ARinfo = {}
-    # check if the document is an AAR by title
-    ARinfo['isAAR'] = ("AAR" in doc.paragraphs[0].text.split(':')[0])
     # Record file name
     ARinfo['File Name'] = ARdoc
-    # Parse the title of the .docx file
-    ARinfo['Description'] = doc.paragraphs[0].text.split(':')[1].strip()
+
+    # Parse document title
+    fulltitle = doc.paragraphs[0].text
+    separatorFlag = False
+    # list of possible separators
+    separatorList = [":", "-", "–"]
+    for separator in separatorList:
+        if separator in fulltitle:
+            separatorFlag = True
+            # check if the document is an AAR by title
+            ARinfo['isAAR'] = ("AAR" in fulltitle.split(separator)[0])
+            # Parse the title of the .docx file
+            ARinfo['Description'] = fulltitle.split(separator)[1].strip()
+            break
+    if separatorFlag == False:
+        raise Exception("Can't parse document title:\n" + fulltitle)
+    
     # Read the 1st table in .docx files
     try:
         table = doc.tables[0]
     except:
-        print("Error: " + ARdoc + " is not a valid AR. Please check if the summary table is present.")
-        exit()
+        raise Exception("Error: " + ARdoc + " is not a valid AR. Please check if the summary table is present.")
+
     for row in table.rows:
         key = row.cells[0].text
         value = row.cells[1].text
