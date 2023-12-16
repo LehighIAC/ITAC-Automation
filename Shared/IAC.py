@@ -6,29 +6,29 @@
 def validate_arc(ARC):
     """
     Validate ARC input
-    :param ARC: Full ARC number as a string
+    :param ARC: Full ARC as a string
     """
     # json5 is too slow, use json instead.
     import os, json
     # Validate if ARC is in x.xxxx.xxx format
     ARCsplit = ARC.split('.')
     if len(ARCsplit) != 3:
-        raise Exception("ARC number must be in x.xxxx.x format")
+        raise Exception("ARC number must be in x.xxx(x).x format")
     # if ARC split are nut full numbers
     for i in range(len(ARCsplit)):
         if ARCsplit[i].isdigit() == False:
-            raise Exception("ARC number must be in x.xxxx.x format")
+            raise Exception("ARC number must be in x.xxx(x).x format")
     
     # Parse ARC code
     code = ARCsplit[0] + '.' + ARCsplit[1]
-    # Read ARC.json5 as dictionary
+    # Read ARC.json as dictionary
     arc_path = os.path.dirname(os.path.abspath(__file__))
     ARCdict = json.load(open(os.path.join(arc_path, 'ARC.json')))
-    desc = ARCdict[code]
-    if desc == None:
-        print("ARC code not found.")
-    else:
+    try:
+        desc = ARCdict[code]
         print(code + ": "+ desc)
+    except:
+        raise Exception("ARC not found.") 
 
     # Parse application code
     app = ARCsplit[2]
@@ -41,7 +41,7 @@ def validate_arc(ARC):
     elif app == '4':
         print("Application code 4: Administrative")
     else:
-        print("Application code not found.")
+        raise Exception("Application code not found.")
 
     print("")
 
