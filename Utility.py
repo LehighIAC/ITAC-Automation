@@ -53,12 +53,11 @@ else:
 
 # Open Utility.json5 as text
 try:
-    with open('utility.json5', 'r') as f:
+    with open('Utility.json5', 'r') as f:
         utility = f.read()
         f.close()
 except FileNotFoundError:
-    print('utility.json5 not found.')
-    os._exit(1)
+    raise Exception('Utility.json5 not found.')
 
 # Replace values in Utility.json5
 utility = re.sub(r'EC: .*', 'EC: ' + str(EC) + ',', utility)
@@ -78,11 +77,10 @@ utility = re.sub(r'TotalFCost: .*', 'TotalFCost: ' + str(TotalFCost) + ',', util
 utility = re.sub(r'TotalBtu: .*', 'TotalBtu: ' + str(TotalBtu) + ',', utility)
 utility = re.sub(r'TotalCost: .*', 'TotalCost: ' + str(TotalCost) + ',', utility)
 
-# Save utility.json5
+# Save Utility.json5
 try:
-    with open('utility.json5', 'w') as f:
+    with open('Utility.json5', 'w') as f:
         f.write(utility)
         f.close()
 except FileNotFoundError:
-    print('utility.json5 not found.')
-    os._exit(1)
+    raise Exception('Utility.json5 not found.')
