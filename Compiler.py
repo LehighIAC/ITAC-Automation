@@ -66,7 +66,7 @@ for ARdoc in ARList:
             # check if the document is an AAR by title
             ARinfo['isAAR'] = ("AAR" in fulltitle.split(separator)[0])
             # Parse the title of the .docx file
-            ARinfo['Description'] = fulltitle.split(separator)[1].strip()
+            ARinfo['Description'] = title_case(fulltitle.split(separator)[1].strip())
             break
     if separatorFlag == False:
         raise Exception("Can't parse document title:\n" + fulltitle)

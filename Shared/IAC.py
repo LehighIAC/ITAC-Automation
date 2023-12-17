@@ -2,6 +2,26 @@
 (Purpose) IAC.py is a module that contains functions used in the IAC report
 """
 
+def title_case(text: str) -> str:
+    """
+    Make title case in natural language
+    :param text: String
+    :return: formatted string with title case in natural language
+    """
+    lowerexceptions = ["a","an","and","as","at","but","by","for","if","in","nor","not","of","off","on","or","per","the","to","so","up","via","yet"]
+    upperexceptions = ["VFD","(VFD)","LED"]
+    text = text.split()
+    # Capitalize every word that is not on "exceptions" list
+    for i, word in enumerate(text):
+        if i==0:
+            text[i] = word.title()
+        elif word.lower() in lowerexceptions:
+            text[i] = word.lower()
+        elif word.upper() in upperexceptions:
+            text[i] = word.upper()
+        else:
+            text[i] = word.title()
+    return ' '.join(text)
 
 def validate_arc(ARC):
     """
