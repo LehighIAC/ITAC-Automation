@@ -11,6 +11,7 @@ from easydict import EasyDict
 from docx import Document, shared
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.section import WD_ORIENT
+from docx.enum.style import WD_STYLE_TYPE
 from docxcompose.composer import Composer
 from python_docx_replace import docx_replace, docx_blocks
 from Shared.IAC import *
@@ -182,21 +183,29 @@ iac.PB = payback(iac.ARACS, iac.ARIC)
 print("done")
 
 print("Reformatting ARs...", end ="")
+subtitlelist = ["Recommended Action","Summary of Estimated Savings and Implementation Costs","Current Practice and Observations","Anticipated Savings","Implementation Cost","Implementation Cost References"]
 ## Reformatting ARs
 for index, row in AR_df.iterrows():
     doc = Document(os.path.join('ARs', row['File Name']))
     # Change title and make it upper case
     doc.paragraphs[0].text = "AR "+ str(index+1) + ': ' + row['Description'].upper()
-    # Set font to bold
-    doc.paragraphs[0].runs[0].bold = True
-    # Set font to upright
-    doc.paragraphs[0].runs[0].italic = False
-    # Set font to no underline
-    doc.paragraphs[0].runs[0].underline = False
-    # Set font size to 12
-    doc.paragraphs[0].runs[0].font.size = shared.Pt(12)
-    # Add pagebreak to the end of the document
-    doc.add_page_break()
+    # Enforce Heading 1
+    try:
+        doc.paragraphs[0].style = doc.styles['Heading 1']
+    except:
+        doc.styles.add_style('Heading 1', WD_STYLE_TYPE.PARAGRAPH)
+        doc.paragraphs[0].style = doc.styles['Heading 1']
+    # Enforce subtitle to be Subtitle1
+    # This style is already defined in Introduction.docx
+    for paragraph in doc.paragraphs:
+        for subtitle in subtitlelist:
+            if paragraph.text == subtitle:
+                try:
+                    paragraph.style = doc.styles['Subtitle1']
+                except:
+                    doc.styles.add_style('Subtitle1', WD_STYLE_TYPE.PARAGRAPH)
+                    paragraph.style = doc.styles['Subtitle1']
+    # Save file with sorted filename
     doc.save(os.path.join('ARs', 'Sorted', 'AR'+ str(index+1) + '.docx'))
 print("done")
 
@@ -227,16 +236,23 @@ if AAR:
         doc = Document(os.path.join('ARs', row['File Name']))
         # Change title and make it upper case
         doc.paragraphs[0].text = "AAR "+ str(index+1) + ': ' + row['Description'].upper()
-        # Set font to bold
-        doc.paragraphs[0].runs[0].bold = True
-        # Set font to upright
-        doc.paragraphs[0].runs[0].italic = False
-        # Set font to no underline
-        doc.paragraphs[0].runs[0].underline = False
-        # Set font size to 12
-        doc.paragraphs[0].runs[0].font.size = shared.Pt(12)
-        # Add pagebreak to the end of the document
-        doc.add_page_break()
+        # Enforce Heading 1
+        try:
+            doc.paragraphs[0].style = doc.styles['Heading 1']
+        except:
+            doc.styles.add_style('Heading 1', WD_STYLE_TYPE.PARAGRAPH)
+            doc.paragraphs[0].style = doc.styles['Heading 1']
+        # Enforce subtitle to be Subtitle1
+        # This style is already defined in Introduction.docx
+        for paragraph in doc.paragraphs:
+            for subtitle in subtitlelist:
+                if paragraph.text == subtitle:
+                    try:
+                        paragraph.style = doc.styles['Subtitle1']
+                    except:
+                        doc.styles.add_style('Subtitle1', WD_STYLE_TYPE.PARAGRAPH)
+                        paragraph.style = doc.styles['Subtitle1']
+        # Save file with sorted filename
         doc.save(os.path.join('ARs', 'Sorted', 'AAR'+ str(index+1) + '.docx'))
     print("done")
 
@@ -456,33 +472,30 @@ filename_energy = iac.LE + '-energy.docx'
 doc_energy.save(filename_energy)
 
 print("Combining all docs...", end ="")
-# A list of docs to combine
+# List of docs to combine
 docList = [os.path.join('Report', 'ToC.docx')]
-ARList = []
 for ARlen in range(1, len(AR_df)+1):
-    ARList.append(os.path.join('ARs', 'Sorted','AR' + str(ARlen) + '.docx'))
-docList.extend(ARList)
+    docList.append(os.path.join('ARs', 'Sorted','AR' + str(ARlen) + '.docx'))
 if AAR:
     docList.append(os.path.join('Report', 'AAR.docx'))
-    AARList = []
     for AARlen in range(1, len(AAR_df)+1):
-        AARList.append(os.path.join('ARs', 'Sorted','AAR' + str(AARlen) + '.docx'))
-    docList.extend(AARList)
+        docList.append(os.path.join('ARs', 'Sorted','AAR' + str(AARlen) + '.docx'))
 else:
     pass
-# docList.append(os.path.join('Report','Background.docx'))
-docList.append(filename_back)
-# docList.append(os.path.join('Report','Background.docx'))
-docList.append(filename_energy)
 
 # Combine all docx files
 master = Document(filename_intro)
+master.add_page_break()
 composer = Composer(master)
 for i in range(0, len(docList)):
-    doc_temp = Document(docList[i])
-    composer.append(doc_temp)
+    doc_add = Document(docList[i])
+    doc_add.add_page_break()
+    composer.append(doc_add)
+composer.append(Document(filename_back))
+composer.append(Document(filename_energy))
 filename = iac.LE +'.docx'
 composer.save(filename)
+
 # delete temp files
 os.remove(filename_intro)
 os.remove(filename_back)
@@ -491,9 +504,7 @@ print("done")
 
 # Open the combined docx file
 doc = Document(filename)
-# Change the orientation of the last section back to landscape
-# If anything goes wrong, check if there's a section break
-# at the end of background.docx
+# Change the orientation of the last section to landscape
 section = doc.sections[-1]
 new_width, new_height = section.page_height, section.page_width
 section.orientation = WD_ORIENT.LANDSCAPE
