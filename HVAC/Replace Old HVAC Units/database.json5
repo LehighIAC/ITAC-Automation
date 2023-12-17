@@ -1,0 +1,30 @@
+{
+  // AR No., integer
+  AR: 2,
+  // Frequent Maintenance, boolean
+  FM: true,
+  // HVAC size, tons, list of float
+  TON: [6, 12],
+  // HVAC Location, list of string
+  AREA: ["Office", "Warehouse"],
+  // HVAC Age, years, list of integers
+  AGE: [20, 20],
+  // Assumed Base EER, list of floats
+  EERB: [10, 10],
+  // Proposed EER, list of floats
+  EERP: [15, 15],
+  // Hours per day, float (allows half hours)
+  HR: 24,
+  // Days per week, float (allows half day on weekends)
+  DY: 7,
+  // Weeks per year, int
+  WK: 30,
+  // Load Factor, %, int
+  LF: 80,
+  // Coincident Factor, %, int
+  CF: 80,
+  // Conversion Factor, mo/yr for cooling season, float
+  CS: 6,
+  // Installation Cost per ton, $, int, default 1500
+  UC: 1500,
+}
