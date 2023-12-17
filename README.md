@@ -127,6 +127,7 @@ The .docx can have pre-defined blocks with XML tags. E.g. starts with `<XX>` and
 
 ### HVAC
 * Programmable Thermostat (based on degree hours)
+* Replace Old HVAC Units
 
 ### Lighting
 * Switch to LED lighting (supports any number of areas)
