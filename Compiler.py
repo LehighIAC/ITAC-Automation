@@ -109,14 +109,24 @@ for ARdoc in ARList:
         else:
             # If the value contains mmbtu, parse it as other energy
             if "mmbtu" in value.lower():
-                # Remove the last word (usually "savings")
-                ARinfo['Other Energy Type'] = key.rsplit(' ', 1)[0]
+                # Remove "annual" (usually the first word)
+                if "annual" in key.lower():
+                    key = key.split(' ', 1)[1]
+                # Remove "savings" (usually the last word)
+                if "saving" in key.lower():
+                    key = key.rsplit(' ', 1)[0]
+                ARinfo['Other Energy Type'] = title_case(key)
                 # Parse number
                 ARinfo['Other Energy Amount'] = locale.atoi(value.split(' ')[0])
             # If not, parse it as other resource
             else:
-                # Remove the last word (usually "savings")
-                ARinfo['Other Resource Type'] = key.rsplit(' ', 1)[0]
+                # Remove "annual" (usually the first word)
+                if "annual" in key.lower():
+                    key = key.split(' ', 1)[1]
+                # Remove "savings" (usually the last word)
+                if "saving" in key.lower():
+                    key = key.rsplit(' ', 1)[0]
+                ARinfo['Other Resource Type'] = title_case(key)
                 # Keep the whole string
                 ARinfo['Other Resource Amount'] = value   
     # Add dictionary to dataframe
@@ -171,8 +181,16 @@ NMMBtu = AR_df['Natural Gas (MMBtu)'].sum(axis=0, skipna=True)
 OMMBtu = AR_df['Other Energy Amount'].sum(axis=0, skipna=True)
 # Add up all energy in MMBtu
 iac.ARMMBtu = round(EMMBtu + NMMBtu + OMMBtu)
-# Calculate CO2 (Currently other type of energy ignored)
-iac.CO2 = round((53 * NMMBtu + 0.22 * EkWh)/1000)
+# Calculate CO2
+if iac.FuelType == "Natural Gas":
+    iac.FuelCO2 = 53
+    iac.CO2 = round((iac.FuelCO2 * NMMBtu + 0.315 * EkWh)/1000)
+elif iac.FuelType == "Propane":
+    iac.FuelCO2 = 61.7
+    iac.CO2 = round((iac.FuelCO2 * OMMBtu + 0.315 * EkWh)/1000)
+elif iac.FuelType == "Fuel Oil #2":
+    iac.FuelCO2 = 73.51
+    iac.CO2 = round((iac.FuelCO2 * OMMBtu + 0.315 * EkWh)/1000)
 # Add up all cost
 iac.ARACS = AR_df['Annual Cost Savings'].sum(axis=0, skipna=True)
 iac.ARIC = AR_df['Implementation Cost'].sum(axis=0, skipna=True)
