@@ -3,27 +3,11 @@ Automated Python script for Lehigh University Industrial Assessment Center
 ## Guide for New IAC Members
 Of course, you need to have Microsoft Office installed.
 ### Windows
-0. Install [VS code](https://code.visualstudio.com/download), [Anaconda](https://www.anaconda.com/download), [Github Desktop](https://desktop.github.com), and [git](https://gitforwindows.org/) (all default).
+Install [VS code](https://code.visualstudio.com/download), [Anaconda](https://www.anaconda.com/download), [Github Desktop](https://desktop.github.com), and [git](https://gitforwindows.org/) (all default).
 ### macOS
-0. Install [homebrew](https://brew.sh) then```brew install --cask visual-studio-code anaconda github```
+Install [homebrew](https://brew.sh) then```brew install --cask visual-studio-code anaconda github```
 ### Linux
 LibreOffice compatibility is not guaranteed.
-### For all operating systems
-1. In VS Code, go to `Extensions`(Ctrl+Shift+X), install `Python` (from Microsoft) and `JSON5 syntax` from mrmlnc.
-
-2. Register a GitHub account with your Lehigh email, then **fork** the [main repository](https://github.com/LehighIAC/IAC-Automation/tree/main). It will make a copy under your account.
-
-3. Sign in GitHub Desktop, **clone your fork** (not the main repository) to the local computer. The fork should be under your username.
-
-4. **IMPORTANT**  Switch to **develop** branch.
-
-4. After validating your proposed changes, go to Github Desktop to `commit` and `push` new code to your fork. *Remember to write detailed comments so other people can understand your proposed changes.*
-   
-5. Go to GitHub website (there should be a shortcut in Github Desktop) and send a pull request. *Remember to write detailed comments so other people can understand your proposed changes.*
-
-6. DO NOT include any sensitive information such as plant name and address when contributing code.
-
-7. After reviewing the code, The IAC Admin can approve and merge your proposed changes.
 
 ## Setting up Python environment
 ### Open Anaconda Terminal, or VS Code Terminal.
@@ -38,15 +22,19 @@ conda install -c conda-forge python-docx docxcompose easydict latex2mathml num2w
 pip install python-docx-replace meteostat
 ```
 `conda` always has the highest priority. If not available, install packages from `conda-forge`. Don't install from `pip` unless you have to, otherwise there might be dependency issue.
-### Configure VS Code Environment
-In VS Code, press Ctrl+Shift+P, search `Python: Select Interpreter` and select the `iac` environment you just created.
+### Configure VS Code
+Go to `Extensions`(Ctrl+Shift+X), install `Python` (from Microsoft) and `JSON5 syntax` from mrmlnc.
+Press Ctrl+Shift+P, search `Python: Select Interpreter` and select the `iac` environment you just created.
 ### NOTE: IF YOU WISH TO REMOVE THIS ENVIRONMENT
 ```
 conda remove --name iac --all
 ```
+
 ## Using templates
-Is it suggested to work on a copy of this reposiotry when generating an IAC report
+Is it suggested to work on a copy of this reposiotry when generating an IAC report. 
 For your convenience, download the main branch from this link: https://codeload.github.com/LehighIAC/IAC-Automation/zip/refs/heads/main
+
+Use VS Code to open the extracted folder.
 ### Energy Charts
 1. Edit `Energy Charts.xlsx`. Select `fuel type` ,`fuel unit` and `start month`, then edit raw data (if copying from other spreadsheet, copy values only). The formatting is fully automatic and shouldn't be touched.
 2. Save the workbook as `Web Page (.htm)` format in the same directory. DO NOT change the filename, all images will be  kept in `Energy Charts.fld` folder. Currently  this is the only stable way to save all charts as images.
@@ -54,7 +42,6 @@ For your convenience, download the main branch from this link: https://codeload.
 ### Assessment Recommendations
 1. Edit `.json5` database of any specific AR. Make sure the data type is matching the description.
 2. Run the corresponding `.py` file. The output will be saved in `ARs` directory. Follow the instructions of the script if there's anything you need to adjust manually.
-
 ### Requirements of AR Files:
 1. No requirement for filename, as long as it's `.docx`
 2. Doesn't matter if the file is made from Python template, Excel template, or by hand. Please **break links** if you used Excel templates.
@@ -62,7 +49,6 @@ For your convenience, download the main branch from this link: https://codeload.
 4. If there's any other type of energy savings, the unit should be `MMBtu`.
 5. All subtitles, such as "Recommend Actions", "Anticipated Savings" should always be **body text** in outline view. Otherwise the automatic table of contents might be broken.
 6. In rare cases, some .docx files are actually wrapped legacy .doc file (pre Word 2000) and is not supported by this tool. Please copy and paste everything to a new blank .docx file. 
-
 ### Compiling Report
 1. Fill required plant information in `Compiler.json5`.
 2. Copy all AR files(if you have any from other sources) into `ARs` directory.
@@ -71,33 +57,32 @@ For your convenience, download the main branch from this link: https://codeload.
 5. Fill the rest of the information manually.
 
 ## Supported AR Templates
-
 ### Boiler
 * Recover Exhaust Gas Heat
-
 ### Compressor
 * Draw Compressor Intake Air from Outside
 * Use Compressor Exhaust to Heat during Winter Months
 * Reduce Compressor Set Pressure
 * Repair Leaks in Compressed Air Lines
 * Install VFD on Air Compressor (Single Motor)
-
 ### HVAC
 * Programmable Thermostat (based on degree hours)
 * Replace Old HVAC Units
-
 ### Lighting
 * Switch to LED lighting (supports any number of areas)
-
 ### Motors
 * Install VFD on Electric Motor (Single Motor)
-
 ### Others
 * Install Solar Panel (fully automated using PVWatts API)
 
-
 ## Developing New Templates
-**Always make changes in the `develop` branch**!
+1. Register a GitHub account with your Lehigh email, then **fork** the [main repository](https://github.com/LehighIAC/IAC-Automation/tree/main). It will make a copy under your account.
+2. Sign in GitHub Desktop, **clone your fork** (not the main repository) to the local computer. The fork should be under your username.
+3. **IMPORTANT**  Switch to **develop** branch.
+4. After **validating** your proposed changes, go to Github Desktop to `commit` and `push` new code to your fork. *Remember to write detailed comments so other people can understand your proposed changes.* 
+5. Go to GitHub website (there should be a shortcut in Github Desktop) and send a pull request. *Remember to write detailed comments so other people can understand your proposed changes.*
+6. DO NOT include any sensitive information such as plant name and address when contributing code.
+7. After reviewing the code, The IAC Admin can approve and merge your proposed changes.
 
 An automated template is usually made of 3 parts:
 1. `template.docx` with tags to be replaced.
@@ -111,11 +96,9 @@ For electricity:
 4. Calculate demand savings DS = (CPD - PPD) * Coincidence Factor %/month * 12 months/year, in kW/yr
 
 For natural gas:
-
 5. Calculate natural gas savings NGS (or any other fuel) in MMBtu/yr
 
 Overall:
-
 6. Calculate annnal cost savings ACS = sum(energy savings * unit price), in $
 
 * Use linear equations as much as possible.
