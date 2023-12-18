@@ -3,7 +3,7 @@ Automated Python script for Lehigh University Industrial Assessment Center
 ## Guide for New IAC Members
 Of course, you need to have Microsoft Office installed.
 ### Windows
-Install [VS code](https://code.visualstudio.com/download), [Anaconda](https://www.anaconda.com/download), [Github Desktop](https://desktop.github.com), and [git](https://gitforwindows.org/) (all default).
+Install [VS code](https://code.visualstudio.com/download) and [Anaconda](https://www.anaconda.com/download).
 ### macOS
 Install [homebrew](https://brew.sh) then```brew install --cask visual-studio-code anaconda github```
 ### Linux
@@ -23,7 +23,7 @@ pip install python-docx-replace meteostat
 ```
 `conda` always has the highest priority. If not available, install packages from `conda-forge`. Don't install from `pip` unless you have to, otherwise there might be dependency issue.
 ### Configure VS Code
-Go to `Extensions`(Ctrl+Shift+X), install `Python` (from Microsoft) and `JSON5 syntax` from mrmlnc.
+Go to `Extensions`(Ctrl+Shift+X), install `Python` (from Microsoft) and `JSON5 syntax` (from mrmlnc).
 Press Ctrl+Shift+P, search `Python: Select Interpreter` and select the `iac` environment you just created.
 ### NOTE: IF YOU WISH TO REMOVE THIS ENVIRONMENT
 ```
@@ -76,6 +76,10 @@ Use VS Code to open the extracted folder.
 * Install Solar Panel (fully automated using PVWatts API)
 
 ## Developing New Templates
+### Windows
+Install [Github Desktop](https://desktop.github.com), and [git](https://gitforwindows.org/) (all default).
+### macOS
+```brew install --cask github``` 
 1. Register a GitHub account with your Lehigh email, then **fork** the [main repository](https://github.com/LehighIAC/IAC-Automation/tree/main). It will make a copy under your account.
 2. Sign in GitHub Desktop, **clone your fork** (not the main repository) to the local computer. The fork should be under your username.
 3. **IMPORTANT**  Switch to **develop** branch.
