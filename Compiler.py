@@ -109,14 +109,24 @@ for ARdoc in ARList:
         else:
             # If the value contains mmbtu, parse it as other energy
             if "mmbtu" in value.lower():
-                # Remove the last word (usually "savings")
-                ARinfo['Other Energy Type'] = key.rsplit(' ', 1)[0]
+                # Remove "annual" (usually the first word)
+                if "annual" in key.lower():
+                    key = key.split(' ', 1)[1]
+                # Remove "savings" (usually the last word)
+                if "saving" in key.lower():
+                    key = key.rsplit(' ', 1)[0]
+                ARinfo['Other Energy Type'] = title_case(key)
                 # Parse number
                 ARinfo['Other Energy Amount'] = locale.atoi(value.split(' ')[0])
             # If not, parse it as other resource
             else:
-                # Remove the last word (usually "savings")
-                ARinfo['Other Resource Type'] = key.rsplit(' ', 1)[0]
+                # Remove "annual" (usually the first word)
+                if "annual" in key.lower():
+                    key = key.split(' ', 1)[1]
+                # Remove "savings" (usually the last word)
+                if "saving" in key.lower():
+                    key = key.rsplit(' ', 1)[0]
+                ARinfo['Other Resource Type'] = title_case(key)
                 # Keep the whole string
                 ARinfo['Other Resource Amount'] = value   
     # Add dictionary to dataframe
