@@ -1,16 +1,18 @@
 # IAC-Automation
 Automated Python script for Lehigh University Industrial Assessment Center
-## Guide for New IAC Members
-Of course, you need to have Microsoft Office installed.
+
+This tutorial is designed for Mechanical Engineering people with zero programming knowledge.
+## Required Software
+Of course, you need to install Microsoft Office. https://confluence.cc.lehigh.edu/display/LKB/Windows+or+macOS%3A++Download+and+Install+Office+365
 ### Windows
 Install [VS code](https://code.visualstudio.com/download) and [Anaconda](https://www.anaconda.com/download).
 ### macOS
-Install [homebrew](https://brew.sh) then```brew install --cask visual-studio-code anaconda github```
+Install [homebrew](https://brew.sh) then```brew install --cask visual-studio-code anaconda```
 ### Linux
 LibreOffice compatibility is not guaranteed.
 
 ## Setting up Python environment
-### Open Anaconda Terminal, or VS Code Terminal.
+### Open Anaconda Prompt
 ```
 conda create -n iac python=3.8 
 conda activate iac 
@@ -31,10 +33,12 @@ conda remove --name iac --all
 ```
 
 ## Using templates
-Is it suggested to work on a copy of this reposiotry when generating an IAC report. 
-For your convenience, download the main branch from this link: https://codeload.github.com/LehighIAC/IAC-Automation/zip/refs/heads/main
+Is it suggested to work on a **copy** of this reposiotry when generating an IAC report. 
 
-Use VS Code to open the extracted folder.
+For your convenience, download the main branch from this link: https://codeload.github.com/LehighIAC/IAC-Automation/zip/refs/heads/main , then use VS Code to open the **folder**.
+
+![iac](https://github.com/LehighIAC/IAC-Automation/assets/12702149/0344e0ce-f8c8-4d39-81cb-99f52df6789f)
+
 ### Energy Charts
 1. Edit `Energy Charts.xlsx`. Select `fuel type` ,`fuel unit` and `start month`, then edit raw data (if copying from other spreadsheet, copy values only). The formatting is fully automatic and shouldn't be touched.
 2. Save the workbook as `Web Page (.htm)` format in the same directory. DO NOT change the filename, all images will be  kept in `Energy Charts.fld` folder. Currently  this is the only stable way to save all charts as images.
@@ -74,61 +78,3 @@ Use VS Code to open the extracted folder.
 * Install VFD on Electric Motor (Single Motor)
 ### Others
 * Install Solar Panel (fully automated using PVWatts API)
-
-## Developing New Templates
-### Windows
-Install [Github Desktop](https://desktop.github.com), and [git](https://gitforwindows.org/) (all default).
-### macOS
-```brew install --cask github``` 
-1. Register a GitHub account with your Lehigh email, then **fork** the [main repository](https://github.com/LehighIAC/IAC-Automation/tree/main). It will make a copy under your account.
-2. Sign in GitHub Desktop, **clone your fork** (not the main repository) to the local computer. The fork should be under your username.
-3. **IMPORTANT**  Switch to **develop** branch.
-4. After **validating** your proposed changes, go to Github Desktop to `commit` and `push` new code to your fork. *Remember to write detailed comments so other people can understand your proposed changes.* 
-5. Go to GitHub website (there should be a shortcut in Github Desktop) and send a pull request. *Remember to write detailed comments so other people can understand your proposed changes.*
-6. DO NOT include any sensitive information such as plant name and address when contributing code.
-7. After reviewing the code, The IAC Admin can approve and merge your proposed changes.
-
-An automated template is usually made of 3 parts:
-1. `template.docx` with tags to be replaced.
-2. `database.json5` saving input numbers and strings.
-3. `automate.py` performing calculation and formatting.
-### Standardized template
-For electricity:
-1. Calculate current power draw CPD in kW
-2. Calculate proposed power draw PPD in kW
-3. Calculate electricity savings ES = CPD * Operating Hours - PPD * Opearting Hours, in kWh/yr
-4. Calculate demand savings DS = (CPD - PPD) * Coincidence Factor %/month * 12 months/year, in kW/yr
-
-For natural gas:
-5. Calculate natural gas savings NGS (or any other fuel) in MMBtu/yr
-
-Overall:
-6. Calculate annnal cost savings ACS = sum(energy savings * unit price), in $
-
-* Use linear equations as much as possible.
-* Make sure all physics units can be properly cancelled (also use that as a validation of your template).
-### Preparations
-1. Make .json5 database by writing detailed comments, including description, unit, data type(int, float, str or list), and default value(if available). The key name could be abbreviation such as "ES", as long as it's consistent with the word document.
-2. Clean up word document formatting. In rare scenario, the document could be a legacy .doc file with .docx extension. You need to copy all the text and paste it into a new document.
-3. Replace numbers/strings with tags, example: `${XX}`. Make sure to adjust the formatting of the tag, as the format will be preserved.
-### Making an automated Python template
-1. Read .json5 databases and convert it to `EasyDict`. Then you can easily access the variable by `iac.XX` instead of `iac['XX']`.
-2. Perform calculations. Remember to keep the data type consistent which means you'll use `round()` frequently.
-3. Format strings. Everything needs to be formatted as strings before replacing. Thousand separator is required. Currency needs to be formatted with $ sign.
-4. Import the .docx template.
-5. Replace keys with `docx_replace()`.
-6. Save file and print caveats if requires more manual operations.
-### Equations
-Currently, `python-docx-replace` doesn't support replacing keys in Word equations. If possible please use regular linear text instead of equations. If the equation is unavoidable, the workaround is to write the equation in LaTeX then convert it to Word equation and insert it to empty tags like `${XXEqn}`. Check the Reduce Set Pressure template for examples.
-### Lookup table
-Make a numpy array with table values, then use `np.interp` to get the result.
-### Table
-If there's any table that needs to be filled with calculated numbers, do the following:
-
-If the table has fixed length, simply access the table and fill in texts.
-
-If the table has variable length, make more reserved lines in the word template, then fill in texts and delete empty lines.
-
-See Repair Leaks template for examples. 
-### Blocks
-The .docx can have pre-defined blocks with XML tags. E.g. starts with `<XX>` and ends with `</XX>`. Then you may choose to enable/disable the block with `docx_blocks()`
