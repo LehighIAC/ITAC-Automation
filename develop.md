@@ -57,3 +57,6 @@ If there's any table that needs to be filled with calculated numbers, do the fol
 If the table has fixed length, simply access the table and fill in texts.
 
 If the table has variable length, make more reserved lines in the word template, then fill in texts and delete empty lines.
+See Repair Leaks template for examples. 
+### Blocks
+The .docx can have pre-defined blocks with XML tags. E.g. starts with `<XX>` and ends with `</XX>`. Then you may choose to enable/disable the block with `docx_blocks()`
