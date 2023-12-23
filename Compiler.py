@@ -547,4 +547,5 @@ print(filename + " is finished.")
 
 # Caveats
 caveat("Please add Process Description, Major Equipment, Current Best Practices, and plant layout image.")
-caveat("Please refresh ToC, tables and figures after running this script.")
+caveat("Please refresh ToC, list of tables/figures after running this script.")
+caveat("After refreshing references, please manully set list of tables/figure to NO BOLD.")
