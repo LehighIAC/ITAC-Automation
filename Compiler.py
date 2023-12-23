@@ -338,7 +338,13 @@ for index, row in AR_df.iterrows():
     ARrow[5].text = locale.currency(row['Implementation Cost'], grouping=True)
     ARrow[5].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.RIGHT
     # Add payback period
-    ARrow[6].text = str(round(row['Payback Period'],1))
+    pb = row['Payback Period']
+    if pb == 0:
+        ARrow[6].text = "Immediate"
+    elif pb < 0.1:
+        ARrow[6].text = "0.1"
+    else:
+        ARrow[6].text = str(round(pb,1))
     ARrow[6].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.RIGHT
     # Set 3pt before and after paragraph
     for col in range(0,7):
@@ -375,7 +381,13 @@ if AAR:
         AARrow[5].text = locale.currency(row['Implementation Cost'], grouping=True)
         AARrow[5].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.RIGHT
         # Add payback period
-        AARrow[6].text = str(round(row['Payback Period'],1))
+        pb = row['Payback Period']
+        if pb == 0:
+            AARrow[6].text = "Immediate"
+        elif pb < 0.1:
+            AARrow[6].text = "0.1"
+        else:
+            AARrow[6].text = str(round(pb,1))
         AARrow[6].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.RIGHT
     # Set 3pt before and after paragraph
     for col in range(0,7):
