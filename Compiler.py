@@ -201,7 +201,7 @@ iac.PB = payback(iac.ARACS, iac.ARIC)
 print("done")
 
 print("Reformatting ARs...", end ="")
-subtitlelist = ["Recommended Action","Summary of Estimated Savings and Implementation Costs","Current Practice and Observations","Anticipated Savings","Implementation Cost","Implementation Cost References"]
+subtitlelist = ["Recommended Actions","Summary of Estimated Savings and Implementation Costs","Current Practice and Observations","Anticipated Savings","Implementation Costs","Implementation Cost References"]
 ## Reformatting ARs
 for index, row in AR_df.iterrows():
     doc = Document(os.path.join('ARs', row['File Name']))
@@ -217,7 +217,7 @@ for index, row in AR_df.iterrows():
     # This style is already defined in Introduction.docx
     for paragraph in doc.paragraphs:
         for subtitle in subtitlelist:
-            if paragraph.text == subtitle:
+            if paragraph.text == subtitle or paragraph.text == subtitle[:-1]:
                 try:
                     paragraph.style = doc.styles['Subtitle1']
                 except:
