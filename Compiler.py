@@ -297,6 +297,9 @@ iac.CONT = CONT.rstrip('\n')
 iac.pop('CONTlist')
 print("done")
 
+# products in lower cases
+iac.PRODlower = iac.PROD.lower()
+
 ## Format strings
 # set electricity cost to 3 digits accuracy
 iac = dollar(['EC'],iac,3)
