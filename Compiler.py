@@ -280,18 +280,18 @@ print("Parsing plant information...", end ="")
 VD = datetime.datetime.strptime(iac.VDATE, '%B %d, %Y')
 RDATE = min(datetime.datetime.today(), VD + datetime.timedelta(days=60))
 iac.RDATE = datetime.datetime.strftime(RDATE, '%B %-d, %Y')
+
 # Sort participant and contributor name list
+iac.PARTlist.sort(key=lambda x: x.rsplit(' ', 1)[1])
 PART=""
 for name in iac.PARTlist:
-    # Sort by last name
-    iac.PARTlist.sort(key=lambda x: x.rsplit(' ', 1)[1])
     PART  = PART + name + '\n'
 iac.PART = PART.rstrip('\n')
 iac.pop('PARTlist')
+
+iac.CONTlist.sort(key=lambda x: x.rsplit(' ', 1)[1])
 CONT=""
 for name in iac.CONTlist:
-    # Sort by last name
-    iac.CONTlist.sort(key=lambda x: x.rsplit(' ', 1)[1])
     CONT  = CONT + name + '\n'
 iac.CONT = CONT.rstrip('\n')
 iac.pop('CONTlist')
