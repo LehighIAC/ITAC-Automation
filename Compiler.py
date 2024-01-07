@@ -279,7 +279,7 @@ print("Parsing plant information...", end ="")
 # Report date = today or 60 days after assessment, which ever is earlier
 VD = datetime.datetime.strptime(iac.VDATE, '%B %d, %Y')
 RDATE = min(datetime.datetime.today(), VD + datetime.timedelta(days=60))
-iac.RDATE = datetime.datetime.strftime(RDATE, '%B %d, %Y')
+iac.RDATE = datetime.datetime.strftime(RDATE, '%B %-d, %Y')
 # Sort participant and contributor name list
 PART=""
 for name in iac.PARTlist:
