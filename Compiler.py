@@ -5,7 +5,7 @@ then run this script.
 """
 
 
-import json5, os, locale, datetime
+import json5, os, locale, datetime, math
 import pandas as pd
 from easydict import EasyDict
 from docx import Document, shared
@@ -195,7 +195,7 @@ elif iac.FuelType == "Fuel Oil #2":
 iac.ARACS = AR_df['Annual Cost Savings'].sum(axis=0, skipna=True)
 iac.ARIC = AR_df['Implementation Cost'].sum(axis=0, skipna=True)
 # Payback period in number
-iac.ARPB = round(iac.ARIC / iac.ARACS, 1)
+iac.ARPB = math.ceil(iac.ARIC / iac.ARACS * 10) / 10
 # Payback period in formatted string
 iac.PB = payback(iac.ARACS, iac.ARIC)
 print("done")
@@ -344,10 +344,8 @@ for index, row in AR_df.iterrows():
     pb = row['Payback Period']
     if pb == 0:
         ARrow[6].text = "Immediate"
-    elif pb < 0.1:
-        ARrow[6].text = "0.1"
     else:
-        ARrow[6].text = str(round(pb,1))
+        ARrow[6].text = str(math.ceil(pb * 10) / 10)
     ARrow[6].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.RIGHT
     # Set 3pt before and after paragraph
     for col in range(0,7):
@@ -385,12 +383,7 @@ if AAR:
         AARrow[5].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.RIGHT
         # Add payback period
         pb = row['Payback Period']
-        if pb == 0:
-            AARrow[6].text = "Immediate"
-        elif pb < 0.1:
-            AARrow[6].text = "0.1"
-        else:
-            AARrow[6].text = str(round(pb,1))
+        AARrow[6].text = str(math.ceil(pb * 10) / 10)
         AARrow[6].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.RIGHT
     # Set 3pt before and after paragraph
     for col in range(0,7):
