@@ -9,7 +9,7 @@ def title_case(text: str) -> str:
     :return: formatted string with title case in natural language
     """
     lowerexceptions = ["a","an","and","as","at","but","by","for","from","if","in","nor","not","of","off","on","or","per","the","to","so","up","via","with","yet"]
-    upperexceptions = ["VFD","(VFD)","LED"]
+    upperexceptions = ["VFD","(VFD)","LED","AC"]
     text = text.split()
     # Capitalize every word that is not on "exceptions" list
     for i, word in enumerate(text):

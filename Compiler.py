@@ -5,7 +5,7 @@ then run this script.
 """
 
 
-import json5, os, locale, datetime
+import json5, os, locale, datetime, math
 import pandas as pd
 from easydict import EasyDict
 from docx import Document, shared
@@ -195,13 +195,13 @@ elif iac.FuelType == "Fuel Oil #2":
 iac.ARACS = AR_df['Annual Cost Savings'].sum(axis=0, skipna=True)
 iac.ARIC = AR_df['Implementation Cost'].sum(axis=0, skipna=True)
 # Payback period in number
-iac.ARPB = round(iac.ARIC / iac.ARACS, 1)
+iac.ARPB = math.ceil(iac.ARIC / iac.ARACS * 10) / 10
 # Payback period in formatted string
 iac.PB = payback(iac.ARACS, iac.ARIC)
 print("done")
 
 print("Reformatting ARs...", end ="")
-subtitlelist = ["Recommended Action","Summary of Estimated Savings and Implementation Costs","Current Practice and Observations","Anticipated Savings","Implementation Cost","Implementation Cost References"]
+subtitlelist = ["Recommended Actions","Summary of Estimated Savings and Implementation Costs","Current Practice and Observations","Anticipated Savings","Implementation Costs","Implementation Cost References"]
 ## Reformatting ARs
 for index, row in AR_df.iterrows():
     doc = Document(os.path.join('ARs', row['File Name']))
@@ -217,7 +217,7 @@ for index, row in AR_df.iterrows():
     # This style is already defined in Introduction.docx
     for paragraph in doc.paragraphs:
         for subtitle in subtitlelist:
-            if paragraph.text == subtitle:
+            if paragraph.text == subtitle or paragraph.text == subtitle[:-1]:
                 try:
                     paragraph.style = doc.styles['Subtitle1']
                 except:
@@ -279,23 +279,26 @@ print("Parsing plant information...", end ="")
 # Report date = today or 60 days after assessment, which ever is earlier
 VD = datetime.datetime.strptime(iac.VDATE, '%B %d, %Y')
 RDATE = min(datetime.datetime.today(), VD + datetime.timedelta(days=60))
-iac.RDATE = datetime.datetime.strftime(RDATE, '%B %d, %Y')
+iac.RDATE = datetime.datetime.strftime(RDATE, '%B %-d, %Y')
+
 # Sort participant and contributor name list
+iac.PARTlist.sort(key=lambda x: x.rsplit(' ', 1)[1])
 PART=""
 for name in iac.PARTlist:
-    # Sort by last name
-    iac.PARTlist.sort(key=lambda x: x.rsplit(' ', 1)[1])
     PART  = PART + name + '\n'
 iac.PART = PART.rstrip('\n')
 iac.pop('PARTlist')
+
+iac.CONTlist.sort(key=lambda x: x.rsplit(' ', 1)[1])
 CONT=""
 for name in iac.CONTlist:
-    # Sort by last name
-    iac.CONTlist.sort(key=lambda x: x.rsplit(' ', 1)[1])
     CONT  = CONT + name + '\n'
 iac.CONT = CONT.rstrip('\n')
 iac.pop('CONTlist')
 print("done")
+
+# products in lower cases
+iac.PRODlower = iac.PROD.lower()
 
 ## Format strings
 # set electricity cost to 3 digits accuracy
@@ -338,7 +341,11 @@ for index, row in AR_df.iterrows():
     ARrow[5].text = locale.currency(row['Implementation Cost'], grouping=True)
     ARrow[5].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.RIGHT
     # Add payback period
-    ARrow[6].text = str(round(row['Payback Period'],1))
+    pb = row['Payback Period']
+    if pb == 0:
+        ARrow[6].text = "Immediate"
+    else:
+        ARrow[6].text = str(math.ceil(pb * 10) / 10)
     ARrow[6].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.RIGHT
     # Set 3pt before and after paragraph
     for col in range(0,7):
@@ -375,7 +382,8 @@ if AAR:
         AARrow[5].text = locale.currency(row['Implementation Cost'], grouping=True)
         AARrow[5].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.RIGHT
         # Add payback period
-        AARrow[6].text = str(round(row['Payback Period'],1))
+        pb = row['Payback Period']
+        AARrow[6].text = str(math.ceil(pb * 10) / 10)
         AARrow[6].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.RIGHT
     # Set 3pt before and after paragraph
     for col in range(0,7):
@@ -421,10 +429,10 @@ print("Adding energy chart images...", end ="")
 # If on macOS
 if chartPath == os.path.join('Energy Charts', 'Energy Charts.fld'):
     add_image(doc_energy, '#EUChart', os.path.join(chartPath, "image001.png"), shared.Inches(6))
-    add_image(doc_energy, '#ECChart', os.path.join(chartPath, "image002.png"), shared.Inches(6))
-    add_image(doc_energy, '#DUChart', os.path.join(chartPath, "image003.png"), shared.Inches(6))
-    add_image(doc_energy, '#DCChart', os.path.join(chartPath, "image004.png"), shared.Inches(6))
-    add_image(doc_energy, '#FUChart', os.path.join(chartPath, "image005.png"), shared.Inches(6))
+    add_image(doc_energy, '#ECChart', os.path.join(chartPath, "image004.png"), shared.Inches(6))
+    add_image(doc_energy, '#DUChart', os.path.join(chartPath, "image002.png"), shared.Inches(6))
+    add_image(doc_energy, '#DCChart', os.path.join(chartPath, "image005.png"), shared.Inches(6))
+    add_image(doc_energy, '#FUChart', os.path.join(chartPath, "image003.png"), shared.Inches(6))
     add_image(doc_energy, '#FCChart', os.path.join(chartPath, "image006.png"), shared.Inches(6))
     add_image(doc_energy, '#PieUChart', os.path.join(chartPath, "image007.png"), shared.Inches(6))
     add_image(doc_energy, '#PieCChart', os.path.join(chartPath, "image008.png"), shared.Inches(6))
@@ -534,5 +542,7 @@ doc.save(filename)
 print(filename + " is finished.")
 
 # Caveats
-caveat("Please add Process Description, Major Equipment, Current Best Practices, and plant layout image.")
-caveat("Please refresh ToC, tables and figures after running this script.")
+caveat("Please select all (Ctrl+A) then refresh (F9) ToC, list of tables/figures, twice.")
+caveat("Please fix title case in ToC (AR/ARR and conjunctions).")
+caveat("Please select list of tables/figures then set to NO BOLD.")
+caveat("Please manually add Process Description, Major Equipment, Current Best Practices, and plant layout image.")
