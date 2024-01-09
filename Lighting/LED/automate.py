@@ -2,7 +2,7 @@
 This script is used to generate the IAC recommendation for Switch to LED lighting.
 """
 
-import json5, sys, os
+import json5, sys, os, num2words
 from docx import Document
 from easydict import EasyDict
 from python_docx_replace import docx_replace, docx_blocks
@@ -127,15 +127,27 @@ else:
     docx_blocks(doc, single = False)
     docx_blocks(doc, multi = True)
 iac.INSTALL = []
-for i in range(N):
-    tmpstr = f"a {iac.PPR[i]} W linear LED bulb "
-    tmpstr += f"costs about {iac.BP[i]} plus "
-    tmpstr += f"{iac.BL[i]} labor to install"
+# get the index of unique PPR
+unique, ind = np.unique(iac.PPR, return_index=True)
+# deduplicate PPR
+for i in ind:
+    # distinguish a/an
+    vowel = num2words.num2words(iac.PPR[i])
+    if vowel[0] in ['a', 'e', 'i', 'o', 'u']:
+        tmpstr = "an"
+    else:
+        tmpstr = "a"
+    tmpstr += f" {iac.PPR[i]} W LED bulb "
+    tmpstr += f"costs about ${iac.BP[i]} plus "
+    tmpstr += f"${iac.BL[i]} labor to install"
     # captialize the first letter of the first sentence
     if i==0:
         tmpstr = tmpstr[0].capitalize() + tmpstr[1:]
     iac.INSTALL.append(tmpstr)
 iac.INSTALL = combine_words(iac.INSTALL)
+# change number of motion sensor to words
+iac.MSN = num2words.num2words(iac.MSN)
+iac.MSN = iac.MSN[0].capitalize() + iac.MSN[1:]
 # Replacing keys
 docx_replace(doc, **iac)
 # Save file as temp{N+1}.docx
