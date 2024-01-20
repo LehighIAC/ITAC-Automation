@@ -1,0 +1,14 @@
+{
+  // AR No., integer
+  AR: 10,
+  // Type of equipment, string, Other options include: Electricity, Demand, Propane
+  TYPE: "natural gas",
+  // Unit type for equipment, string, Units represent: Electricity, Demand, Natural Gas, Propane
+  UNIT: ["kWh", "kW", "MMBtu", "MMBtu"],
+  // Energy usage by the plant, integer
+  EU: 84968,
+  // Proposed Energy cost, integer
+  PEC: 9,
+  // State, string
+  STATE: "PA",
+}
