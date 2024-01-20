@@ -35,16 +35,16 @@ elif iac.TYPE == "demand":
   iac.UNIT = "kW"
   iac.TYPET = "Demand"
 # Determining site based on state
-  if iac.STATE == "PA":
-    if iac.TYPE == "electricity" or iac.TYPE == "demand":
-      iac.WEB = "PA Power Switch"
-      iac.SITE = "https://www.papowerswitch.com"
-    elif iac.TYPE == "natural gas":
-      iac.WEBS = "PA Gas Switch"
-      iac.SITE = "https://www.pagasswitch.com"
-  elif iac.STATE == "NJ":
-    iac.WEB = "NJ Power Switch"
-    iac.SITE = "https://nj.gov/njpowerswitch/"
+if iac.STATE == "PA":
+  if (iac.TYPE == "electricity" or iac.TYPE == "demand"):
+    iac.WEB = "PA Power Switch"
+    iac.SITE = "https://www.papowerswitch.com"
+  elif iac.TYPE == "natural gas":
+    iac.WEB = "PA Gas Switch"
+    iac.SITE = "https://www.pagasswitch.com"
+elif iac.STATE == "NJ":
+  iac.WEB = "NJ Power Switch"
+  iac.SITE = "https://nj.gov/njpowerswitch/"
 # Savings
 iac.ACS = iac.EU * (iac.NGC - iac.PEC)
 
