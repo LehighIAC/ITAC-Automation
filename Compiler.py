@@ -5,7 +5,7 @@ then run this script.
 """
 
 
-import json5, os, locale, datetime, math
+import json5, os, locale, datetime, math, platform
 import pandas as pd
 from easydict import EasyDict
 from docx import Document, shared
@@ -279,7 +279,10 @@ print("Parsing plant information...", end ="")
 # Report date = today or 60 days after assessment, which ever is earlier
 VD = datetime.datetime.strptime(iac.VDATE, '%B %d, %Y')
 RDATE = min(datetime.datetime.today(), VD + datetime.timedelta(days=60))
-iac.RDATE = datetime.datetime.strftime(RDATE, '%B %-d, %Y')
+if platform.system() == 'Windows':
+    iac.RDATE = datetime.datetime.strftime(RDATE, '%B %#d, %Y')
+else: # macOS or Linux
+    iac.RDATE = datetime.datetime.strftime(RDATE, '%B %-d, %Y')
 
 # Sort participant and contributor name list
 iac.PARTlist.sort(key=lambda x: x.rsplit(' ', 1)[1])
