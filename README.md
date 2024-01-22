@@ -78,3 +78,4 @@ For your convenience, download the main branch from this link: https://codeload.
 * Install VFD on Electric Motor (Single Motor)
 ### Others
 * Install Solar Panel (fully automated using PVWatts API)
+* Negotiate Utility Charge
