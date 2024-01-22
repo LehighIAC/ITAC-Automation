@@ -159,8 +159,8 @@ composer = Composer(master)
 for i in range(N+1):
     doc_tmp = Document('tmp'+str(i+1)+'.docx')
     composer.append(doc_tmp)
-filename = 'AR'+str(iac.AR)+'.docx'
-composer.save(os.path.join('..', '..', 'ARs', filename))
+
+savefile(composer, str(iac.AR))
 
 # delete temp files
 for i in range(N+2):

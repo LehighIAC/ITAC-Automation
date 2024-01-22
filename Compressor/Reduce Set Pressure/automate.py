@@ -69,8 +69,7 @@ add_eqn(doc, iac, '${POWEqn}', POWEqn)
 # Replacing keys
 docx_replace(doc, **iac)
 
-filename = 'AR'+iac.AR+'.docx'
-doc.save(os.path.join('..', '..', 'ARs', filename))
+savefile(doc, iac.AR)
 
 # Caveats
 caveat("Please manually change the font size of equations to 16.")

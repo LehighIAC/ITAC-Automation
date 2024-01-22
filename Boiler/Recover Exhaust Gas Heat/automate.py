@@ -60,9 +60,7 @@ doc = Document('template.docx')
 # Replacing keys
 docx_replace(doc, **iac)
 
-# Save file as AR*.docx
-filename = 'AR'+iac.AR+'.docx'
-doc.save(os.path.join('..', '..', 'ARs', filename))
+savefile(doc, iac.AR)
 
 # Caveats
 caveat("Please modify highlighted region if necessary.")

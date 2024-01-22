@@ -125,8 +125,7 @@ for i in reversed(range(NL.size)):
     if NL[i]==0:
         table3._tbl.remove(table3.rows[i+1]._tr)
 
-filename = 'AR'+iac.AR+'.docx'
-doc.save(os.path.join('..', '..', 'ARs', filename))
+savefile(doc, iac.AR)
 
 # Caveats
 caveat("Please change implementation cost references if necessary.")

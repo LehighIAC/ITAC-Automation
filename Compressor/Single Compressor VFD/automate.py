@@ -73,9 +73,7 @@ docx_replace(doc, **iac)
 
 docx_blocks(doc, TANK=iac.TANK)
 
-# Save file as AR*.docx
-filename = 'AR'+str(iac.AR)+'.docx'
-doc.save(os.path.join('..', '..', 'ARs', filename))
+savefile(doc, iac.AR)
 
 # Caveats
 caveat("Please change implementation cost references if necessary.")

@@ -80,5 +80,4 @@ else:
 # Replacing keys
 docx_replace(doc, **iac)
 
-filename = 'AR'+iac.AR+'.docx'
-doc.save(os.path.join('..', '..', 'ARs', filename))
+savefile(doc, iac.AR)

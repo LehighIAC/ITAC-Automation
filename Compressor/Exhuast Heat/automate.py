@@ -43,9 +43,7 @@ doc = Document('template.docx')
 # Replacing keys
 docx_replace(doc, **iac)
 
-# Save file as AR*.docx
-filename = 'AR'+str(iac.AR)+'.docx'
-doc.save(os.path.join('..', '..', 'ARs', filename))
+savefile(doc, iac.AR)
 
 # Caveats
 caveat("Please change implementation cost references if necessary.")
