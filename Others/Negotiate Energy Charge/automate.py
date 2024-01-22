@@ -9,7 +9,6 @@ from python_docx_replace import docx_replace, docx_blocks
 sys.path.append(os.path.join('..', '..'))
 from Shared.IAC import *
 from datetime import datetime
-from docx.enum.text import WD_ALIGN_PARAGRAPH
 
 # Load utility cost
 jsonDict = json5.load(open(os.path.join('..', '..', 'Utility.json5')))
@@ -36,14 +35,11 @@ elif iac.TYPE == "demand":
   iac.TYPET = "Demand"
 # Determining site based on state
 if iac.STATE == "PA":
-  if (iac.TYPE == "electricity" or iac.TYPE == "demand"):
-    iac.WEB = "PA Power Switch"
-    iac.SITE = "https://www.papowerswitch.com"
-  elif iac.TYPE == "natural gas":
-    iac.WEB = "PA Gas Switch"
+  if iac.TYPE == "natural gas":
     iac.SITE = "https://www.pagasswitch.com"
+  elif (iac.TYPE == "electricity" or iac.TYPE == "demand"):
+    iac.SITE = "https://www.papowerswitch.com"
 elif iac.STATE == "NJ":
-  iac.WEB = "NJ Power Switch"
   iac.SITE = "https://nj.gov/njpowerswitch/"
 # Savings
 iac.ACS = iac.EU * (iac.NGC - iac.PEC)
@@ -60,11 +56,9 @@ iac = grouping_num(iac)
 # Import docx template
 doc = Document('template.docx')
 
+
 # Replacing keys
 docx_replace(doc, **iac)
 
 filename = 'AR'+iac.AR+'.docx'
 doc.save(os.path.join('..', '..', 'ARs', filename))
-
-# Caveats
-caveat("Please change implementation cost references if necessary.")

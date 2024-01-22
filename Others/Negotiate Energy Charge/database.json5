@@ -7,8 +7,8 @@
   UNIT: ["kWh", "kW", "MMBtu", "MMBtu"],
   // Energy usage by the plant, integer
   EU: 84968,
-  // Proposed Energy cost, integer
-  PEC: 9,
+  // Proposed Energy cost, float
+  PEC: 1.01,
   // State, string
   STATE: "PA",
 }
