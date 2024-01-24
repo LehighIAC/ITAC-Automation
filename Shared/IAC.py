@@ -31,7 +31,7 @@ def savefile(doc, AR: str, AAR=False):
         else: 
             print("Command not recongnized.")
     doc.save(filepath)
-    print("File saved to " + filepath)
+    print("File saved to " + os.path.abspath(filepath))
                 
 def title_case(text: str) -> str:
     """
