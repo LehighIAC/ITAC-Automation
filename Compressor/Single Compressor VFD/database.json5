@@ -15,6 +15,11 @@
   WK: 52,
   // Load Fraction, %, int
   LF: 60,
+  // Control Type, int
+  // 1: Blow Off
+  // 2: Modulation
+  // 3: Load/Unload
+  CT: 1,
   // Existing efficiency of motor, %, int
   ETAE: 85,
   // Proposed efficiency of motor with VFD, %, int

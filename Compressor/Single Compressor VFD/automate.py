@@ -24,12 +24,28 @@ VFD = np.array([25, 28, 33, 38, 42, 47, 52, 57, 61, 65, 70, 75, 80, 85, 90, 95, 
 ## Calculations
 # Operating hours
 iac.OH = iac.HR * iac.DY * iac.WK
-# Power FRaction with VFD
-iac.FR = round(np.interp(iac.LF, Load, VFD).item())
+
+# Power Fraction without VFD
+# Blow Off
+if iac.CT == 1:
+   iac.FPC = 100
+   iac.CT = "blow off"
+# Modulation
+elif iac.CT == 2:
+   iac.FPC = round(0.3 * iac.LF + 70)
+   iac.CT = "modulation"
+# Load/Unload
+elif iac.CT == 3:
+   iac.FPC = round(0.5 * iac.LF + 50)
+   iac.CT = "load/unload"
+else:
+   raise Exception("Wrong control type!")
+# Power Fraction with VFD
+iac.FPV = round(np.interp(iac.LF, Load, VFD).item())
 # Current Power Draw
-iac.CPD = round((iac.HP * 0.746) / (iac.ETAE/100))
+iac.CPD = round((iac.HP * 0.746 * (iac.FPC/100)) / (iac.ETAE/100))
 # Proposed Power Draw
-iac.PPD = round((iac.HP * 0.746 * (iac.FR/100)) / (iac.ETAP/100))
+iac.PPD = round((iac.HP * 0.746 * (iac.FPV/100)) / (iac.ETAP/100))
 
 ## Savings
 # Annual Energy Savings
