@@ -68,7 +68,7 @@ For your convenience, download the main branch from this link: https://codeload.
 * Use Compressor Exhaust to Heat during Winter Months
 * Reduce Compressor Set Pressure
 * Repair Leaks in Compressed Air Lines
-* Install VFD on Air Compressor (Single Motor)
+* Install VFD on Existing Air Compressor (Single Motor)
 ### HVAC
 * Programmable Thermostat (based on degree hours)
 * Replace Old HVAC Units
