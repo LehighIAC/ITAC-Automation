@@ -1,0 +1,17 @@
+{
+  // hours per day, float (allows half hours)
+  HR: 8.0,
+  // days per week, float (allows half day on weekends)
+  DY: 5.0,
+  // weeks per year, int
+  WK: 52,
+  // Boiler Size, string
+  SIZE:"",
+  // Equipment Name, string
+  EQUIP:"",
+  // Current O2, %, float
+  O2:,
+  // Percent of natural gas savings from maximum efficient conditions, %, float
+  SAV:,
+
+}
