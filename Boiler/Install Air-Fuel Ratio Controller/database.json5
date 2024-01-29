@@ -13,5 +13,12 @@
   O2:,
   // Percent of natural gas savings from maximum efficient conditions, %, float
   SAV:,
-
+  // Flue Gas Temperature, °F, int
+  FGT:,
+  // Combustion Air Temperature, °F, int
+  CAT:,
+  // Cost for the air-fuel controller, $, float
+  PARTS:,
+  // Cost for the installation of the air-fuel controller, $, float
+  LABOR:,
 }
