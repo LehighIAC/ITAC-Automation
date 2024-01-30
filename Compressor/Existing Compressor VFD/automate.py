@@ -76,7 +76,7 @@ iac = dollar(['EC', 'RR'],iac,3)
 # set demand to 2 digits accuracy
 iac = dollar(['DC'],iac,2)
 # set the rest to integer
-varList = ['ACS', 'ECS', 'DCS', 'VFD', 'AIC', 'IC', 'RB', 'MRB', 'MIC']
+varList = ['ACS', 'ECS', 'DCS', 'VFD', 'AIC', 'IC', 'RB', 'MRB', 'MIC', 'ATP']
 iac = dollar(varList,iac,0)
 # Format all numbers to string with thousand separator
 iac = grouping_num(iac)
