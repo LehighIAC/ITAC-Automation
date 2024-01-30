@@ -63,19 +63,21 @@ For your convenience, download the main branch from this link: https://codeload.
 ## Supported AR Templates
 ### Boiler
 * Recover Exhaust Gas Heat
+* Install Air-Fuel Ratio Controller
 ### Compressor
 * Draw Compressor Intake Air from Outside
 * Use Compressor Exhaust to Heat during Winter Months
 * Reduce Compressor Set Pressure
 * Repair Leaks in Compressed Air Lines
-* Install VFD on Existing Air Compressor (Single Motor)
+* Install VFD on Existing Air Compressor
+* Install New Air Compressor with VFD
 ### HVAC
 * Programmable Thermostat (based on degree hours)
 * Replace Old HVAC Units
 ### Lighting
 * Switch to LED lighting (supports any number of areas)
 ### Motors
-* Install VFD on Electric Motor (Single Motor)
+* Install VFD on Electric Motor
 ### Others
 * Install Solar Panel (fully automated using PVWatts API)
 * Negotiate Utility Charge
