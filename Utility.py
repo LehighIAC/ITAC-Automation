@@ -15,6 +15,8 @@ ws = wb['Raw Data']
 EC = round(ws['D21'].value,3)
 # Get Demand cost from cell D23, 2 digits
 DC = round(ws['D23'].value,2)
+# Get Fees from cell G19, 2 digits
+Fees = round(ws['G19'].value,2)
 # Get Fuel cost from cell D24, 2 digits
 FC = round(ws['D24'].value,2)
 # Get Fuel type from cell Q2, string
@@ -37,7 +39,7 @@ TotalFBtu = round(ws['M19'].value)
 # Get Total Energy worksheet
 ws = wb['Total Energy']
 # Get Total Electricity cost from cell E5+E6
-TotalECost = round(ws['E5'].value+ws['E6'].value)
+TotalECost = round(ws['E5'].value+ws['E6'].value+Fees)
 # Get Total Fuel cost from cell E7
 TotalFCost = round(ws['E7'].value)
 # Get Total Energy MMBtu from cell D8
@@ -53,11 +55,12 @@ else:
 
 # Open Utility.json5 as text
 try:
-    with open('Utility.json5', 'r') as f:
+    with open('utility.json5', 'r') as f:
         utility = f.read()
         f.close()
 except FileNotFoundError:
-    raise Exception('Utility.json5 not found.')
+    print('utility.json5 not found.')
+    os._exit(1)
 
 # Replace values in Utility.json5
 utility = re.sub(r'EC: .*', 'EC: ' + str(EC) + ',', utility)
@@ -77,10 +80,11 @@ utility = re.sub(r'TotalFCost: .*', 'TotalFCost: ' + str(TotalFCost) + ',', util
 utility = re.sub(r'TotalBtu: .*', 'TotalBtu: ' + str(TotalBtu) + ',', utility)
 utility = re.sub(r'TotalCost: .*', 'TotalCost: ' + str(TotalCost) + ',', utility)
 
-# Save Utility.json5
+# Save utility.json5
 try:
-    with open('Utility.json5', 'w') as f:
+    with open('utility.json5', 'w') as f:
         f.write(utility)
         f.close()
 except FileNotFoundError:
-    raise Exception('Utility.json5 not found.')
+    print('utility.json5 not found.')
+    os._exit(1)
