@@ -18,25 +18,24 @@ jsonDict.update(json5.load(open('database.json5')))
 # Convert to easydict
 iac = EasyDict(jsonDict)
 
-# Interpolation
-
 # Calculations
 iac.OH = int(iac.HR * iac.DY * iac.WK)
+iac.CAH = round(AFR.AFR(iac.CAT, iac.FGT, iac.O2))
+# Proposed condition is 2% O2
+iac.PAH = round(AFR.AFR(iac.CAT, iac.FGT, 2))
+iac.SAV = round((iac.PAH - iac.CAH)/iac.PAH * 100, 2)
+iac.IC = round(iac.LABOR + iac.PARTS)
 iac.NGS = round(iac.SIZE * iac.OH * (iac.LF/100) * (iac.SAV/100))
 iac.ACS = round(iac.NGS * iac.NGC)
-iac.CAH = round(AFR.AFR(iac.CAT, iac.FGT, iac.O2))
-iac.IC = round(iac.LABOR * iac.PARTS)
 
 # Implementation
 iac.PB = payback(iac.ACS, iac.IC)
 
 ## Format strings
-# set electricity cost to 3 digits accuracy
-iac = dollar(['EC'],iac,3)
 # set the natural gas and demand to 2 digits accuracy
-iac = dollar(['NGC', 'DC'],iac,2)
+iac = dollar(['NGC'],iac,2)
 # set the rest to integer
-varList = ['LR', 'NGCS', 'EUC', 'DUC', 'ACS', 'IC']
+varList = ['ACS', 'IC', 'PARTS', 'LABOR']
 iac = dollar(varList,iac,0)
 # Format all numbers to string with thousand separator
 iac = grouping_num(iac)
