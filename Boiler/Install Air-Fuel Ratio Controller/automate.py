@@ -8,7 +8,6 @@ from easydict import EasyDict
 from python_docx_replace import docx_replace
 sys.path.append(os.path.join('..', '..')) 
 from Shared.IAC import *
-import numpy as np
 import AFR
 
 # Load utility cost
@@ -20,9 +19,9 @@ iac = EasyDict(jsonDict)
 
 # Calculations
 iac.OH = int(iac.HR * iac.DY * iac.WK)
-iac.CAH = round(AFR.AFR(iac.CAT, iac.FGT, iac.O2))
+iac.CAH = round(AFR.AFR(iac.CAT, iac.FGT, iac.O2),2)
 # Proposed condition is 2% O2
-iac.PAH = round(AFR.AFR(iac.CAT, iac.FGT, 2))
+iac.PAH = round(AFR.AFR(iac.CAT, iac.FGT, 2),2)
 iac.SAV = round((iac.PAH - iac.CAH)/iac.PAH * 100, 2)
 iac.IC = round(iac.LABOR + iac.PARTS)
 iac.NGS = round(iac.SIZE * iac.OH * (iac.LF/100) * (iac.SAV/100))
