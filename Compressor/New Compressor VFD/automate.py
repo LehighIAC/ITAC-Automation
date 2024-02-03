@@ -43,9 +43,9 @@ else:
 # Power Fraction with VFD
 iac.FPV = round(np.interp(iac.LF, Load, VFD).item())
 # Current Power Draw
-iac.CPD = round((iac.HP * 0.746 * (iac.FPC/100)) / (iac.ETAE/100))
+iac.CPD = round((iac.HPC * 0.746 * (iac.FPC/100)) / (iac.ETAE/100))
 # Proposed Power Draw
-iac.PPD = round((iac.HP * 0.746 * (iac.FPV/100)) / (iac.ETAP/100))
+iac.PPD = round((iac.HPP * 0.746 * (iac.FPV/100)) / (iac.ETAP/100))
 
 ## Savings
 # Annual Energy Savings

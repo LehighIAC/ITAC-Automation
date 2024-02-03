@@ -6,12 +6,13 @@
   // Air Tank Price, int
   ATP: 5000,
   // Horsepower of current motor, integer
-  HP: 300,
+  HPC: 100,
   // Horsepower of proposed motor, integer
+  HPP: 100,
   // hours per day, float (allows half hours)
-  HR: 8.0,
+  HR: 18.0,
   // days per week, float (allows half day on weekends)
-  DY: 5.0,
+  DY: 6.0,
   // weeks per year, int
   WK: 52,
   // Load Fraction, %, int
