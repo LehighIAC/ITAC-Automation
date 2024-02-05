@@ -80,4 +80,4 @@ else:
 # Replacing keys
 docx_replace(doc, **iac)
 
-savefile(doc, iac.AR)
+savefile(doc, iac.REC)
