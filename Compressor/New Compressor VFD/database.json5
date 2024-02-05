@@ -28,8 +28,8 @@
   ETAP: 85,
   // Coincidence Factor, %, int
   CF: 100,
-  // Cost of VFD, integer
+  // Cost of the new compressor with VFD, integer
   VFD: 15000,
-  //Additional installation cost, integer
+  // Additional installation cost, integer
   AIC: 10000,
 }
