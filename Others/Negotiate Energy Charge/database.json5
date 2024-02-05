@@ -1,6 +1,6 @@
 {
   // AR No., integer
-  AR: 10,
+  REC: 8,
   // Type of equipment, string, possible options : electricity, demand, natural gas, propane
   TYPE: "natural gas",
   // Energy usage by the plant, integer
