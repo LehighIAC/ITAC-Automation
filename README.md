@@ -44,23 +44,23 @@ For your convenience, download the main branch from this link: https://codeload.
 2. Save the workbook as `Web Page (.htm)` format in the same directory. DO NOT change the filename, all images will be  kept in `Energy Charts.fld` folder. Currently  this is the only stable way to save all charts as images.
 3. Run `Utility.py` to extract energy usage data from the spreadsheet.
 ### Assessment Recommendations
-1. Edit `.json5` database of any specific AR. Make sure the data type is matching the description.
-2. Run the corresponding `.py` file. The output will be saved in `ARs` directory. Follow the instructions of the script if there's anything you need to adjust manually.
-### Requirements of AR Files:
+1. Edit `.json5` database of any specific recommendation. Make sure the data type is matching the description.
+2. Run the corresponding `.py` file. The output will be saved in `Recommendations` directory. Follow the instructions of the script if there's anything you need to adjust manually.
+### Requirements of Recommendation Files:
 1. No requirement for filename, as long as it's `.docx`
 2. Doesn't matter if the file is made from Python template, Excel template, or by hand. Please **break links** if you used Excel templates.
-3. The title text should always be "AR x: Title" or "AAR x: Title". Case insensitive. In outline view the title should always be **Level 1**.
+3. The title text should always be "Recommendation x: Title" or "Additional Recommendation x: Title". Case insensitive. In outline view the title should always be **Level 1**.
 4. If there's any other type of energy savings, the unit should be `MMBtu`.
 5. All subtitles, such as "Recommend Actions", "Anticipated Savings" should always be **body text** in outline view. Otherwise the automatic table of contents might be broken.
 6. In rare cases, some .docx files are actually wrapped legacy .doc file (pre Word 2000) and is not supported by this tool. Please copy and paste everything to a new blank .docx file. 
 ### Compiling Report
 1. Fill required plant information in `Compiler.json5`.
-2. Copy all AR files(if you have any from other sources) into `ARs` directory.
+2. Copy all recommendation files(if you have any from other sources) into `Recommendations` directory.
 3. Run `Compiler.py` to compile the final report.
 4. Ctrl+A then F9 to refresh ToC, tables and figures, you may need to do it twice.
 5. Fill the rest of the information manually.
 
-## Supported AR Templates
+## Supported Recommendation Templates
 ### Boiler
 * Recover Exhaust Gas Heat
 * Install Air-Fuel Ratio Controller

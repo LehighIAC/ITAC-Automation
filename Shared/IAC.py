@@ -2,19 +2,19 @@
 (Purpose) IAC.py is a module that contains functions used in the IAC report
 """
 
-def savefile(doc, AR: str, AAR=False):
+def savefile(doc, rec: str, add=False):
     """
-    Avoid overwriting AR documents directly
+    Avoid overwriting recommendation documents directly
     :param doc: python-docx or docxcompose object
-    :param AR: AR No., string
-    :param AAR(optional): AAR flag, bool
+    :param rec: Recommendation No., string
+    :param add(optional): additional flag, bool
     """
     import os
-    if AAR:
-        filename = 'AAR'+ AR +'.docx'
+    if add:
+        filename = 'Add'+ rec +'.docx'
     else:
-        filename = 'AR'+ AR +'.docx'
-    filepath = os.path.join('..', '..', 'ARs', filename)
+        filename = 'Rec'+ rec +'.docx'
+    filepath = os.path.join('..', '..', 'Recommendations', filename)
     while os.path.isfile(filepath):
         answer = input("Filename exists, overwrite or rename?(o/r)")
         if answer.lower() == "o":
@@ -26,7 +26,7 @@ def savefile(doc, AR: str, AAR=False):
                     None
                 else:
                     filename = filename + ".docx"
-                filepath = os.path.join('..', '..', 'ARs', filename)
+                filepath = os.path.join('..', '..', 'Recommendations', filename)
             break
         else: 
             print("Command not recongnized.")
@@ -56,7 +56,7 @@ def title_case(text: str) -> str:
 
 def validate_arc(ARC):
     """
-    Validate ARC input
+    Validate ARC number
     :param ARC: Full ARC as a string
     """
     # json5 is too slow, use json instead.
