@@ -229,8 +229,8 @@ for index, row in recData.iterrows():
 print("done")
 
 # Check if there's at least 1 additional recommendation
-additional = df['isAdditional'].any()
-if additional:
+hasAdditional = df['isAdditional'].any()
+if hasAdditional:
     print("Analyzing additional recommendations...", end ="")
     # Filter additional
     addData = df[df['isAdditional'] == True]
@@ -276,6 +276,7 @@ if additional:
     print("done")
 
 print("Parsing plant information...", end ="")
+
 ## Compiler.json5 Calculations
 # Report date = today or 60 days after assessment, which ever is earlier
 VD = datetime.datetime.strptime(iac.VDATE, '%B %d, %Y')
@@ -312,7 +313,7 @@ iac = dollar(['EC'],iac,3)
 iac = dollar(['DC', 'FC'],iac,2)
 # set the rest to integer
 varList = ['ACS', 'IC', 'TotalECost', 'TotalFCost', 'TotalCost']
-if additional:
+if hasAdditional:
     varList.extend(['AddACS', 'AddIC'])
 iac = dollar(varList,iac,0)
 # Format all numbers to string with thousand separator
@@ -361,7 +362,7 @@ for index in reversed(range(len(recData), 15)):
     recTable._tbl.remove(recTable.rows[index+1]._tr)
 print("done")
 
-if additional:
+if hasAdditional:
     # Add rows to additional recommendation table (Should be the 4th table)
     print("Writing Additional Recommendation table...", end ="")
     locale._override_localeconv={'frac_digits':0}
@@ -403,7 +404,7 @@ else:
     docIntro._body._body.remove(docIntro.tables[3]._tbl)
 
 # Remove Add blocks if no Additional
-docx_blocks(docIntro, ADD = additional)
+docx_blocks(docIntro, ADD = hasAdditional)
 
 # Replacing keys
 print("Replacing keys in introduction...", end ="")
@@ -507,7 +508,7 @@ print("Combining all docs...", end ="")
 docList = [os.path.join('Report', 'ToC.docx')]
 for RecLength in range(1, len(recData)+1):
     docList.append(os.path.join('Recommendations', 'Sorted','Rec' + str(RecLength) + '.docx'))
-if additional:
+if hasAdditional:
     docList.append(os.path.join('Report', 'Add.docx'))
     for AddLength in range(1, len(addData)+1):
         docList.append(os.path.join('Recommendations', 'Sorted','Add' + str(AddLength) + '.docx'))
