@@ -547,7 +547,6 @@ doc.save(filename)
 print(filename + " is finished.")
 
 # Caveats
-caveat("Please fix title case in ToC (AR/ARR and conjunctions).")
 caveat("Please select all (Ctrl+A) then refresh TWICE (F9) ToC, list of tables/figures.")
 caveat("Please select list of tables/figures then set to NO BOLD.")
 caveat("Please manually add Process Description, Major Equipment, Current Best Practices, and plant layout image.")
