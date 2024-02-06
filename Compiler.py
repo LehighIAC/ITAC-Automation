@@ -254,14 +254,14 @@ if additional:
     for index, row in addData.iterrows():
         doc = Document(os.path.join('Recommendations', row['File Name']))
         # Change title and make it upper case
-        doc.paragraphs[0].text = "Additional Recommendation"+ str(index+1) + ': ' + title_case(row['Description'])
-        # Enforce Heading 1
+        doc.paragraphs[0].text = "Additional Recommendation "+ str(index+1) + ': ' + title_case(row['Description'])
+        # Enforce Heading 1 style
         try:
             doc.paragraphs[0].style = doc.styles['Heading 1']
         except:
             doc.styles.add_style('Heading 1', WD_STYLE_TYPE.PARAGRAPH)
             doc.paragraphs[0].style = doc.styles['Heading 1']
-        # Enforce subtitle to be Subtitle1
+        # Enforce Subtitle 1 style
         # This style is already defined in Introduction.docx
         for paragraph in doc.paragraphs:
             for subtitle in subtitleList:
