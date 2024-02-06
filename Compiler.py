@@ -5,7 +5,7 @@ then run this script.
 """
 
 
-import json5, os, locale, datetime, math, platform
+import json5, os, locale, datetime, math, platform, re
 import pandas as pd
 from easydict import EasyDict
 from docx import Document, shared
@@ -226,22 +226,32 @@ for index, row in recData.iterrows():
     doc = Document(os.path.join('Recommendations', row['File Name']))
     # Change title and make it upper case
     doc.paragraphs[0].text = "Recommendation "+ str(index+1) + ': ' + title_case(row['Description'])
-    # Enforce Heading 1
+    # Enforce Heading 1 style
     try:
         doc.paragraphs[0].style = doc.styles['Heading 1']
     except:
         doc.styles.add_style('Heading 1', WD_STYLE_TYPE.PARAGRAPH)
         doc.paragraphs[0].style = doc.styles['Heading 1']
-    # Enforce subtitle to be Subtitle1
+    # Enforce Subtitle style
     # This style is already defined in Introduction.docx
     for paragraph in doc.paragraphs:
+        txt = paragraph.text
         for subtitle in subtitleList:
-            if paragraph.text == subtitle or paragraph.text == subtitle[:-1]:
+            # single or plural
+            if txt == subtitle or txt == subtitle[:-1]:
                 try:
-                    paragraph.style = doc.styles['Subtitle1']
+                    paragraph.style = doc.styles['Subtitle']
                 except:
-                    doc.styles.add_style('Subtitle1', WD_STYLE_TYPE.PARAGRAPH)
-                    paragraph.style = doc.styles['Subtitle1']
+                    doc.styles.add_style('Subtitle', WD_STYLE_TYPE.PARAGRAPH)
+                    paragraph.style = doc.styles['Subtitle']
+        # Fix table/figure captions
+        if re.search('^\s?Table\s\d{1,2}:', txt) != None or re.search('^\s?Figure\s\d{1,2}:', txt) != None:
+            try:
+                paragraph.style = doc.styles['Caption']
+            except:
+                doc.styles.add_style('Caption', WD_STYLE_TYPE.PARAGRAPH)
+                paragraph.style = doc.styles['Caption']
+
     # Save file with sorted filename
     doc.save(os.path.join('Recommendations', 'Sorted', 'Rec'+ str(index+1) + '.docx'))
 print("done")
@@ -279,16 +289,25 @@ if hasAdditional:
         except:
             doc.styles.add_style('Heading 1', WD_STYLE_TYPE.PARAGRAPH)
             doc.paragraphs[0].style = doc.styles['Heading 1']
-        # Enforce Subtitle 1 style
+        # Enforce Subtitle style
         # This style is already defined in Introduction.docx
         for paragraph in doc.paragraphs:
+            txt = paragraph.text
             for subtitle in subtitleList:
-                if paragraph.text == subtitle:
+                # single or plural
+                if txt == subtitle or txt == subtitle[:-1]:
                     try:
-                        paragraph.style = doc.styles['Subtitle1']
+                        paragraph.style = doc.styles['Subtitle']
                     except:
-                        doc.styles.add_style('Subtitle1', WD_STYLE_TYPE.PARAGRAPH)
-                        paragraph.style = doc.styles['Subtitle1']
+                        doc.styles.add_style('Subtitle', WD_STYLE_TYPE.PARAGRAPH)
+                        paragraph.style = doc.styles['Subtitle']
+            # Fix table/figure captions
+            if re.search('^\s?Table\s\d{1,2}:', txt) != None or re.search('^\s?Figure\s\d{1,2}:', txt) != None:
+                try:
+                    paragraph.style = doc.styles['Caption']
+                except:
+                    doc.styles.add_style('Caption', WD_STYLE_TYPE.PARAGRAPH)
+                    paragraph.style = doc.styles['Caption']
         # Save file with sorted filename
         doc.save(os.path.join('Recommendations', 'Sorted', 'Add'+ str(index+1) + '.docx'))
     print("done")
