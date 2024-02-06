@@ -16,6 +16,24 @@ from docxcompose.composer import Composer
 from python_docx_replace import docx_replace, docx_blocks
 from Shared.IAC import *
 
+# Check if Description.docx has been changed
+docTest = Document(os.path.join('Report', 'Description.docx'))
+answer = ""
+# If finds "#Insert plant layout picture here and delete this line", the file has not been changed yet
+for p in docTest.paragraphs:
+    if "#Insert plant layout picture here and delete this line" in p.text:
+        caveat("Looks like Report/Description.docx has not been changed yet.")
+        print("You may edit the document and run the script again,")
+        print("or ignore this message and edit the final report.")
+        while True:
+            answer = input("Do you wish to continue? (y/n): ")
+            if answer.lower() == 'y':
+                break
+            elif answer.lower() == 'n':
+                exit()
+            else:
+                pass
+
 # If Recommendations/Sorted/ folder doesn't exist, create one
 os.makedirs(os.path.join('Recommendations', 'Sorted'), exist_ok=True)
 
@@ -412,8 +430,8 @@ docx_replace(docIntro, **iac)
 print("done")
 
 # Save introduction
-filename_intro = iac.LE + '-intro.docx'
-docIntro.save(filename_intro)
+filenameIntro = iac.LE + '-intro.docx'
+docIntro.save(filenameIntro)
 
 ## Load backgroud template
 docBackground = Document(os.path.join('Report', 'Background.docx'))
@@ -424,8 +442,8 @@ docx_replace(docBackground, **iac)
 print("done")
 
 # Save background
-filename_back = iac.LE + '-back.docx'
-docBackground.save(filename_back)
+filenameBackground = iac.LE + '-back.docx'
+docBackground.save(filenameBackground)
 
 ## Load energy bill analysis template
 docEnergy = Document(os.path.join('Report', 'Energy.docx'))
@@ -500,8 +518,8 @@ print("Replacing keys in energy charts...", end ="")
 docx_replace(docEnergy, **iac)
 print("done")
 # Save energy charts
-filename_energy = iac.LE + '-energy.docx'
-docEnergy.save(filename_energy)
+filenameEnergy = iac.LE + '-energy.docx'
+docEnergy.save(filenameEnergy)
 
 print("Combining all docs...", end ="")
 # List of docs to combine
@@ -514,24 +532,27 @@ if hasAdditional:
         docList.append(os.path.join('Recommendations', 'Sorted','Add' + str(AddLength) + '.docx'))
 else:
     pass
+docList.append(filenameBackground)
+docList.append(os.path.join('Report', 'Description.docx'))
 
 # Combine all docx files
-main = Document(filename_intro)
+main = Document(filenameIntro)
 main.add_page_break()
 composer = Composer(main)
 for i in range(0, len(docList)):
     doc_add = Document(docList[i])
     doc_add.add_page_break()
     composer.append(doc_add)
-composer.append(Document(filename_back))
-composer.append(Document(filename_energy))
+# A section break is already added in BestPractice.docx, so no need to add a page break
+composer.append(Document(os.path.join('Report', 'BestPractice.docx')))
+composer.append(Document(filenameEnergy))
 filename = iac.LE +'.docx'
 composer.save(filename)
 
 # delete temp files
-os.remove(filename_intro)
-os.remove(filename_back)
-os.remove(filename_energy)
+os.remove(filenameIntro)
+os.remove(filenameBackground)
+os.remove(filenameEnergy)
 print("done")
 
 # Open the combined docx file
@@ -550,4 +571,5 @@ print(filename + " is finished.")
 # Caveats
 caveat("Please select all (Ctrl+A) then refresh TWICE (F9) ToC, list of tables/figures.")
 caveat("Please select list of tables/figures then set to NO BOLD.")
-caveat("Please manually add Process Description, Major Equipment, Current Best Practices, and plant layout image.")
+if answer.lower() == 'y':
+    caveat("Please manually add Process Description, Major Equipment, Current Best Practices, and plant layout image.")

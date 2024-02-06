@@ -55,10 +55,12 @@ For your convenience, download the main branch from this link: https://codeload.
 6. In rare cases, some .docx files are actually wrapped legacy .doc file (pre Word 2000) and is not supported by this tool. Please copy and paste everything to a new blank .docx file. 
 ### Compiling Report
 1. Fill required plant information in `Compiler.json5`.
-2. Copy all recommendation files(if you have any from other sources) into `Recommendations` directory.
-3. Run `Compiler.py` to compile the final report.
-4. Ctrl+A then F9 to refresh ToC, tables and figures, you may need to do it twice.
-5. Fill the rest of the information manually.
+2. Fill other gathered information in `Report/Description.docx`
+3. Copy all recommendation files(if you have any from other sources) into `Recommendations` directory.
+4. Run `Compiler.py` to compile the final report.
+5. Ctrl+A then F9 to refresh ToC, tables and figures, you may need to do it twice.
+6. select list of tables/figures then set to no bold.
+7. Fill the rest of the information manually if necessary.
 
 ## Supported Recommendation Templates
 ### Boiler
