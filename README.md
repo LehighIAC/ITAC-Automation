@@ -37,7 +37,7 @@ Is it suggested to work on a **copy** of this reposiotry when generating an IAC 
 
 For your convenience, download the main branch from this link: https://codeload.github.com/LehighIAC/IAC-Automation/zip/refs/heads/main , then use VS Code to open the **folder**.
 
-![iac](https://github.com/LehighIAC/IAC-Automation/assets/12702149/62d48584-f6f5-449e-849e-2daa8e54854a)
+![iac](https://github.com/LehighIAC/IAC-Automation/assets/12702149/fabb6817-7c5a-4e76-9bfe-661a4d2643a5)
 
 ### Energy Charts
 1. Edit `Energy Charts.xlsx`. Select `fuel type` ,`fuel unit` and `start month`, then edit raw data (if copying from other spreadsheet, copy values only). The formatting is fully automatic and shouldn't be touched.
