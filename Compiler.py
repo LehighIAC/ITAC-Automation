@@ -589,6 +589,6 @@ print(filename + " is finished.")
 
 # Caveats
 caveat("Please select all (Ctrl+A) then refresh TWICE (F9) ToC, list of tables/figures.")
-caveat("Please select list of tables/figures then set to NO BOLD.")
+
 if answer.lower() == 'y':
     caveat("Please manually add Process Description, Major Equipment, Current Best Practices, and plant layout image.")
