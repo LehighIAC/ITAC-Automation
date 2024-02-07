@@ -37,7 +37,7 @@ Is it suggested to work on a **copy** of this reposiotry when generating an IAC 
 
 For your convenience, download the main branch from this link: https://codeload.github.com/LehighIAC/IAC-Automation/zip/refs/heads/main , then use VS Code to open the **folder**.
 
-![iac](https://github.com/LehighIAC/IAC-Automation/assets/12702149/62d48584-f6f5-449e-849e-2daa8e54854a)
+![iac](https://github.com/LehighIAC/IAC-Automation/assets/12702149/fabb6817-7c5a-4e76-9bfe-661a4d2643a5)
 
 ### Energy Charts
 1. Edit `Energy Charts.xlsx`. Select `fuel type` ,`fuel unit` and `start month`, then edit raw data (if copying from other spreadsheet, copy values only). The formatting is fully automatic and shouldn't be touched.
@@ -46,7 +46,7 @@ For your convenience, download the main branch from this link: https://codeload.
 ### Assessment Recommendations
 1. Edit `.json5` database of any specific recommendation. Make sure the data type is matching the description.
 2. Run the corresponding `.py` file. The output will be saved in `Recommendations` directory. Follow the instructions of the script if there's anything you need to adjust manually.
-### Requirements of Recommendation Files:
+### Requirements of Manual Recommendation Files:
 1. No requirement for filename, as long as it's `.docx`
 2. Doesn't matter if the file is made from Python template, Excel template, or by hand. Please **break links** if you used Excel templates.
 3. The title text should always be "Recommendation x: Title" or "Additional Recommendation x: Title". Case insensitive. In outline view the title should always be **Level 1**.
@@ -56,11 +56,9 @@ For your convenience, download the main branch from this link: https://codeload.
 ### Compiling Report
 1. Fill required plant information in `Compiler.json5`.
 2. Fill other gathered information in `Report/Description.docx`
-3. Copy all recommendation files(if you have any from other sources) into `Recommendations` directory.
+3. Copy all recommendation documents(if you have any from other sources) into `Recommendations` directory.
 4. Run `Compiler.py` to compile the final report.
-5. Ctrl+A then F9 to refresh ToC, tables and figures, you may need to do it twice.
-6. select list of tables/figures then set to no bold.
-7. Fill the rest of the information manually if necessary.
+5. Ctrl+A then F9 to refresh ToC, tables and figures, you need to do it **twice**.
 
 ## Supported Recommendation Templates
 ### Boiler
