@@ -28,18 +28,18 @@ iac.OH = iac.HR * iac.DY * iac.WK
 # Power Fraction without VFD
 # Blow Off
 if iac.CT == 1:
-   iac.FPC = 100
-   iac.CT = "blow off"
+    iac.FPC = 100
+    iac.CT = "blow off"
 # Modulation
 elif iac.CT == 2:
-   iac.FPC = round(0.3 * iac.LF + 70)
-   iac.CT = "modulation"
+    iac.FPC = round(0.3 * iac.LF + 70)
+    iac.CT = "modulation"
 # Load/Unload
 elif iac.CT == 3:
-   iac.FPC = round(0.5 * iac.LF + 50)
-   iac.CT = "load/unload"
+    iac.FPC = round(0.5 * iac.LF + 50)
+    iac.CT = "load/unload"
 else:
-   raise Exception("Wrong control type!")
+    raise Exception("Wrong control type!")
 # Power Fraction with VFD
 iac.FPV = round(np.interp(iac.LF, Load, VFD).item())
 # Current Power Draw
@@ -60,9 +60,9 @@ iac.DCS = round(iac.DS * iac.DC)
 iac.ACS = iac.ECS + iac.DCS
 # Total Installation Cost
 if (iac.TANK == True):
-  iac.IC = iac.VFD + iac.AIC + iac.ATP
+    iac.IC = iac.VFD + iac.AIC + iac.ATP
 else:
-  iac.IC = iac.VFD + iac.AIC
+    iac.IC = iac.VFD + iac.AIC
 
 ## Rebate
 iac.RB = round(iac.RR * iac.ES)
@@ -89,7 +89,7 @@ docx_replace(doc, **iac)
 
 docx_blocks(doc, TANK=iac.TANK)
 
-savefile(doc, iac.AR)
+savefile(doc, iac.REC)
 
 # Caveats
 caveat("Please change implementation cost references if necessary.")

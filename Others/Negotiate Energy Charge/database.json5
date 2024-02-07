@@ -1,12 +1,12 @@
 {
-  // AR No., integer
-  AR: 10,
-  // Type of equipment, string, possible options : electricity, demand, natural gas, propane
-  TYPE: "natural gas",
-  // Energy usage by the plant, integer
-  EU: 84968,
-  // Proposed Energy Cost, float
-  PEC: 0.01,
-  // State, string
-  STATE: "PA",
+    // Recommendation No., integer
+    REC: 1,
+    // Type of equipment, string, possible options : electricity, demand, natural gas, propane
+    TYPE: "natural gas",
+    // Energy usage by the plant, integer
+    EU: 84968,
+    // Proposed Energy Cost, float
+    PEC: 0.01,
+    // State, string
+    STATE: "PA",
 }

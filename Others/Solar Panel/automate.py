@@ -105,7 +105,7 @@ table.cell(13, 2).text = locale.format_string('%d',round(sum(ac_monthly)), group
 table.cell(13, 2).paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.RIGHT
 table.cell(13, 2).paragraphs[0].runs[0].bold = True
 
-savefile(doc, iac.AR, AAR=True)
+savefile(doc, iac.REC, add=True)
 
 # Caveats
 caveat("Please check if the grabbed info is correct.")

@@ -1,57 +1,57 @@
 {
-// AR No., integer
-AR: 1,
-// City, State, string
-TOWN: "Bethlehem, PA",
-// Area, string
-AREA: "office area",
-// Price of thermostat, $, int
-PT: 100,
-// Number of thermostats, int
-NT: 10,
-// Installation time, hr, float
-IT: 1.5,
-// Labor rate is in Utility.json5
-// current hours per day, float (allows half hours)
-CHR: 24,
-// current days per week, float (allows half day on weekends)
-CDY: 7,
-// current weeks per year, int
-CWK: 32,
-// proposed hours per day, float (allows half hours)
-PHR: 8,
-// proposed days per week, float (allows half day on weekends)
-PDY: 5,
-// proposed weeks per year, int
-PWK: 32,
+    // Recommendation No., integer
+    REC: 1,
+    // City, State, string
+    TOWN: "Bethlehem, PA",
+    // Area, string
+    AREA: "office area",
+    // Price of thermostat, $, int
+    PT: 100,
+    // Number of thermostats, int
+    NT: 10,
+    // Installation time, hr, float
+    IT: 1.5,
+    // Labor rate is in Utility.json5
+    // current hours per day, float (allows half hours)
+    CHR: 24,
+    // current days per week, float (allows half day on weekends)
+    CDY: 7,
+    // current weeks per year, int
+    CWK: 32,
+    // proposed hours per day, float (allows half hours)
+    PHR: 8,
+    // proposed days per week, float (allows half day on weekends)
+    PDY: 5,
+    // proposed weeks per year, int
+    PWK: 32,
 
-// Cooling season, boolean
-COOL: true,
-// HVAC size, float
-TON: 120,
-// HVAC load factor, %, int
-LF: 60,
-// HVAC , BTU/hr/WEER, float
-EER: 11.0,
-// Cooling Set Temperature, degF, int
-CST: 72,
-// Modified Cooling Setback Temperature, degF, int
-MCST: 80,
-// Cooling Degree Hours, deg.hr, int
-CDH: 20000,
-// Modified Cooling Degree Hours, deg.hr, int
-MCDH: 10000,
+    // Cooling season, boolean
+    COOL: true,
+    // HVAC size, float
+    TON: 120,
+    // HVAC load factor, %, int
+    LF: 60,
+    // HVAC , BTU/hr/WEER, float
+    EER: 11.0,
+    // Cooling Set Temperature, degF, int
+    CST: 72,
+    // Modified Cooling Setback Temperature, degF, int
+    MCST: 80,
+    // Cooling Degree Hours, deg.hr, int
+    CDH: 20000,
+    // Modified Cooling Degree Hours, deg.hr, int
+    MCDH: 10000,
 
-// Heating season, boolean
-HEAT: true,
-// Natural Gas Usage, MMBtu/yr, int
-NGU: 10000,
-// Heating Set Temperature, degF, int
-HST: 68,
-// Modified Heating Setback Temperature, degF, int
-MHST: 60,
-// Heating Degree Hours, deg.hr, int
-HDH: 20000,
-// Modified Heating Degree Hours, deg.hr, int
-MHDH: 10000,
+    // Heating season, boolean
+    HEAT: true,
+    // Natural Gas Usage, MMBtu/yr, int
+    NGU: 10000,
+    // Heating Set Temperature, degF, int
+    HST: 68,
+    // Modified Heating Setback Temperature, degF, int
+    MHST: 60,
+    // Heating Degree Hours, deg.hr, int
+    HDH: 20000,
+    // Modified Heating Degree Hours, deg.hr, int
+    MHDH: 10000,
 }

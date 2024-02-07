@@ -26,42 +26,42 @@ iac.TYPE = iac.TYPE.lower()
 
 # Determining Unit, Supplier Type and Current Energy Cost
 if iac.TYPE == "natural gas" or iac.TYPE == "propane":
-  iac.UNIT = "MMBtu"
-  iac.CEC = iac.FC
-  iac.TYPES = iac.TYPE
+    iac.UNIT = "MMBtu"
+    iac.CEC = iac.FC
+    iac.TYPES = iac.TYPE
 elif iac.TYPE == "electricity":
-  iac.UNIT = "kWh"
-  iac.CEC = iac.EC
-  iac.TYPES = iac.TYPE
+    iac.UNIT = "kWh"
+    iac.CEC = iac.EC
+    iac.TYPES = iac.TYPE
 elif iac.TYPE == "demand":
-  iac.UNIT = "kW"
-  iac.CEC = iac.DC
-  iac.TYPES = "electricity"
+    iac.UNIT = "kW"
+    iac.CEC = iac.DC
+    iac.TYPES = "electricity"
 else:
   raise Exception("Energy type is not supported.")
 
 # Determining site based on state
 if iac.STATE == "PA":
-  if iac.TYPE == "natural gas":
-    iac.SITE = "https://www.pagasswitch.com"
-  elif (iac.TYPE == "electricity" or iac.TYPE == "demand"):
-    iac.SITE = "https://www.papowerswitch.com"
+    if iac.TYPE == "natural gas":
+        iac.SITE = "https://www.pagasswitch.com"
+    elif (iac.TYPE == "electricity" or iac.TYPE == "demand"):
+        iac.SITE = "https://www.papowerswitch.com"
 elif iac.STATE == "NJ":
-  iac.SITE = "https://nj.gov/njpowerswitch/"
+    iac.SITE = "https://nj.gov/njpowerswitch/"
 else:
-  raise Exception("State is not supported yet.")
+    raise Exception("State is not supported yet.")
 
 if iac.CEC <= iac.PEC:
-  raise Exception("Proposed energy cost is higher than current energy cost.")
+    raise Exception("Proposed energy cost is higher than current energy cost.")
 
 # Savings
 iac.ACS = iac.EU * (iac.CEC - iac.PEC)
 
 ## Format strings
 if iac.TYPE == "electricity":
-  iac = dollar(['CEC','PEC'],iac,3)
+    iac = dollar(['CEC','PEC'],iac,3)
 else:
-  iac = dollar(['CEC','PEC'],iac,2)
+    iac = dollar(['CEC','PEC'],iac,2)
 # set the rest to integer
 varList = ['ACS']
 iac = dollar(varList,iac,0)
@@ -73,11 +73,11 @@ doc = Document('template.docx')
 
 # If uses propane, there's no website
 if iac.TYPE == "propane":
-  docx_blocks(doc, PROPANE = False)
+    docx_blocks(doc, PROPANE = False)
 else:
-  docx_blocks(doc, PROPANE = True)
+    docx_blocks(doc, PROPANE = True)
 
 # Replacing keys
 docx_replace(doc, **iac)
 
-savefile(doc, iac.AR)
+savefile(doc, iac.REC)

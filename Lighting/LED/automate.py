@@ -160,7 +160,7 @@ for i in range(N+1):
     doc_tmp = Document('tmp'+str(i+1)+'.docx')
     composer.append(doc_tmp)
 
-savefile(composer, str(iac.AR))
+savefile(composer, str(iac.REC))
 
 # delete temp files
 for i in range(N+2):

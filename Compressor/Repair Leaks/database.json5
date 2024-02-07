@@ -1,60 +1,60 @@
 {
-// AR No., integer
-AR: 1,
-// hours per day, float (allows half hours)
-HR: 8.0,
-// days per week, float (allows half day on weekends)
-DY: 5.0,
-// weeks per year, int
-WK: 52,
-// Ultrasonic leak detector cost $, integer
-USLD: 1000,
+    // Recommendation No., integer
+    REC: 1,
+    // hours per day, float (allows half hours)
+    HR: 8.0,
+    // days per week, float (allows half day on weekends)
+    DY: 5.0,
+    // weeks per year, int
+    WK: 52,
+    // Ultrasonic leak detector cost $, integer
+    USLD: 1000,
 
-// Single stage reciprocating 0.88
-// Multi stage reciprocating  0.75
-// Rotary screw               0.82
-// Sliding vane               0.72
-// Single stage centrifugal   0.80
-// Multi stage centrifugal    0.70
-// Turbo blowers              0.70
-// Roots blowers              0.62
+    // Single stage reciprocating 0.88
+    // Multi stage reciprocating  0.75
+    // Rotary screw               0.82
+    // Sliding vane               0.72
+    // Single stage centrifugal   0.80
+    // Multi stage centrifugal    0.70
+    // Turbo blowers              0.70
+    // Roots blowers              0.62
 
-// Compressor Type, string
-CT: "Screw",
-// Adiabatic efficienty of compressor, %, integer
-EA: 82,
-// Number of stages, integer
-N: 1,
-// Leak location, string
-LL: "Production",
+    // Compressor Type, string
+    CT: "Screw",
+    // Adiabatic efficienty of compressor, %, integer
+    EA: 82,
+    // Number of stages, integer
+    N: 1,
+    // Leak location, string
+    LL: "Production",
 
-// Inlet temperature degF, integer
-T0: 75,
-// Leak point temperature degF, interger
-T1: 70,
-// Compressor operating temperature psig, integer
-P0: 110,
-// Line pressure at point of nozzle psig, integer
-P1: 80,
-// Compressor horsepower HP, integer
-HP: 250,
-// Motor efficienty, %, integer
-EM: 90,
-// Operating hours, integer
-OH: 8736,
-// Coincidence factor, %, integer
-CF: 100,
+    // Inlet temperature degF, integer
+    T0: 75,
+    // Leak point temperature degF, interger
+    T1: 70,
+    // Compressor operating temperature psig, integer
+    P0: 110,
+    // Line pressure at point of nozzle psig, integer
+    P1: 80,
+    // Compressor horsepower HP, integer
+    HP: 250,
+    // Motor efficienty, %, integer
+    EM: 90,
+    // Operating hours, integer
+    OH: 8736,
+    // Coincidence factor, %, integer
+    CF: 100,
 
-// Number of 1/64 in leaks, integer
-NL1: 0,
-// Number of 1/32 in leaks, integer
-NL2: 0,
-// Number of 1/16 in leaks, integer
-NL3: 6,
-// Number of 1/8 in leaks, integer
-NL4: 6,
-// Number of 3/16 in leaks, integer
-NL5: 3,
-// Number of 1/4 in leaks, integer
-NL6: 0,
+    // Number of 1/64 in leaks, integer
+    NL1: 0,
+    // Number of 1/32 in leaks, integer
+    NL2: 0,
+    // Number of 1/16 in leaks, integer
+    NL3: 6,
+    // Number of 1/8 in leaks, integer
+    NL4: 6,
+    // Number of 3/16 in leaks, integer
+    NL5: 3,
+    // Number of 1/4 in leaks, integer
+    NL6: 0,
 }

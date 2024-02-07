@@ -1,26 +1,26 @@
 {
-  // AR No., integer
-  AR: 1,
-  // ZIP code for average outdoor temperature, ZIP, string
-  ZIP: "18015",
-  // hours per day, float (allows half hours)
-  HR: 18.0,
-  // days per week, float (allows half day on weekends)
-  DY: 6.0,
-  // weeks per year, int
-  WK: 30,
-  // Horsepower of compressors, HP, integer
-  HP: 200,
-  // Average indoor temperature, degrees F, integer
-  TI: 70,
-  // Compressor power fraction, %, integer
-  FR: 83,
-  // Efficiency of compressor, %, integer
-  ETA: 90,
-  // Coincidence Factor, %, integer
-  CF: 80,
-  // Winter months per year, integer
-  C2: 8,
-  // Implementation Cost, $, integer
-  IC: 4000,
+    // Recommendation No., integer
+    REC: 1,
+    // ZIP code for average outdoor temperature, ZIP, string
+    ZIP: "18015",
+    // hours per day, float (allows half hours)
+    HR: 18.0,
+    // days per week, float (allows half day on weekends)
+    DY: 6.0,
+    // weeks per year, int
+    WK: 30,
+    // Horsepower of compressors, HP, integer
+    HP: 200,
+    // Average indoor temperature, degrees F, integer
+    TI: 70,
+    // Compressor power fraction, %, integer
+    FR: 83,
+    // Efficiency of compressor, %, integer
+    ETA: 90,
+    // Coincidence Factor, %, integer
+    CF: 80,
+    // Winter months per year, integer
+    C2: 8,
+    // Implementation Cost, $, integer
+    IC: 4000,
 }
