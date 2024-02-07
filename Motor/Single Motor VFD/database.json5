@@ -1,6 +1,6 @@
 {
   // AR Num, integer
-  AR: 1,
+  REC: 1,
   // Motor location, string
   MT: "oven blowers",
   // Horsepower of motor, integer

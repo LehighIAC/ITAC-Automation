@@ -1,6 +1,6 @@
 {
 // AR No., integer
-AR: 1,
+REC 1,
 // Number of motion sensors, integer
 MSN: 0,
 // Part + labor per motion serson $, integer
