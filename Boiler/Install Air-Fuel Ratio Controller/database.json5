@@ -1,0 +1,26 @@
+{
+    // Recommendation No., integer
+    REC: 1,
+    // hours per day, float (allows half hours)
+    HR: 24.0,
+    // days per week, float (allows half day on weekends)
+    DY: 7.0,
+    // weeks per year, int
+    WK: 52,
+    // Boiler Size, float
+    SIZE: 18,
+    // Equipment Name, string
+    EQUIP: "Steam Boiler",
+    // Current O2, %, float
+    O2: 5,
+    // Load Factor, %, float
+    LF: 55,
+    // Flue Gas Temperature, °F, int
+    FGT: 317,
+    // Combustion Air Temperature, °F, int
+    CAT: 88,
+    // Cost for the air-fuel controller, $, float
+    PARTS: 17000,
+    // Cost for the installation of the air-fuel controller, $, float
+    LABOR: 12000,
+}

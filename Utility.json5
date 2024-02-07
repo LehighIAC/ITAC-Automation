@@ -5,7 +5,7 @@
   FuelUnit: "Mcf",
   // Fuel Cost $/MMBtu, float
   FC: 2.95,
-  // Natural Gas Cost(for compatibility) $/MMBtu, float
+  // Natural Gas Cost(for compatibility) $/MMBtu, float, default 2.95
   NGC: 2.95,
   // Electricity Cost $/kWh, float, default 0.081
   EC: 0.081,

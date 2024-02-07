@@ -75,8 +75,7 @@ docx_blocks(doc, COOL = iac.COOL)
 docx_blocks(doc, HEAT = iac.HEAT)
 docx_blocks(doc, DOUBLE = iac.DOUBLE)
 
-filename = 'AR'+iac.AR+'.docx'
-doc.save(os.path.join('..', '..', 'ARs', filename))
+savefile(doc, iac.REC)
 
 # Caveats
 caveat("Please change implementation cost references if necessary.")

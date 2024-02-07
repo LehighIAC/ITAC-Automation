@@ -1,20 +1,20 @@
 {
-  // AR No., integer
-  AR: 1,
-  // hours per day, float (allows half hours)
-  HR: 18.0,
-  // days per week, float (allows half day on weekends)
-  DY: 6.0,
-  // weeks per year, int
-  WK: 30,
-  // Horsepower of compressors, HP, integer
-  HP: 200,
-  // Load Factor fraction, %, integer
-  FR: 83,
-  // Electrical Energy turned into heat, %, integer
-  EC: 80,
-  // Efficiency of heat recovery, %, integer
-  EHR: 50,
-  // Implementation Cost, integer
-  IC: 2500,
+    // Recommendation No., integer
+    REC: 1,
+    // hours per day, float (allows half hours)
+    HR: 18.0,
+    // days per week, float (allows half day on weekends)
+    DY: 6.0,
+    // weeks per year, int
+    WK: 30,
+    // Horsepower of compressors, HP, integer
+    HP: 200,
+    // Load Factor fraction, %, integer
+    FR: 83,
+    // Electrical Energy turned into heat, %, integer
+    EC: 80,
+    // Efficiency of heat recovery, %, integer
+    EHR: 50,
+    // Implementation Cost, integer
+    IC: 2500,
 }

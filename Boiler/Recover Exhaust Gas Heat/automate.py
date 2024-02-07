@@ -20,7 +20,7 @@ iac = EasyDict(jsonDict)
 # Interpolation
 TrhoList = np.array([0, 10, 20, 30, 40, 50, 60, 70, 80, 100, 120, 140, 160, 180, 200, 250, 300, 350, 400, 450, 500, 600, 700, 800, 1000, 1200, 1400, 1600])
 rhoList = np.array([0.0862, 0.0844, 0.0826, 0.081, 0.0793, 0.0778, 0.0763, 0.0749, 0.0735, 0.0709, 0.0685, 0.0662 , 0.0641, 0.0621\
-                        , 0.0602, 0.0559, 0.0522, 0.0489, 0.0461, 0.0436, 0.041, 0.0371, 0.034, 0.0315, 0.0272, 0.0239, 0.0213, 0.0193])
+                    , 0.0602, 0.0559, 0.0522, 0.0489, 0.0461, 0.0436, 0.041, 0.0371, 0.034, 0.0315, 0.0272, 0.0239, 0.0213, 0.0193])
 iac.RHO = round(np.interp(iac.TI, TrhoList, rhoList).item(),3)
 
 TCpList = np.array([-352, -318, -313, -280, -244, -208, -172, -136, -99.7, -63.7, -27.7, 8.3, 32, 44.3, 60, 80.3, 116, 152, 188, 224, 260, 440, 620, 800, 980, 1160, 1520, 2240, 2960])
@@ -60,9 +60,7 @@ doc = Document('template.docx')
 # Replacing keys
 docx_replace(doc, **iac)
 
-# Save file as AR*.docx
-filename = 'AR'+iac.AR+'.docx'
-doc.save(os.path.join('..', '..', 'ARs', filename))
+savefile(doc, iac.REC)
 
 # Caveats
 caveat("Please modify highlighted region if necessary.")

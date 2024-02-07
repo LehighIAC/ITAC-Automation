@@ -89,8 +89,7 @@ for i in reversed(range(len(iac.TON), 9)):
 docx_blocks(doc, mtrue = iac.FM)
 docx_blocks(doc, mfalse = not iac.FM)
 
-filename = 'AR'+iac.AR+'.docx'
-doc.save(os.path.join('..', '..', 'ARs', filename))
+savefile(doc, iac.REC)
 
 # Caveats
 caveat("Please change implementation cost references if necessary.")

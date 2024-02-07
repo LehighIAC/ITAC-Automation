@@ -1,11 +1,11 @@
 """
 Fully-automated IAC report compiler
-Usage: Copy all ARs into the ARs folder, Update info in Compiler.json5 and Utility.json5,
+Usage: Copy all recommendations into the Recommendations folder, Update info in Compiler.json5 and Utility.json5,
 then run this script.
 """
 
 
-import json5, os, locale, datetime, math
+import json5, os, locale, datetime, math, platform, re
 import pandas as pd
 from easydict import EasyDict
 from docx import Document, shared
@@ -16,8 +16,26 @@ from docxcompose.composer import Composer
 from python_docx_replace import docx_replace, docx_blocks
 from Shared.IAC import *
 
-# If ARs/Sorted/ folder doesn't exist, create one
-os.makedirs(os.path.join('ARs', 'Sorted'), exist_ok=True)
+# Check if Description.docx has been changed
+docTest = Document(os.path.join('Report', 'Description.docx'))
+answer = ""
+# If finds "#Insert plant layout picture here and delete this line", the file has not been changed yet
+for p in docTest.paragraphs:
+    if "#Insert plant layout picture here and delete this line" in p.text:
+        caveat("Looks like Report/Description.docx has not been changed yet.")
+        print("You may edit the document and run the script again,")
+        print("or ignore this message and edit the final report.")
+        while True:
+            answer = input("Do you wish to continue? (y/n): ")
+            if answer.lower() == 'y':
+                break
+            elif answer.lower() == 'n':
+                exit()
+            else:
+                pass
+
+# If Recommendations/Sorted/ folder doesn't exist, create one
+os.makedirs(os.path.join('Recommendations', 'Sorted'), exist_ok=True)
 
 # If on macOS
 if os.path.exists(os.path.join('Energy Charts', 'Energy Charts.fld')):
@@ -37,7 +55,7 @@ iac = EasyDict(jsonDict)
 print("done")
 
 # Initialize dataframe
-columns = ["isAAR", "File Name", "ARC No.", "Description", "Electricity (kWh)", "Electricity (MMBtu)", "Demand (kW)"
+columns = ["isAdditional", "File Name", "ARC No.", "Description", "Electricity (kWh)", "Electricity (MMBtu)", "Demand (kW)"
            , "Natural Gas (MMBtu)", "Other Energy Type", "Other Energy Amount", "Other Resource Type", "Other Resource Amount"
            , "Savings Type", "Savings Value", "Annual Cost Savings", "Implementation Cost", "Payback Period"]
 df = pd.DataFrame(columns=columns)
@@ -45,38 +63,39 @@ df = pd.DataFrame(columns=columns)
 # Set locale to en_US
 locale.setlocale(locale.LC_ALL, 'en_US')
 
-print("Reading ARs...")
-# Get all .docx files in ARs directory and extract information
-ARList = [f for f in os.listdir('ARs') if f.endswith('.docx')]
-AR_id = 0
-for ARdoc in ARList:
-    print(ARdoc)
-    doc = Document(os.path.join('ARs', ARdoc))
-    ARinfo = {}
+print("Reading recommendations...")
+# Get all .docx files in Recommendations/ directory and extract information
+recList = [f for f in os.listdir('Recommendations') if f.endswith('.docx')]
+recID = 0
+for recDoc in recList:
+    print(recDoc)
+    doc = Document(os.path.join('Recommendations', recDoc))
+    recInfo = {}
     # Record file name
-    ARinfo['File Name'] = ARdoc
+    recInfo['File Name'] = recDoc
 
     # Parse document title
-    fulltitle = doc.paragraphs[0].text
+    fullTitle = doc.paragraphs[0].text
     separatorFlag = False
     # list of possible separators
     separatorList = [":", "-", "–"]
     for separator in separatorList:
-        if separator in fulltitle:
+        if separator in fullTitle:
             separatorFlag = True
-            # check if the document is an AAR by title
-            ARinfo['isAAR'] = ("AAR" in fulltitle.split(separator)[0])
+            # check if the document is an additional recommendation by title
+            # Keep "AAR" for outdated documents
+            recInfo['isAdditional'] = ("Additional" in fullTitle.split(separator)[0]) or ("AAR" in fullTitle.split(separator)[0])
             # Parse the title of the .docx file
-            ARinfo['Description'] = title_case(fulltitle.split(separator)[1].strip())
+            recInfo['Description'] = title_case(fullTitle.split(separator)[1].strip())
             break
     if separatorFlag == False:
-        raise Exception("Can't parse document title:\n" + fulltitle)
+        raise Exception("Can't parse document title:\n" + fullTitle)
     
     # Read the 1st table in .docx files
     try:
         table = doc.tables[0]
     except:
-        raise Exception("Error: " + ARdoc + " is not a valid AR. Please check if the summary table is present.")
+        raise Exception("Error: " + recDoc + " is not a valid recommendation. Please check if the summary table is present.")
 
     for row in table.rows:
         key = row.cells[0].text
@@ -84,27 +103,27 @@ for ARdoc in ARList:
         # Parse ARC Number
         if "arc" in key.lower() and "number" in key.lower():
             validate_arc(value)
-            ARinfo['ARC No.'] = value
+            recInfo['ARC No.'] = value
         # Parse Annual Cost Savings
         elif "annual" in key.lower() and "cost" in key.lower():
             # convert currency to interger
-            ARinfo['Annual Cost Savings'] = locale.atoi(value.strip("$"))
+            recInfo['Annual Cost Savings'] = locale.atoi(value.strip("$"))
         # Parse Implementation Cost
         elif "implementation" in key.lower():
             # convert currency to interger
-            ARinfo['Implementation Cost'] = locale.atoi(value.strip("$"))
+            recInfo['Implementation Cost'] = locale.atoi(value.strip("$"))
         # If Payback Period skip (Doesn't matter, will calculate later)
         elif "payback" in key.lower():
             continue
         # Parse Electricity
         elif "electricity" in key.lower():
-            ARinfo['Electricity (kWh)'] = locale.atoi(value.split(' ')[0])
+            recInfo['Electricity (kWh)'] = locale.atoi(value.split(' ')[0])
         # Parse Demand
         elif "demand" in key.lower():
-            ARinfo['Demand (kW)'] = locale.atoi(value.split(' ')[0])
+            recInfo['Demand (kW)'] = locale.atoi(value.split(' ')[0])
         # Parse Natural Gas
         elif "natural" in key.lower():
-            ARinfo['Natural Gas (MMBtu)'] = locale.atoi(value.split(' ')[0])
+            recInfo['Natural Gas (MMBtu)'] = locale.atoi(value.split(' ')[0])
         # Parse undefined type
         else:
             # If the value contains mmbtu, parse it as other energy
@@ -115,9 +134,9 @@ for ARdoc in ARList:
                 # Remove "savings" (usually the last word)
                 if "saving" in key.lower():
                     key = key.rsplit(' ', 1)[0]
-                ARinfo['Other Energy Type'] = title_case(key)
+                recInfo['Other Energy Type'] = title_case(key)
                 # Parse number
-                ARinfo['Other Energy Amount'] = locale.atoi(value.split(' ')[0])
+                recInfo['Other Energy Amount'] = locale.atoi(value.split(' ')[0])
             # If not, parse it as other resource
             else:
                 # Remove "annual" (usually the first word)
@@ -126,16 +145,16 @@ for ARdoc in ARList:
                 # Remove "savings" (usually the last word)
                 if "saving" in key.lower():
                     key = key.rsplit(' ', 1)[0]
-                ARinfo['Other Resource Type'] = title_case(key)
+                recInfo['Other Resource Type'] = title_case(key)
                 # Keep the whole string
-                ARinfo['Other Resource Amount'] = value   
+                recInfo['Other Resource Amount'] = value   
     # Add dictionary to dataframe
-    for key in ARinfo:
-        df.loc[AR_id, key] = ARinfo[key]
-    AR_id += 1
+    for key in recInfo:
+        df.loc[recID, key] = recInfo[key]
+    recID += 1
 print("done")
 
-print("Analyzing ARs...", end ="")
+print("Analyzing recommendations...", end ="")
 ## Calculate on columns
 # Calculate payback period
 df['Payback Period'] = df['Implementation Cost'] / df['Annual Cost Savings']
@@ -170,17 +189,17 @@ for index, row in df.iterrows():
     df.at[index, 'Savings Value'] = SV
 
 ## Summation statistics
-# Filter ARs
-AR_df = df[df['isAAR'] == False]
+# Filter Recommendationss
+recData = df[df['isAdditional'] == False]
 # Reorder index
-AR_df = AR_df.reset_index(drop=True)
-# AR statistics
-EkWh = AR_df['Electricity (kWh)'].sum(axis=0, skipna=True)
-EMMBtu = AR_df['Electricity (MMBtu)'].sum(axis=0, skipna=True)
-NMMBtu = AR_df['Natural Gas (MMBtu)'].sum(axis=0, skipna=True)
-OMMBtu = AR_df['Other Energy Amount'].sum(axis=0, skipna=True)
+recData = recData.reset_index(drop=True)
+# Recommendations statistics
+EkWh = recData['Electricity (kWh)'].sum(axis=0, skipna=True)
+EMMBtu = recData['Electricity (MMBtu)'].sum(axis=0, skipna=True)
+NMMBtu = recData['Natural Gas (MMBtu)'].sum(axis=0, skipna=True)
+OMMBtu = recData['Other Energy Amount'].sum(axis=0, skipna=True)
 # Add up all energy in MMBtu
-iac.ARMMBtu = round(EMMBtu + NMMBtu + OMMBtu)
+iac.MMBtu = round(EMMBtu + NMMBtu + OMMBtu)
 # Calculate CO2
 if iac.FuelType == "Natural Gas":
     iac.FuelCO2 = 53
@@ -192,94 +211,117 @@ elif iac.FuelType == "Fuel Oil #2":
     iac.FuelCO2 = 73.51
     iac.CO2 = round((iac.FuelCO2 * OMMBtu + 0.315 * EkWh)/1000)
 # Add up all cost
-iac.ARACS = AR_df['Annual Cost Savings'].sum(axis=0, skipna=True)
-iac.ARIC = AR_df['Implementation Cost'].sum(axis=0, skipna=True)
+iac.ACS = recData['Annual Cost Savings'].sum(axis=0, skipna=True)
+iac.IC = recData['Implementation Cost'].sum(axis=0, skipna=True)
 # Payback period in number
-iac.ARPB = math.ceil(iac.ARIC / iac.ARACS * 10) / 10
+iac.PB = math.ceil(iac.IC / iac.ACS * 10) / 10
 # Payback period in formatted string
-iac.PB = payback(iac.ARACS, iac.ARIC)
+iac.PBstr = payback(iac.ACS, iac.IC)
 print("done")
 
-print("Reformatting ARs...", end ="")
-subtitlelist = ["Recommended Actions","Summary of Estimated Savings and Implementation Costs","Current Practice and Observations","Anticipated Savings","Implementation Costs","Implementation Cost References"]
-## Reformatting ARs
-for index, row in AR_df.iterrows():
-    doc = Document(os.path.join('ARs', row['File Name']))
+print("Reformatting recommendations...", end ="")
+subtitleList = ["Recommended Actions","Summary of Estimated Savings and Implementation Costs","Current Practice and Observations","Anticipated Savings","Implementation Costs","Implementation Cost References"]
+## Reformatting Recommendations
+for index, row in recData.iterrows():
+    doc = Document(os.path.join('Recommendations', row['File Name']))
     # Change title and make it upper case
-    doc.paragraphs[0].text = "AR "+ str(index+1) + ': ' + row['Description'].upper()
-    # Enforce Heading 1
+    doc.paragraphs[0].text = "Recommendation "+ str(index+1) + ': ' + title_case(row['Description'])
+    # Enforce Heading 1 style
     try:
         doc.paragraphs[0].style = doc.styles['Heading 1']
     except:
         doc.styles.add_style('Heading 1', WD_STYLE_TYPE.PARAGRAPH)
         doc.paragraphs[0].style = doc.styles['Heading 1']
-    # Enforce subtitle to be Subtitle1
+    # Enforce Subtitle style
     # This style is already defined in Introduction.docx
     for paragraph in doc.paragraphs:
-        for subtitle in subtitlelist:
-            if paragraph.text == subtitle or paragraph.text == subtitle[:-1]:
+        txt = paragraph.text
+        for subtitle in subtitleList:
+            # single or plural
+            if txt == subtitle or txt == subtitle[:-1]:
                 try:
-                    paragraph.style = doc.styles['Subtitle1']
+                    paragraph.style = doc.styles['Subtitle']
                 except:
-                    doc.styles.add_style('Subtitle1', WD_STYLE_TYPE.PARAGRAPH)
-                    paragraph.style = doc.styles['Subtitle1']
+                    doc.styles.add_style('Subtitle', WD_STYLE_TYPE.PARAGRAPH)
+                    paragraph.style = doc.styles['Subtitle']
+        # Fix table/figure captions
+        if re.search('^\s?Table\s\d{1,2}:', txt) != None or re.search('^\s?Figure\s\d{1,2}:', txt) != None:
+            try:
+                paragraph.style = doc.styles['Caption']
+            except:
+                doc.styles.add_style('Caption', WD_STYLE_TYPE.PARAGRAPH)
+                paragraph.style = doc.styles['Caption']
+
     # Save file with sorted filename
-    doc.save(os.path.join('ARs', 'Sorted', 'AR'+ str(index+1) + '.docx'))
+    doc.save(os.path.join('Recommendations', 'Sorted', 'Rec'+ str(index+1) + '.docx'))
 print("done")
 
-# Check if there's at least 1 AAR
-AAR = df['isAAR'].any()
-if AAR:
-    print("Analyzing AARs...", end ="")
-    # Filter AAR
-    AAR_df = df[df['isAAR'] == True]
-    # reorder index
-    AAR_df = AAR_df.reset_index(drop=True)
-    # AAR statistics
-    EMMBtu = AAR_df['Electricity (MMBtu)'].sum(axis=0, skipna=True)
-    NMMBtu = AAR_df['Natural Gas (MMBtu)'].sum(axis=0, skipna=True)
-    OMMBtu = AAR_df['Other Energy Amount'].sum(axis=0, skipna=True)
+# Check if there's at least 1 additional recommendation
+hasAdditional = df['isAdditional'].any()
+if hasAdditional:
+    print("Analyzing additional recommendations...", end ="")
+    # Filter additional
+    addData = df[df['isAdditional'] == True]
+    # Reorder index
+    addData = addData.reset_index(drop=True)
+    # Additional statistics
+    EMMBtu = addData['Electricity (MMBtu)'].sum(axis=0, skipna=True)
+    NMMBtu = addData['Natural Gas (MMBtu)'].sum(axis=0, skipna=True)
+    OMMBtu = addData['Other Energy Amount'].sum(axis=0, skipna=True)
     # Add up all energy
-    iac.AARMMBtu = round(EMMBtu + NMMBtu + OMMBtu)
+    iac.AddMMBtu = round(EMMBtu + NMMBtu + OMMBtu)
     # Add up all cost
-    iac.AARACS = AAR_df['Annual Cost Savings'].sum(axis=0, skipna=True)
-    iac.AARIC = AAR_df['Implementation Cost'].sum(axis=0, skipna=True)
+    iac.AddACS = addData['Annual Cost Savings'].sum(axis=0, skipna=True)
+    iac.AddIC = addData['Implementation Cost'].sum(axis=0, skipna=True)
     # Payback period in number
-    iac.AARPB = round(iac.AARIC / iac.AARACS, 1)
+    iac.AddPB = round(iac.AddIC / iac.AddACS, 1)
     print("done")
 
-    print("Reformatting AARs...", end ="")
-    # Modify the title of the AAR docx
-    for index, row in AAR_df.iterrows():
-        doc = Document(os.path.join('ARs', row['File Name']))
+    print("Reformatting additional recommendations...", end ="")
+    # Modify the title of the additional recommendation docx
+    for index, row in addData.iterrows():
+        doc = Document(os.path.join('Recommendations', row['File Name']))
         # Change title and make it upper case
-        doc.paragraphs[0].text = "AAR "+ str(index+1) + ': ' + row['Description'].upper()
-        # Enforce Heading 1
+        doc.paragraphs[0].text = "Additional Recommendation "+ str(index+1) + ': ' + title_case(row['Description'])
+        # Enforce Heading 1 style
         try:
             doc.paragraphs[0].style = doc.styles['Heading 1']
         except:
             doc.styles.add_style('Heading 1', WD_STYLE_TYPE.PARAGRAPH)
             doc.paragraphs[0].style = doc.styles['Heading 1']
-        # Enforce subtitle to be Subtitle1
+        # Enforce Subtitle style
         # This style is already defined in Introduction.docx
         for paragraph in doc.paragraphs:
-            for subtitle in subtitlelist:
-                if paragraph.text == subtitle:
+            txt = paragraph.text
+            for subtitle in subtitleList:
+                # single or plural
+                if txt == subtitle or txt == subtitle[:-1]:
                     try:
-                        paragraph.style = doc.styles['Subtitle1']
+                        paragraph.style = doc.styles['Subtitle']
                     except:
-                        doc.styles.add_style('Subtitle1', WD_STYLE_TYPE.PARAGRAPH)
-                        paragraph.style = doc.styles['Subtitle1']
+                        doc.styles.add_style('Subtitle', WD_STYLE_TYPE.PARAGRAPH)
+                        paragraph.style = doc.styles['Subtitle']
+            # Fix table/figure captions
+            if re.search('^\s?Table\s\d{1,2}:', txt) != None or re.search('^\s?Figure\s\d{1,2}:', txt) != None:
+                try:
+                    paragraph.style = doc.styles['Caption']
+                except:
+                    doc.styles.add_style('Caption', WD_STYLE_TYPE.PARAGRAPH)
+                    paragraph.style = doc.styles['Caption']
         # Save file with sorted filename
-        doc.save(os.path.join('ARs', 'Sorted', 'AAR'+ str(index+1) + '.docx'))
+        doc.save(os.path.join('Recommendations', 'Sorted', 'Add'+ str(index+1) + '.docx'))
     print("done")
 
 print("Parsing plant information...", end ="")
+
 ## Compiler.json5 Calculations
 # Report date = today or 60 days after assessment, which ever is earlier
 VD = datetime.datetime.strptime(iac.VDATE, '%B %d, %Y')
 RDATE = min(datetime.datetime.today(), VD + datetime.timedelta(days=60))
-iac.RDATE = datetime.datetime.strftime(RDATE, '%B %-d, %Y')
+if platform.system() == 'Windows':
+    iac.RDATE = datetime.datetime.strftime(RDATE, '%B %#d, %Y')
+else: # macOS or Linux
+    iac.RDATE = datetime.datetime.strftime(RDATE, '%B %-d, %Y')
 
 # Sort participant and contributor name list
 iac.PARTlist.sort(key=lambda x: x.rsplit(' ', 1)[1])
@@ -297,7 +339,8 @@ iac.CONT = CONT.rstrip('\n')
 iac.pop('CONTlist')
 print("done")
 
-# products in lower cases
+# products in different cases
+iac.PRODTitle = iac.PROD.title()
 iac.PRODlower = iac.PROD.lower()
 
 ## Format strings
@@ -306,148 +349,148 @@ iac = dollar(['EC'],iac,3)
 # set the natural gas and demand to 2 digits accuracy
 iac = dollar(['DC', 'FC'],iac,2)
 # set the rest to integer
-varList = ['ARACS', 'ARIC', 'TotalECost', 'TotalFCost', 'TotalCost']
-if AAR:
-    varList.extend(['AARACS', 'AARIC'])
+varList = ['ACS', 'IC', 'TotalECost', 'TotalFCost', 'TotalCost']
+if hasAdditional:
+    varList.extend(['AddACS', 'AddIC'])
 iac = dollar(varList,iac,0)
 # Format all numbers to string with thousand separator
 iac = grouping_num(iac)
 
 ## Load introduction template
-doc_intro = Document(os.path.join('Report', 'Introduction.docx'))
+docIntro = Document(os.path.join('Report', 'Introduction.docx'))
 
-# Add rows to AR table (Should be the 3rd table)
-print("Writing AR table...", end ="")
+# Add rows to Recommendation table (Should be the 3rd table)
+print("Writing recommendation table...", end ="")
 locale._override_localeconv={'frac_digits':0}
-ARTable = doc_intro.tables[2]
-for index, row in AR_df.iterrows():
-    ARrow = ARTable.rows[index+1].cells
+recTable = docIntro.tables[2]
+for index, row in recData.iterrows():
+    recRow = recTable.rows[index+1].cells
     # Add ARC No.
-    ARrow[0].text = 'AR ' + str(index+1) + '\n' + row['ARC No.']
-    ARrow[0].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+    recRow[0].text = 'Rec. ' + str(index+1) + '\n' + row['ARC No.']
+    recRow[0].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
     # Add description
-    ARrow[1].text = row['Description']
-    ARrow[1].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.LEFT
+    recRow[1].text = row['Description']
+    recRow[1].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.LEFT
     # Add savings type
-    ARrow[2].text = row['Savings Type']
-    ARrow[2].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+    recRow[2].text = row['Savings Type']
+    recRow[2].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
     # Add savings value
-    ARrow[3].text = row['Savings Value']
-    ARrow[3].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+    recRow[3].text = row['Savings Value']
+    recRow[3].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
     # Add annual cost savings
-    ARrow[4].text = locale.currency(row['Annual Cost Savings'], grouping=True)
-    ARrow[4].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.RIGHT
+    recRow[4].text = locale.currency(row['Annual Cost Savings'], grouping=True)
+    recRow[4].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.RIGHT
     # Add implementation cost
-    ARrow[5].text = locale.currency(row['Implementation Cost'], grouping=True)
-    ARrow[5].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.RIGHT
+    recRow[5].text = locale.currency(row['Implementation Cost'], grouping=True)
+    recRow[5].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.RIGHT
     # Add payback period
     pb = row['Payback Period']
     if pb == 0:
-        ARrow[6].text = "Immediate"
+        recRow[6].text = "Immediate"
     else:
-        ARrow[6].text = str(math.ceil(pb * 10) / 10)
-    ARrow[6].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.RIGHT
+        recRow[6].text = str(math.ceil(pb * 10) / 10)
+    recRow[6].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.RIGHT
     # Set 3pt before and after paragraph
     for col in range(0,7):
-        ARrow[col].paragraphs[0].paragraph_format.space_before = shared.Pt(3)
-        ARrow[col].paragraphs[0].paragraph_format.space_after = shared.Pt(3)
+        recRow[col].paragraphs[0].paragraph_format.space_before = shared.Pt(3)
+        recRow[col].paragraphs[0].paragraph_format.space_after = shared.Pt(3)
 # Delete unused rows (Currectly row 1-15 are empty)
-for index in reversed(range(len(AR_df), 15)):
-    ARTable._tbl.remove(ARTable.rows[index+1]._tr)
+for index in reversed(range(len(recData), 15)):
+    recTable._tbl.remove(recTable.rows[index+1]._tr)
 print("done")
 
-if AAR:
-    # Add rows to AAR table (Should be the 4th table)
-    print("Writing AAR table...", end ="")
+if hasAdditional:
+    # Add rows to additional recommendation table (Should be the 4th table)
+    print("Writing Additional Recommendation table...", end ="")
     locale._override_localeconv={'frac_digits':0}
-    AARTable = doc_intro.tables[3]
-    for index, row in AAR_df.iterrows():
-        AARrow = AARTable.rows[index+1].cells
+    addTable = docIntro.tables[3]
+    for index, row in addData.iterrows():
+        addRow = addTable.rows[index+1].cells
         # Add ARC No.
-        AARrow[0].text = 'AAR ' + str(index+1) + '\n' + row['ARC No.']
-        AARrow[0].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+        addRow[0].text = 'Add. Rec. ' + str(index+1) + '\n' + row['ARC No.']
+        addRow[0].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
         # Add description
-        AARrow[1].text = row['Description']
-        AARrow[1].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.LEFT
+        addRow[1].text = row['Description']
+        addRow[1].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.LEFT
         # Add savings type
-        AARrow[2].text = row['Savings Type']
-        AARrow[2].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+        addRow[2].text = row['Savings Type']
+        addRow[2].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
         # Add savings value
-        AARrow[3].text = row['Savings Value']
-        AARrow[3].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+        addRow[3].text = row['Savings Value']
+        addRow[3].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
         # Add annual cost savings
-        AARrow[4].text = locale.currency(row['Annual Cost Savings'], grouping=True)
-        AARrow[4].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.RIGHT
+        addRow[4].text = locale.currency(row['Annual Cost Savings'], grouping=True)
+        addRow[4].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.RIGHT
         # Add implementation cost
-        AARrow[5].text = locale.currency(row['Implementation Cost'], grouping=True)
-        AARrow[5].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.RIGHT
+        addRow[5].text = locale.currency(row['Implementation Cost'], grouping=True)
+        addRow[5].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.RIGHT
         # Add payback period
         pb = row['Payback Period']
-        AARrow[6].text = str(math.ceil(pb * 10) / 10)
-        AARrow[6].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.RIGHT
+        addRow[6].text = str(math.ceil(pb * 10) / 10)
+        addRow[6].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.RIGHT
     # Set 3pt before and after paragraph
     for col in range(0,7):
-        AARrow[col].paragraphs[0].paragraph_format.space_before = shared.Pt(3)
-        AARrow[col].paragraphs[0].paragraph_format.space_after = shared.Pt(3)
+        addRow[col].paragraphs[0].paragraph_format.space_before = shared.Pt(3)
+        addRow[col].paragraphs[0].paragraph_format.space_after = shared.Pt(3)
     # Delete unused rows (Currectly row 1-5 are empty)
-    for index in reversed(range(len(AAR_df), 5)):
-        AARTable._tbl.remove(AARTable.rows[index+1]._tr)
+    for index in reversed(range(len(addData), 5)):
+        addTable._tbl.remove(addTable.rows[index+1]._tr)
     print("done")
 else:
     # delete this table
-    doc_intro._body._body.remove(doc_intro.tables[3]._tbl)
+    docIntro._body._body.remove(docIntro.tables[3]._tbl)
 
-# Remove AAR blocks if no AAR
-docx_blocks(doc_intro, AAR = AAR)
+# Remove Add blocks if no Additional
+docx_blocks(docIntro, ADD = hasAdditional)
 
 # Replacing keys
 print("Replacing keys in introduction...", end ="")
-docx_replace(doc_intro, **iac)
+docx_replace(docIntro, **iac)
 print("done")
 
 # Save introduction
-filename_intro = iac.LE + '-intro.docx'
-doc_intro.save(filename_intro)
+filenameIntro = iac.LE + '-intro.docx'
+docIntro.save(filenameIntro)
 
 ## Load backgroud template
-doc_back = Document(os.path.join('Report', 'Background.docx'))
+docBackground = Document(os.path.join('Report', 'Background.docx'))
 
 # Replacing keys
 print("Replacing keys in background...", end ="")
-docx_replace(doc_back, **iac)
+docx_replace(docBackground, **iac)
 print("done")
 
 # Save background
-filename_back = iac.LE + '-back.docx'
-doc_back.save(filename_back)
+filenameBackground = iac.LE + '-back.docx'
+docBackground.save(filenameBackground)
 
 ## Load energy bill analysis template
-doc_energy = Document(os.path.join('Report', 'Energy.docx'))
+docEnergy = Document(os.path.join('Report', 'Energy.docx'))
 
 # Add energy chart images
 print("Adding energy chart images...", end ="")
 # If on macOS
 if chartPath == os.path.join('Energy Charts', 'Energy Charts.fld'):
-    add_image(doc_energy, '#EUChart', os.path.join(chartPath, "image001.png"), shared.Inches(6))
-    add_image(doc_energy, '#ECChart', os.path.join(chartPath, "image004.png"), shared.Inches(6))
-    add_image(doc_energy, '#DUChart', os.path.join(chartPath, "image002.png"), shared.Inches(6))
-    add_image(doc_energy, '#DCChart', os.path.join(chartPath, "image005.png"), shared.Inches(6))
-    add_image(doc_energy, '#FUChart', os.path.join(chartPath, "image003.png"), shared.Inches(6))
-    add_image(doc_energy, '#FCChart', os.path.join(chartPath, "image006.png"), shared.Inches(6))
-    add_image(doc_energy, '#PieUChart', os.path.join(chartPath, "image007.png"), shared.Inches(6))
-    add_image(doc_energy, '#PieCChart', os.path.join(chartPath, "image008.png"), shared.Inches(6))
-    add_image(doc_energy, '#TotalChart', os.path.join(chartPath, "image009.png"), shared.Inches(9))
+    add_image(docEnergy, '#EUChart', os.path.join(chartPath, "image001.png"), shared.Inches(6))
+    add_image(docEnergy, '#ECChart', os.path.join(chartPath, "image004.png"), shared.Inches(6))
+    add_image(docEnergy, '#DUChart', os.path.join(chartPath, "image002.png"), shared.Inches(6))
+    add_image(docEnergy, '#DCChart', os.path.join(chartPath, "image005.png"), shared.Inches(6))
+    add_image(docEnergy, '#FUChart', os.path.join(chartPath, "image003.png"), shared.Inches(6))
+    add_image(docEnergy, '#FCChart', os.path.join(chartPath, "image006.png"), shared.Inches(6))
+    add_image(docEnergy, '#PieUChart', os.path.join(chartPath, "image007.png"), shared.Inches(6))
+    add_image(docEnergy, '#PieCChart', os.path.join(chartPath, "image008.png"), shared.Inches(6))
+    add_image(docEnergy, '#TotalChart', os.path.join(chartPath, "image009.png"), shared.Inches(9))
 # If on Windows
 elif chartPath == os.path.join('Energy Charts', 'Energy Charts_files'):
-    add_image(doc_energy, '#EUChart', os.path.join(chartPath, "image001.png"), shared.Inches(6))
-    add_image(doc_energy, '#ECChart', os.path.join(chartPath, "image002.png"), shared.Inches(6))
-    add_image(doc_energy, '#DUChart', os.path.join(chartPath, "image003.png"), shared.Inches(6))
-    add_image(doc_energy, '#DCChart', os.path.join(chartPath, "image005.png"), shared.Inches(6))
-    add_image(doc_energy, '#FUChart', os.path.join(chartPath, "image006.png"), shared.Inches(6))
-    add_image(doc_energy, '#FCChart', os.path.join(chartPath, "image007.png"), shared.Inches(6))
-    add_image(doc_energy, '#PieUChart', os.path.join(chartPath, "image009.png"), shared.Inches(6))
-    add_image(doc_energy, '#PieCChart', os.path.join(chartPath, "image011.png"), shared.Inches(6))
-    add_image(doc_energy, '#TotalChart', os.path.join(chartPath, "image013.png"), shared.Inches(9))
+    add_image(docEnergy, '#EUChart', os.path.join(chartPath, "image001.png"), shared.Inches(6))
+    add_image(docEnergy, '#ECChart', os.path.join(chartPath, "image002.png"), shared.Inches(6))
+    add_image(docEnergy, '#DUChart', os.path.join(chartPath, "image003.png"), shared.Inches(6))
+    add_image(docEnergy, '#DCChart', os.path.join(chartPath, "image005.png"), shared.Inches(6))
+    add_image(docEnergy, '#FUChart', os.path.join(chartPath, "image006.png"), shared.Inches(6))
+    add_image(docEnergy, '#FCChart', os.path.join(chartPath, "image007.png"), shared.Inches(6))
+    add_image(docEnergy, '#PieUChart', os.path.join(chartPath, "image009.png"), shared.Inches(6))
+    add_image(docEnergy, '#PieCChart', os.path.join(chartPath, "image011.png"), shared.Inches(6))
+    add_image(docEnergy, '#TotalChart', os.path.join(chartPath, "image013.png"), shared.Inches(9))
 print("done")
 
 # Fill in energy chart tables from Energy Charts.xlsx
@@ -458,74 +501,77 @@ edf = pd.read_excel(os.path.join('Energy Charts', 'Energy Charts.xlsx'), sheet_n
 fdf = pd.read_excel(os.path.join('Energy Charts', 'Energy Charts.xlsx'), sheet_name="Raw Data", skiprows = 5, nrows=13, usecols = 'K:N')
 
 # Add rows to electricity table (Should be the 1st table)
-etable = doc_energy.tables[0]
+eTable = docEnergy.tables[0]
 for index, row in edf.iterrows():
-    erow = etable.rows[index+3].cells
+    eRow = eTable.rows[index+3].cells
     # Add Month
-    erow[0].text = edf.iloc[(index, 0)]
-    erow[0].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+    eRow[0].text = edf.iloc[(index, 0)]
+    eRow[0].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
     for col in range(1,8):
         # Add interger with thousand separator
-        erow[col].text = locale.format_string('%d',round(edf.iloc[(index, col)]), grouping=True)
-        erow[col].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.RIGHT
+        eRow[col].text = locale.format_string('%d',round(edf.iloc[(index, col)]), grouping=True)
+        eRow[col].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.RIGHT
     # Bold the last row
     if index == 12:
         for col in range(0,8):
-            erow[col].paragraphs[0].runs[0].bold = True
+            eRow[col].paragraphs[0].runs[0].bold = True
 
 # Add rows to fuel table (Should be the 2nd table)
-ftable = doc_energy.tables[1]
+fTable = docEnergy.tables[1]
 for index, row in fdf.iterrows():
-    frow = ftable.rows[index+3].cells
+    fRow = fTable.rows[index+3].cells
     # Add Month
-    frow[0].text = fdf.iloc[(index, 0)]
-    frow[0].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+    fRow[0].text = fdf.iloc[(index, 0)]
+    fRow[0].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
     for col in range(1,4):
         # Add interger with thousand separator
-        frow[col].text = locale.format_string('%d',round(fdf.iloc[(index, col)]), grouping=True)
-        frow[col].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.RIGHT
+        fRow[col].text = locale.format_string('%d',round(fdf.iloc[(index, col)]), grouping=True)
+        fRow[col].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.RIGHT
     # Bold the last row
     if index == 12:
         for col in range(0,4):
-            frow[col].paragraphs[0].runs[0].bold = True
+            fRow[col].paragraphs[0].runs[0].bold = True
 print("done")
 # Replacing keys
 print("Replacing keys in energy charts...", end ="")
-docx_replace(doc_energy, **iac)
+docx_replace(docEnergy, **iac)
 print("done")
 # Save energy charts
-filename_energy = iac.LE + '-energy.docx'
-doc_energy.save(filename_energy)
+filenameEnergy = iac.LE + '-energy.docx'
+docEnergy.save(filenameEnergy)
 
 print("Combining all docs...", end ="")
 # List of docs to combine
 docList = [os.path.join('Report', 'ToC.docx')]
-for ARlen in range(1, len(AR_df)+1):
-    docList.append(os.path.join('ARs', 'Sorted','AR' + str(ARlen) + '.docx'))
-if AAR:
-    docList.append(os.path.join('Report', 'AAR.docx'))
-    for AARlen in range(1, len(AAR_df)+1):
-        docList.append(os.path.join('ARs', 'Sorted','AAR' + str(AARlen) + '.docx'))
+for RecLength in range(1, len(recData)+1):
+    docList.append(os.path.join('Recommendations', 'Sorted','Rec' + str(RecLength) + '.docx'))
+if hasAdditional:
+    docList.append(os.path.join('Report', 'Add.docx'))
+    for AddLength in range(1, len(addData)+1):
+        docList.append(os.path.join('Recommendations', 'Sorted','Add' + str(AddLength) + '.docx'))
 else:
     pass
+docList.append(filenameBackground)
+docList.append(os.path.join('Report', 'Description.docx'))
 
 # Combine all docx files
-master = Document(filename_intro)
-master.add_page_break()
-composer = Composer(master)
+main = Document(filenameIntro)
+main.add_page_break()
+composer = Composer(main)
 for i in range(0, len(docList)):
     doc_add = Document(docList[i])
     doc_add.add_page_break()
     composer.append(doc_add)
-composer.append(Document(filename_back))
-composer.append(Document(filename_energy))
+# A section break is already added in BestPractice.docx, so no need to add a page break
+composer.append(Document(os.path.join('Report', 'BestPractice.docx')))
+composer.append(Document(filenameEnergy))
 filename = iac.LE +'.docx'
 composer.save(filename)
 
 # delete temp files
-os.remove(filename_intro)
-os.remove(filename_back)
-os.remove(filename_energy)
+os.remove(filenameIntro)
+os.remove(filenameBackground)
+os.remove(filenameEnergy)
 print("done")
 
 # Open the combined docx file
@@ -542,7 +588,7 @@ doc.save(filename)
 print(filename + " is finished.")
 
 # Caveats
-caveat("Please select all (Ctrl+A) then refresh (F9) ToC, list of tables/figures, twice.")
-caveat("Please fix title case in ToC (AR/ARR and conjunctions).")
-caveat("Please select list of tables/figures then set to NO BOLD.")
-caveat("Please manually add Process Description, Major Equipment, Current Best Practices, and plant layout image.")
+caveat("Please select all (Ctrl+A) then refresh TWICE (F9) ToC, list of tables/figures.")
+
+if answer.lower() == 'y':
+    caveat("Please manually add Process Description, Major Equipment, Current Best Practices, and plant layout image.")

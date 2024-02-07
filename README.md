@@ -19,7 +19,7 @@ conda activate iac
 ```
 ### Install the Following Packages
 ```
-conda install json5 numpy pandas"<2" openpyxl requests
+conda install json5 numpy pandas openpyxl requests
 conda install -c conda-forge python-docx docxcompose easydict latex2mathml num2words pgeocode
 pip install python-docx-replace meteostat
 ```
@@ -37,44 +37,47 @@ Is it suggested to work on a **copy** of this reposiotry when generating an IAC 
 
 For your convenience, download the main branch from this link: https://codeload.github.com/LehighIAC/IAC-Automation/zip/refs/heads/main , then use VS Code to open the **folder**.
 
-![iac](https://github.com/LehighIAC/IAC-Automation/assets/12702149/62d48584-f6f5-449e-849e-2daa8e54854a)
+![iac](https://github.com/LehighIAC/IAC-Automation/assets/12702149/fabb6817-7c5a-4e76-9bfe-661a4d2643a5)
 
 ### Energy Charts
 1. Edit `Energy Charts.xlsx`. Select `fuel type` ,`fuel unit` and `start month`, then edit raw data (if copying from other spreadsheet, copy values only). The formatting is fully automatic and shouldn't be touched.
 2. Save the workbook as `Web Page (.htm)` format in the same directory. DO NOT change the filename, all images will be  kept in `Energy Charts.fld` folder. Currently  this is the only stable way to save all charts as images.
 3. Run `Utility.py` to extract energy usage data from the spreadsheet.
 ### Assessment Recommendations
-1. Edit `.json5` database of any specific AR. Make sure the data type is matching the description.
-2. Run the corresponding `.py` file. The output will be saved in `ARs` directory. Follow the instructions of the script if there's anything you need to adjust manually.
-### Requirements of AR Files:
+1. Edit `.json5` database of any specific recommendation. Make sure the data type is matching the description.
+2. Run the corresponding `.py` file. The output will be saved in `Recommendations` directory. Follow the instructions of the script if there's anything you need to adjust manually.
+### Requirements of Manual Recommendation Files:
 1. No requirement for filename, as long as it's `.docx`
 2. Doesn't matter if the file is made from Python template, Excel template, or by hand. Please **break links** if you used Excel templates.
-3. The title text should always be "AR x: Title" or "AAR x: Title". Case insensitive. In outline view the title should always be **Level 1**.
+3. The title text should always be "Recommendation x: Title" or "Additional Recommendation x: Title". Case insensitive. In outline view the title should always be **Level 1**.
 4. If there's any other type of energy savings, the unit should be `MMBtu`.
 5. All subtitles, such as "Recommend Actions", "Anticipated Savings" should always be **body text** in outline view. Otherwise the automatic table of contents might be broken.
 6. In rare cases, some .docx files are actually wrapped legacy .doc file (pre Word 2000) and is not supported by this tool. Please copy and paste everything to a new blank .docx file. 
 ### Compiling Report
 1. Fill required plant information in `Compiler.json5`.
-2. Copy all AR files(if you have any from other sources) into `ARs` directory.
-3. Run `Compiler.py` to compile the final report.
-4. Ctrl+A then F9 to refresh ToC, tables and figures, you may need to do it twice.
-5. Fill the rest of the information manually.
+2. Fill other gathered information in `Report/Description.docx`
+3. Copy all recommendation documents(if you have any from other sources) into `Recommendations` directory.
+4. Run `Compiler.py` to compile the final report.
+5. Ctrl+A then F9 to refresh ToC, tables and figures, you need to do it **twice**.
 
-## Supported AR Templates
+## Supported Recommendation Templates
 ### Boiler
 * Recover Exhaust Gas Heat
+* Install Air-Fuel Ratio Controller
 ### Compressor
 * Draw Compressor Intake Air from Outside
 * Use Compressor Exhaust to Heat during Winter Months
 * Reduce Compressor Set Pressure
 * Repair Leaks in Compressed Air Lines
-* Install VFD on Air Compressor (Single Motor)
+* Install VFD on Existing Air Compressor
+* Install New Air Compressor with VFD
 ### HVAC
 * Programmable Thermostat (based on degree hours)
 * Replace Old HVAC Units
 ### Lighting
 * Switch to LED lighting (supports any number of areas)
 ### Motors
-* Install VFD on Electric Motor (Single Motor)
+* Install VFD on Electric Motor
 ### Others
 * Install Solar Panel (fully automated using PVWatts API)
+* Negotiate Utility Charge

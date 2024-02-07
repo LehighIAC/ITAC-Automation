@@ -2,6 +2,37 @@
 (Purpose) IAC.py is a module that contains functions used in the IAC report
 """
 
+def savefile(doc, rec: str, add=False):
+    """
+    Avoid overwriting recommendation documents directly
+    :param doc: python-docx or docxcompose object
+    :param rec: Recommendation No., string
+    :param add(optional): additional flag, bool
+    """
+    import os
+    if add:
+        filename = 'Add'+ rec +'.docx'
+    else:
+        filename = 'Rec'+ rec +'.docx'
+    filepath = os.path.join('..', '..', 'Recommendations', filename)
+    while os.path.isfile(filepath):
+        answer = input("Filename exists, overwrite or rename?(o/r)")
+        if answer.lower() == "o":
+            break
+        elif answer.lower() == "r":
+            while os.path.isfile(filepath):
+                filename = input('Filename exists, input new filename:')
+                if ".docx" in filename:
+                    None
+                else:
+                    filename = filename + ".docx"
+                filepath = os.path.join('..', '..', 'Recommendations', filename)
+            break
+        else: 
+            print("Command not recongnized.")
+    doc.save(filepath)
+    print("File saved to " + os.path.abspath(filepath))
+                
 def title_case(text: str) -> str:
     """
     Make title case in natural language
@@ -25,7 +56,7 @@ def title_case(text: str) -> str:
 
 def validate_arc(ARC):
     """
-    Validate ARC input
+    Validate ARC number
     :param ARC: Full ARC as a string
     """
     # json5 is too slow, use json instead.
