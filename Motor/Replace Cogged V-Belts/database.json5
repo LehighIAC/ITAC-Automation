@@ -1,0 +1,22 @@
+{
+  // Recommendation No., integer
+  REC: 1,
+  // Horsepower of motor, float
+  HP: 73.5,
+  // Existing efficiency of motor, %, int
+  ETA: 90,
+  // Load Fraction, %, int
+  LF: 100,
+  // hours per day, float (allows half hours)
+  HR: 24.0,
+  // days per week, float (allows half day on weekends)
+  DY: 7.0,
+  // weeks per year, int
+  WK: 52,
+  // Coincidence Factor, %, int
+  CF: 100,
+  // Cost of V-belt, integer
+  CBELT: 100,
+  // Amount of Belts to replace, integer
+  AMT: 27,
+}
