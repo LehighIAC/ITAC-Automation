@@ -44,6 +44,9 @@ iac.EU = round(iac.HP * C3 * iac.OHAC)
 # Demand usage for the air curtain system
 iac.DU = round(iac.HP * C3 * C2 * CF/100)
 
+## Table
+
+
 ## Savings
 # Summer energy savings
 iac.SES = iac.SHT * (iac.EF/100 - iac.EFES/100)
