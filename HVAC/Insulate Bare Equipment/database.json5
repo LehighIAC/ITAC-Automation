@@ -1,0 +1,34 @@
+{
+  // Recommendation No. , int
+  REC: 1,
+  // Injection type, string
+  TYPE: "injection molding barrels",
+  // Number of barrels, string
+  AMT: "three",
+  // Number of areas, int
+  N: 3,
+  // Line number, string
+  LINE: ["Line 1", "Line 2", "Line 3"],
+  // Size of the barrel, list of floats
+  SIZE: [1.5, 4, 1.5],
+  // Temperature at which injection molding barrel runs, list of ints, Farenheit
+  TEMP: [150, 240, 130],
+  // Temperature strings, list of strings
+  TEMPS: ["150", "240", "130"],
+  // Hours per day, float (allows half hours), int
+  HR: [24, 24, 24],
+  // Days per week, float (allows half day on weekends), int
+  DY: [7, 7, 7],
+  // Weeks per year, int
+  WK: [52, 52, 52],
+  // Estimated surface area, list of floats
+  SFA: [22.5, 22.5, 22.5],
+  // Ambient air temperature, int, Farenheit
+  AMB: [75, 75, 75],
+  // Proposed surface air temperature, int, Farenheit
+  PTEMP: [95, 95, 90],
+  // Implementation Cost, int, $
+  COST: [4, 9, 4],
+  // Cost of Labor, float, $
+  LABOR: [0.5, 0.5, 0.5],
+}
