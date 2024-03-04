@@ -1,0 +1,28 @@
+{
+  // Recommendation No. , int
+  REC: 2,
+  // Location of motion sensor, string
+  TYPE: "production area",
+  // Number of areas, int
+  N: 3,
+  // Specific location, string
+  LOC: ["resin warehouse", "machine shop", "building 2"],
+  // Number of LED bulbs, list of int
+  LED: [56, 8, 25],
+  // Power rating of each LED bulb, list of int
+  CFW: [60, 50, 50],
+  // Number of hours per day, list of int
+  HR: [12, 16, 24],
+  // Number of days per year, list of int
+  DY: [5, 5, 5],
+  // Number of weeks per year, list of int
+  WK: [52, 52, 52],
+  // Fraction of operating hours when area is occupied, list of int, %
+  FR: [50, 30, 30],
+  // Cost of installation material per sensor, int, $
+  COST: 100,
+  // Time required to install each sensor, int, hours
+  TIME: 1,
+  // Cost of labor per hour, int, $
+  LABOR: 40,
+}
