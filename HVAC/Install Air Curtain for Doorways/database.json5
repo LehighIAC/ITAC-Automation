@@ -3,6 +3,12 @@
   REC: 1,
   // Number of docking doors, int
   AMT: 3,
+  // Location of door, string
+  LOC: "Ice Storage",
+  // Door width, int, ft
+  DW: 8,
+  // Door height, int, ft
+  DH: 9,
   // Room temperature, int, farenheit
   RT: 30,
   // Average outside summer temperature, int, farenheit

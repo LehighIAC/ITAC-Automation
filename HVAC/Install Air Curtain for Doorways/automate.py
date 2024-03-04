@@ -45,13 +45,19 @@ iac.EU = round(iac.HP * C3 * iac.OHAC)
 iac.DU = round(iac.HP * C3 * C2 * CF/100)
 
 ## Table
-
+iac.AREA = iac.DW * iac.DH
+iac.TOTALAREA = iac.AREA * iac.AMT
+# Total # of doors
+if type(iac.AMT) == list:
+  iac.TOTALDOORS = sum(iac.AMT)
+else:
+  iac.TOTALDOORS = iac.AMT
 
 ## Savings
 # Summer energy savings
-iac.SES = iac.SHT * (iac.EF/100 - iac.EFES/100)
+iac.SES = round(iac.SHT * (iac.EF/100 - iac.EFES/100))
 # Summer demand savings
-iac.SDS = (iac.SES/iac.OHS) * C2 * CF/100
+iac.SDS = round((iac.SES/iac.OHS) * C2 * CF/100)
 # Energy savings
 iac.ES = iac.SES - iac.EU
 # Demand savings
@@ -77,7 +83,7 @@ iac = dollar(['EC'],iac,3)
 # set the natural gas and demand to 2 digits accuracy
 iac = dollar(['DC'],iac,2)
 # set the rest to integer
-varList = ['ECS', 'DCS', 'ACS', 'IC',]
+varList = ['ACS', 'IC', 'COST', 'LABOR']
 iac = dollar(varList,iac,0)
 # Format all numbers to string with thousand separator
 iac = grouping_num(iac)
