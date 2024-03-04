@@ -1,0 +1,32 @@
+{
+  // Recommendation No. , int
+  REC: 1,
+  // Number of docking doors, int
+  AMT: 3,
+  // Room temperature, int, farenheit
+  RT: 30,
+  // Average outside summer temperature, int, farenheit
+  OT: 75,
+  // Temperature difference correction based on chart, int, farenheit
+  TDC: 13,
+  // Heat transfer factor per door, int, MMBtu/yr
+  HTF: 100,
+  // Operating hours HVAC, int, hours/day
+  HRHV: 24,
+  // Operating hours Air curtain, int, hours/day
+  HRAC: 2,
+  // Operating days, int, days/year
+  DY: 7,
+  // Operating weeks, int, weeks/year
+  WK: 26,
+  // Efficiency of the air curtain, int, %
+  EF: 80,
+  // Efficiency of existing solution (strip curtains), int, %
+  EFES: 40,
+  // Horsepower per door, int, hp
+  HPF: 5,
+  // Cost of air curtain, int, $
+  COST: 6000,
+  // Labor cost for air curtain system, int, $
+  LABOR: 5000,
+}
