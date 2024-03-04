@@ -58,15 +58,13 @@ iac.PB = payback(iac.ACS.item(), iac.IC)
 iac.TLOC = [''] * N
 for i in range(N):
   iac.TLOC[i] = iac.LOC[i].title()
-iac.TYPET = iac.TYPE.title()
+
 # Number to words
 iac.NUM = num2words.num2words(N)
 
 ## Format strings
 # set to 3 digits accuracy
 iac = dollar(['EC'],iac,3)
-# set to 2 digits accuracy
-# iac = dollar([],iac,2)
 # set the rest to integer
 varList = ['COST', 'LABOR', 'TCOST', 'TLABOR', 'ACS', 'IC']
 iac = dollar(varList,iac,0)
