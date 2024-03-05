@@ -3,8 +3,6 @@
   REC: 1,
   // Injection type, string
   TYPE: "injection molding barrels",
-  // Number of barrels, string
-  AMT: "three",
   // Number of areas, int
   N: 3,
   // Line number, string
@@ -13,8 +11,6 @@
   SIZE: [1.5, 4, 1.5],
   // Temperature at which injection molding barrel runs, list of ints, Farenheit
   TEMP: [150, 240, 130],
-  // Temperature strings, list of strings
-  TEMPS: ["150", "240", "130"],
   // Hours per day, float (allows half hours), int
   HR: [24, 24, 24],
   // Days per week, float (allows half day on weekends), int
@@ -30,5 +26,5 @@
   // Implementation Cost, int, $
   COST: [4, 9, 4],
   // Cost of Labor, float, $
-  LABOR: [0.5, 0.5, 0.5],
+  LABOR: 0.5,
 }
