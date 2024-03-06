@@ -57,10 +57,7 @@ iac.IC = iac.MSC + iac.BC + iac.LC
 iac.ACS = iac.ECS + iac.DCS
 
 # Rebate
-iac.RB = round(iac.ES * iac.RR)
-iac.MRB = min(iac.RB, iac.IC/2)
-iac.MIC = iac.IC - iac.MRB
-iac.PB = payback(iac.ACS.item(), iac.MIC.item())
+iac = rebate(iac)
 
 # Combine words
 iac.AREAS = combine_words(iac.AREA)
@@ -75,7 +72,7 @@ else:
 
 ## Format strings
 # set electricity cost / rebate to 3 digits accuracy
-iac = dollar(['EC', 'RR'],iac,3)
+iac = dollar(['EC', 'ERR'],iac,3)
 # set the natural gas and demand to 2 digits accuracy
 iac = dollar(['NGC', 'DC'],iac,2)
 # set the rest to integer
@@ -119,6 +116,8 @@ for i in range(1,N):
 doc = Document('template 3.docx')
 # Motion sensors block
 docx_blocks(doc, ms = MS)
+# Rebate block
+docx_blocks(doc, REBATE = iac.REB)
 # Multi areas block
 if N == 1:
     docx_blocks(doc, single = True)
