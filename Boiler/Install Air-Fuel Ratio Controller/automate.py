@@ -5,7 +5,7 @@ This script is used to generate the IAC recommendation for Recover Exhaust Gas H
 import json5, sys, os
 from docx import Document
 from easydict import EasyDict
-from python_docx_replace import docx_replace
+from python_docx_replace import docx_replace, docx_blocks
 sys.path.append(os.path.join('..', '..')) 
 from Shared.IAC import *
 import AFR
@@ -27,20 +27,23 @@ iac.IC = round(iac.LABOR + iac.PARTS)
 iac.NGS = round(iac.SIZE * iac.OH * (iac.LF/100) * (iac.SAV/100))
 iac.ACS = round(iac.NGS * iac.NGC)
 
-# Implementation
-iac.PB = payback(iac.ACS, iac.IC)
+# Rebate
+iac = rebate(iac)
 
 ## Format strings
 # set the natural gas and demand to 2 digits accuracy
-iac = dollar(['NGC'],iac,2)
+iac = dollar(['NGC','NRR'],iac,2)
 # set the rest to integer
-varList = ['ACS', 'IC', 'PARTS', 'LABOR']
+varList = ['ACS', 'IC', 'PARTS', 'LABOR', 'RB', 'MRB', 'MIC']
 iac = dollar(varList,iac,0)
 # Format all numbers to string with thousand separator
 iac = grouping_num(iac)
 
 # Import docx template
 doc = Document('template.docx')
+
+# Rebate Section
+docx_blocks(doc, REBATE = iac.REB)
 
 # Replacing keys
 docx_replace(doc, **iac)
