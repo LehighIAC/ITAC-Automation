@@ -65,18 +65,15 @@ else:
     iac.IC = iac.VFD + iac.AIC
 
 ## Rebate
-iac.RB = round(iac.RR * iac.ES)
-iac.MRB = min(iac.RB, iac.IC/2)
-iac.MIC = iac.IC - iac.MRB
-iac.PB = payback(iac.ACS, iac.MIC)
+iac = rebate(iac)
 
 ## Format strings
 # set electricity cost / rebate to 3 digits accuracy
-iac = dollar(['EC', 'RR'],iac,3)
+iac = dollar(['EC', 'ERR'],iac,3)
 # set demand to 2 digits accuracy
 iac = dollar(['DC'],iac,2)
 # set the rest to integer
-varList = ['ACS', 'ECS', 'DCS', 'VFD', 'AIC', 'IC', 'RB', 'MRB', 'MIC']
+varList = ['ACS', 'ECS', 'DCS', 'VFD', 'AIC', 'IC', 'RB', 'MRB', 'MIC', 'ATP']
 iac = dollar(varList,iac,0)
 # Format all numbers to string with thousand separator
 iac = grouping_num(iac)
@@ -87,6 +84,7 @@ doc = Document('template.docx')
 # Replacing keys
 docx_replace(doc, **iac)
 
+docx_blocks(doc, REBATE=iac.REB)
 docx_blocks(doc, TANK=iac.TANK)
 
 savefile(doc, iac.REC)
