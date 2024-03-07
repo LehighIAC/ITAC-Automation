@@ -1,6 +1,10 @@
 {
   // Recommendation No. , int
-  REC: 2,
+  REC: 1,
+  // Rebate, boolean
+  REB: true,
+  // Electricity rebate rate, $/kwh.1yr, float
+  ERR: 0.075,
   // Location of motion sensor, string
   TYPE: "production area",
   // Number of areas, int
