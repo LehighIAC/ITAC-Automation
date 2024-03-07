@@ -10,10 +10,14 @@ def rebate(dic: dict) -> dict:
     if dic.REB == True:    
         # electricity rebate
         if "ES" in dic:
-            dic.RB += round(dic.ES * dic.ERR)
+            # if ES is positive
+            if dic.ES > 0:
+                dic.RB += round(dic.ES * dic.ERR)
         # natural gas rebate
         if "NGS" in dic:
-            dic.RB += round(dic.NGS * dic.NRR)
+            # if NGS is positive
+            if dic.NGS > 0:
+                dic.RB += round(dic.NGS * dic.NRR)
         # Modified rebate, up to 50% IC
         dic.MRB = min(dic.RB, dic.IC/2)
         dic.MIC = dic.IC - dic.MRB
