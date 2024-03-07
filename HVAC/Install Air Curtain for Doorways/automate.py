@@ -71,7 +71,9 @@ iac.ACS = iac.ECS + iac.DCS
 
 ## Implementation cost
 iac.IC = (iac.COST * iac.AMT) + iac.LABOR
-iac.PB = payback(iac.ACS, iac.IC)
+
+## Rebare
+iac = rebate(iac)
 
 ## Number to words
 iac.AMTSTR = num2words.num2words(iac.AMT)
@@ -79,11 +81,11 @@ iac.HRSTR = num2words.num2words(iac.HRAC)
 
 ## Format strings
 # set electricity cost to 3 digits accuracy
-iac = dollar(['EC'],iac,3)
+iac = dollar(['EC', 'ERR'],iac,3)
 # set the natural gas and demand to 2 digits accuracy
 iac = dollar(['DC'],iac,2)
 # set the rest to integer
-varList = ['ACS', 'IC', 'COST', 'LABOR']
+varList = ['ACS', 'IC', 'COST', 'LABOR', 'RB', 'MIC', 'MRB']
 iac = dollar(varList,iac,0)
 # Format all numbers to string with thousand separator
 iac = grouping_num(iac)
@@ -93,6 +95,7 @@ doc = Document('template.docx')
 
 # Replacing keys
 docx_replace(doc, **iac)
+docx_blocks(doc, REBATE=iac.REB)
 
 savefile(doc, iac.REC)
 
