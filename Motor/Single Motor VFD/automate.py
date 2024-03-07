@@ -5,7 +5,7 @@ This script is used to generate the IAC recommendation for Installing VFD on Ele
 import json5, sys, os
 from docx import Document
 from easydict import EasyDict
-from python_docx_replace import docx_replace
+from python_docx_replace import docx_replace, docx_blocks
 sys.path.append(os.path.join('..', '..')) 
 from Shared.IAC import *
 import numpy as np
@@ -46,14 +46,11 @@ iac.ACS = iac.ECS + iac.DCS
 iac.IC = iac.VFD + iac.AIC
 
 ## Rebate
-iac.RB = round(iac.RR * iac.ES)
-iac.MRB = min(iac.RB, iac.IC/2)
-iac.MIC = iac.IC - iac.RB
-iac.PB = payback(iac.ACS, iac.MIC)
+iac = rebate(iac)
 
 ## Format strings
 # set electricity cost / rebate to 3 digits accuracy
-iac = dollar(['EC', 'RR'],iac,3)
+iac = dollar(['EC', 'ERR'],iac,3)
 # set demand to 2 digits accuracy
 iac = dollar(['DC'],iac,2)
 # set the rest to integer
@@ -64,6 +61,8 @@ iac = grouping_num(iac)
 
 # Import docx template
 doc = Document('template.docx')
+
+docx_blocks(doc, REBATE=iac.REB)
 
 # Replacing keys
 docx_replace(doc, **iac)
