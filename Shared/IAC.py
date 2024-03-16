@@ -2,6 +2,33 @@
 (Purpose) IAC.py is a module that contains functions used in the IAC report
 """
 
+def rebate(dic: dict) -> dict:
+    """
+    Calculates the rebate based on values provided by database.json5
+    """
+    dic.RB = 0
+    if dic.REB == True:    
+        # electricity rebate
+        if "ES" in dic:
+            # if ES is positive
+            if dic.ES > 0:
+                dic.RB += round(dic.ES * dic.ERR)
+        # natural gas rebate
+        if "NGS" in dic:
+            # if NGS is positive
+            if dic.NGS > 0:
+                dic.RB += round(dic.NGS * dic.NRR)
+        # Modified rebate, up to 50% IC
+        dic.MRB = min(dic.RB, dic.IC/2)
+        dic.MIC = dic.IC - dic.MRB
+    else:
+        # same implementation cost
+        dic.MRB = 0
+        dic.MIC = dic.IC
+        
+    dic.MPB = payback(dic.ACS, dic.MIC)
+    return dic
+
 def savefile(doc, rec: str, add=False):
     """
     Avoid overwriting recommendation documents directly
@@ -244,14 +271,19 @@ def latex2word(latex_input: str):
     new_dom = transform(tree)
     return new_dom.getroot()
 
-def payback(ACS: float, IC: float) -> str:
+def payback(ACS, IC) -> str:
     """
     Format payback period by year and month
-    :param ACS: Annual Cost Savings ($/yr) as float
-    :param IC: Implementation Cost ($) as float
+    :param ACS: Annual Cost Savings ($/yr)
+    :param IC: Implementation Cost ($)
     :return: formatted Payback Period as string
     """
-    import math
+    import math, numpy
+    # if the dtype is numpy
+    if type(ACS) == numpy.int64 or type(ACS) == numpy.float64:
+        ACS = ACS.item()
+    if type(IC) == numpy.int64 or type(IC) == numpy.float64:
+        IC = IC.item()
     # if ACS or IC is not a number
     if type(ACS) != int and type(ACS) != float:
         raise Exception("Annual Cost Savings must be a number")

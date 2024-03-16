@@ -1,6 +1,10 @@
 {
     // Recommendation No., integer
     REC: 1,
+    // Rebate, boolean
+    REB: false,
+    // Natural Gas rebate rate, $/MMBtu.1yr, float
+    NRR: 2.0,
     // hours per day, float (allows half hours)
     HR: 24.0,
     // days per week, float (allows half day on weekends)

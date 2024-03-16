@@ -1,9 +1,13 @@
 {
     // Recommendation No., integer
     REC: 1,
+    // Rebate, boolean
+    REB: true,
+    // Electricity rebate rate, $/kwh.1yr, float
+    ERR: 0.05,
     // Number of motion sensors, integer
     MSN: 0,
-    // Part + labor per motion serson $, integer
+    // Part + labor per motion serson, $, integer
     MSPL: 50,
 
     // This template supports arbitraty number of areas.

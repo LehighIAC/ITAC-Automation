@@ -62,22 +62,26 @@ For your convenience, download the main branch from this link: https://codeload.
 
 ## Supported Recommendation Templates
 ### Boiler
-* Recover Exhaust Gas Heat
-* Install Air-Fuel Ratio Controller
+* Install Air-Fuel Ratio Controller [rebate]
+* Recover Exhaust Gas Heat [rebate]
 ### Compressor
-* Draw Compressor Intake Air from Outside
 * Use Compressor Exhaust to Heat during Winter Months
+* Install VFD on Existing Air Compressor [rebate]
+* Draw Compressor Intake Air from Outside
+* Install New Air Compressor with VFD [rebate]
 * Reduce Compressor Set Pressure
 * Repair Leaks in Compressed Air Lines
-* Install VFD on Existing Air Compressor
-* Install New Air Compressor with VFD
 ### HVAC
+* Install Air Curtain [rebate]
+* Insulate Bare Equipemnt
 * Programmable Thermostat (based on degree hours)
-* Replace Old HVAC Units
+* Replace Old HVAC Units [rebate]
 ### Lighting
-* Switch to LED lighting (supports any number of areas)
+* Install Motion Sensor [rebate]
+* Switch to LED lighting [rebate](supports any number of areas)
 ### Motors
-* Install VFD on Electric Motor
+* Replace Cogged V-Belts
+* Install VFD on Electric Motor [rebate]
 ### Others
-* Install Solar Panel (fully automated using PVWatts API)
 * Negotiate Utility Charge
+* Install Solar Panel (fully automated using PVWatts API)

@@ -1,6 +1,10 @@
 {
   // Recommendation No. , int
   REC: 1,
+  // Rebate, boolean
+  REB: true,
+  // Electricity rebate rate, $/kwh.1yr, float
+  ERR: 0.075,
   // Number of docking doors, int
   AMT: 3,
   // Location of door, string

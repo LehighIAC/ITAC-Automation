@@ -47,17 +47,19 @@ iac.DS = round(iac.PR * iac.CF/100 * iac.CS)
 iac.ECS = round(iac.EC * iac.ES)
 iac.DCS = round(iac.DC * iac.DS)
 iac.ACS = iac.ECS + iac.DCS
-## Payback
+
 iac.IC = round(iac.TTON * iac.UC)
-iac.PB = payback(iac.ACS, iac.IC)
+
+# Rebate
+iac = rebate(iac)
 
 ## Format strings
 # set to 3 digits accuracy
-iac = dollar(['EC'],iac,3)
+iac = dollar(['EC', 'ERR'],iac,3)
 # set to 2 digits accuracy
 iac = dollar(['DC'],iac,2)
 # set the rest to integer
-varList = ['UC', 'ACS', 'IC', 'ECS', 'DCS']
+varList = ['UC', 'ACS', 'IC', 'ECS', 'DCS', 'RB', 'MIC', 'MRB']
 iac = dollar(varList,iac,0)
 # Format all numbers to string with thousand separator
 iac = grouping_num(iac)
@@ -88,6 +90,7 @@ for i in reversed(range(len(iac.TON), 9)):
 
 docx_blocks(doc, mtrue = iac.FM)
 docx_blocks(doc, mfalse = not iac.FM)
+docx_blocks(doc, REBATE = iac.REB)
 
 savefile(doc, iac.REC)
 

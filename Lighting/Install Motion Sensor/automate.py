@@ -51,8 +51,9 @@ iac.ACS = iac.ES * iac.EC
 iac.TCOST = iac.COST * N
 iac.TLABOR = iac.LABOR * N
 iac.IC = iac.TCOST + iac.TLABOR
+
 # Rebate
-iac.PB = payback(iac.ACS.item(), iac.IC)
+iac = rebate(iac)
 
 # TItle Converter
 iac.TLOC = [''] * N
@@ -64,9 +65,9 @@ iac.NUM = num2words.num2words(N)
 
 ## Format strings
 # set to 3 digits accuracy
-iac = dollar(['EC'],iac,3)
+iac = dollar(['EC','ERR'],iac,3)
 # set the rest to integer
-varList = ['COST', 'LABOR', 'TCOST', 'TLABOR', 'ACS', 'IC']
+varList = ['COST', 'LABOR', 'TCOST', 'TLABOR', 'ACS', 'IC', 'RB', 'MIC', 'MRB']
 iac = dollar(varList,iac,0)
 # Format all numbers to string with thousand separator
 iac = grouping_num(iac)
@@ -100,6 +101,8 @@ for i in range(1, N):
 
 # Import ending template
 doc = Document('template 3.docx')
+# rebate block
+docx_blocks(doc, REBATE=iac.REB)
 # Replacing keys
 docx_replace(doc, **iac)
 # Save file as temp{N+1}.docx

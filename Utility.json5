@@ -13,8 +13,6 @@
   DC: 4.22,
   // Labor Rate $/hour, integer
   LR: 40,
-  // Rebate Rate $/kWh.1yr, float
-  RR: 0.075,
   // Start month, string
   StartMo: "Jul 22",
   // End month, string
