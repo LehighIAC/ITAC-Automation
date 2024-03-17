@@ -5,7 +5,7 @@ This script is used to generate the IAC recommendation for Industrial fans to im
 import json5, sys, os, num2words
 from docx import Document
 from easydict import EasyDict
-from python_docx_replace import docx_replace
+from python_docx_replace import docx_replace, docx_blocks
 sys.path.append(os.path.join('..', '..')) 
 from Shared.IAC import *
 
@@ -47,6 +47,8 @@ iac.ACS = iac.NGCS + iac.ECS + iac.DCS
 iac.IC = iac.FAN * iac.COST
 iac.PB = payback(iac.ACS, iac.IC)
 
+iac = rebate(iac)
+
 ## Format strings
 # Convert to word
 iac.FANStr = num2words.num2words(iac.FAN)
@@ -62,6 +64,9 @@ iac = grouping_num(iac)
 
 # Import docx template
 doc = Document('template.docx')
+
+# rebate block
+docx_blocks(doc, REBATE=iac.REB)
 
 # Replacing keys
 docx_replace(doc, **iac)
