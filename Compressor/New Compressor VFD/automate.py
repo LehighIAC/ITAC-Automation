@@ -49,9 +49,9 @@ iac.PPD = round((iac.HPP * 0.746 * (iac.FPV/100)) / (iac.ETAP/100))
 
 ## Savings
 # Annual Energy Savings
-iac.ES = (iac.CPD - iac.PPD) * iac.OH
+iac.ES = round((iac.CPD - iac.PPD) * iac.OH)
 # Annual Demand Savings
-iac.DS = (iac.CPD - iac.PPD) * (iac.CF/100) * 12
+iac.DS = round((iac.CPD - iac.PPD) * (iac.CF/100) * 12)
 # Estimated Cost Savings
 iac.ECS = round(iac.ES * iac.EC)
 # Demand Cost Savings
