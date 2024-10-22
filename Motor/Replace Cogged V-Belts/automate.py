@@ -5,7 +5,7 @@ This script is used to generate the IAC recommendation for Installing VFD on Ele
 import json5, sys, os
 from docx import Document
 from easydict import EasyDict
-from python_docx_replace import docx_replace, docx_blocks
+from python_docx_replace import docx_replace
 sys.path.append(os.path.join('..', '..')) 
 from Shared.IAC import *
 import numpy as np
@@ -17,52 +17,40 @@ jsonDict.update(json5.load(open('database.json5')))
 # Convert to easydict
 iac = EasyDict(jsonDict)
 
-## VFD table
-Load = np.linspace(20, 100, num=17)
-VFD = np.array([5, 6, 8, 11, 14, 17, 21, 26, 32, 38, 44, 50, 57, 64, 73, 86, 105])
-
 ## Calculations
 # Operating hours
 iac.OH = iac.HR * iac.DY * iac.WK
-# Power FRaction with VFD
-iac.FR = round(np.interp(iac.LF, Load, VFD).item())
-# Current Power Draw
-iac.CPD = round((iac.HP * 0.746) / (iac.ETAE/100))
-# Proposed Power Draw
-iac.PPD = round((iac.HP * 0.746 * (iac.FR/100)) / (iac.ETAP/100))
 
 ## Savings
 # Annual Energy Savings
-iac.ES = (iac.CPD - iac.PPD) * iac.OH
+iac.ES = round(iac.HP * 0.746 * iac.LF/100 * iac.OH * ((1.5/100)/(iac.ETA/100)))
 # Annual Demand Savings
-iac.DS = (iac.CPD - iac.PPD) * (iac.CF/100) * 12
+iac.DS = round(iac.HP * 0.746 * iac.LF/100 * iac.CF/100 * 12 * ((1.5/100)/(iac.ETA/100)))
 # Estimated Cost Savings
 iac.ECS = round(iac.ES * iac.EC)
 # Demand Cost Savings
-iac.DCS = round(iac.DS * iac.DC)
+iac.DCS = round(iac.DS * iac.DS)
 # Total Cost Savings
 iac.ACS = iac.ECS + iac.DCS
 # Total Installation Cost
-iac.IC = iac.VFD + iac.AIC
+iac.IC = iac.CBELT * iac.AMT
 
 ## Rebate
-iac = rebate(iac)
+iac.PB = payback(iac.ACS, iac.IC)
 
 ## Format strings
 # set electricity cost / rebate to 3 digits accuracy
-iac = dollar(['EC', 'ERR'],iac,3)
+iac = dollar(['EC'],iac,3)
 # set demand to 2 digits accuracy
 iac = dollar(['DC'],iac,2)
 # set the rest to integer
-varList = ['ACS', 'ECS', 'DCS', 'VFD', 'AIC', 'IC', 'RB', 'MRB', 'MIC']
+varList = ['ACS', 'ECS', 'DCS', 'CBELT', 'IC']
 iac = dollar(varList,iac,0)
 # Format all numbers to string with thousand separator
 iac = grouping_num(iac)
 
 # Import docx template
 doc = Document('template.docx')
-
-docx_blocks(doc, REBATE=iac.REB)
 
 # Replacing keys
 docx_replace(doc, **iac)

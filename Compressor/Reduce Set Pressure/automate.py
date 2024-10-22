@@ -72,5 +72,4 @@ docx_replace(doc, **iac)
 savefile(doc, iac.REC)
 
 # Caveats
-caveat("Please manually change the font size of equations to 16.")
 caveat("Please change implementation cost references if necessary.")

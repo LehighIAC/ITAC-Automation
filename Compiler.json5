@@ -17,7 +17,7 @@ SALE: 1000000,
 EMPL: 1000,
 // Area, sqft, integer
 AREA: 100000,
-// Princial product, string
+// Principal product, string
 PROD: 'student',
 // Annual production, float
 ANPR: 2000,

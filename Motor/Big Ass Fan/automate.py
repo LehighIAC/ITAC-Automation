@@ -1,14 +1,13 @@
 """
-This script is used to generate the IAC recommendation for Installing VFD on Electric Motors
+This script is used to generate the IAC recommendation for Industrial fans to improve air circulation
 """
 
-import json5, sys, os
+import json5, sys, os, num2words
 from docx import Document
 from easydict import EasyDict
 from python_docx_replace import docx_replace, docx_blocks
 sys.path.append(os.path.join('..', '..')) 
 from Shared.IAC import *
-import numpy as np
 
 # Load utility cost
 jsonDict = json5.load(open(os.path.join('..', '..', 'Utility.json5')))
@@ -17,44 +16,48 @@ jsonDict.update(json5.load(open('database.json5')))
 # Convert to easydict
 iac = EasyDict(jsonDict)
 
-## VFD table
-Load = np.linspace(20, 100, num=17)
-VFD = np.array([5, 6, 8, 11, 14, 17, 21, 26, 32, 38, 44, 50, 57, 64, 73, 86, 105])
+## Constants
+# Conversion constant
+C1 = 0.7457
+# Coincidence factor, %
+CF = 100
 
 ## Calculations
 # Operating hours
 iac.OH = iac.HR * iac.DY * iac.WK
-# Power FRaction with VFD
-iac.FR = round(np.interp(iac.LF, Load, VFD).item())
-# Current Power Draw
-iac.CPD = round((iac.HP * 0.746) / (iac.ETAE/100))
-# Proposed Power Draw
-iac.PPD = round((iac.HP * 0.746 * (iac.FR/100)) / (iac.ETAP/100))
 
 ## Savings
-# Annual Energy Savings
-iac.ES = (iac.CPD - iac.PPD) * iac.OH
-# Annual Demand Savings
-iac.DS = (iac.CPD - iac.PPD) * (iac.CF/100) * 12
-# Estimated Cost Savings
+# Natural Gas Savings
+iac.NGS = iac.PR/100 * iac.NGU
+# Extra electricity consumption
+iac.ES = round(-(iac.FAN) * iac.HP * C1 * iac.OH)
+# Extra demand consumption
+iac.DS = round(-(iac.FAN) * iac.HP * C1 * 6 * CF/100, 1)
+# Natual Gas cost savings
+iac.NGCS = round(iac.NGS * iac.NGC)
+# Electricity cost savings
 iac.ECS = round(iac.ES * iac.EC)
-# Demand Cost Savings
+# Demand cost savings
 iac.DCS = round(iac.DS * iac.DC)
-# Total Cost Savings
-iac.ACS = iac.ECS + iac.DCS
-# Total Installation Cost
-iac.IC = iac.VFD + iac.AIC
+# Annual cost savings
+iac.ACS = iac.NGCS + iac.ECS + iac.DCS
 
 ## Rebate
+# Total fan cost
+iac.IC = iac.FAN * iac.COST
+iac.PB = payback(iac.ACS, iac.IC)
+
 iac = rebate(iac)
 
 ## Format strings
+# Convert to word
+iac.FANStr = num2words.num2words(iac.FAN)
 # set electricity cost / rebate to 3 digits accuracy
-iac = dollar(['EC', 'ERR'],iac,3)
+iac = dollar(['EC'],iac,3)
 # set demand to 2 digits accuracy
-iac = dollar(['DC'],iac,2)
+iac = dollar(['DC', 'NGC'],iac,2)
 # set the rest to integer
-varList = ['ACS', 'ECS', 'DCS', 'VFD', 'AIC', 'IC', 'RB', 'MRB', 'MIC']
+varList = ['NGCS', 'ECS', 'DCS', 'ACS', 'COST', 'IC']
 iac = dollar(varList,iac,0)
 # Format all numbers to string with thousand separator
 iac = grouping_num(iac)
@@ -62,6 +65,7 @@ iac = grouping_num(iac)
 # Import docx template
 doc = Document('template.docx')
 
+# rebate block
 docx_blocks(doc, REBATE=iac.REB)
 
 # Replacing keys

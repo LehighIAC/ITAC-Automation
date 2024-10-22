@@ -1,35 +1,39 @@
 {
-    // Recommendation No., integer
-    REC: 1,
-    // Air Tank, boolean
-    TANK: false,
-    // Air Tank Price, int
-    ATP: 5000,
-    // Horsepower of current motor, integer
-    HPC: 100,
-    // Horsepower of proposed motor, integer
-    HPP: 100,
-    // hours per day, float (allows half hours)
-    HR: 18.0,
-    // days per week, float (allows half day on weekends)
-    DY: 6.0,
-    // weeks per year, int
-    WK: 52,
-    // Load Fraction, %, int
-    LF: 60,
-    // Control Type, int
-    // 1: Blow Off
-    // 2: Modulation
-    // 3: Load/Unload
-    CT: 1,
-    // Existing efficiency of motor, %, int
-    ETAE: 85,
-    // Proposed efficiency of motor with VFD, %, int
-    ETAP: 85,
-    // Coincidence Factor, %, int
-    CF: 100,
-    // Cost of the new compressor with VFD, integer
-    VFD: 15000,
-    // Additional installation cost, integer
-    AIC: 10000,
+  // Recommendation No., integer
+  REC: 1,
+  // Rebate, boolean
+  REB: true,
+  // Electricity rebate rate, $/kwh.1yr, float
+  ERR: 0.075,
+  // Air Tank, boolean
+  TANK: false,
+  // Air Tank Price, int
+  ATP: 5000,
+  // Horsepower of current motor, integer
+  HPC: 100,
+  // Horsepower of proposed motor, integer
+  HPP: 100,
+  // hours per day, float (allows half hours)
+  HR: 18.0,
+  // days per week, float (allows half day on weekends)
+  DY: 6.0,
+  // weeks per year, int
+  WK: 52,
+  // Load Fraction, %, int
+  LF: 60,
+  // Control Type, int
+  // 1: Blow Off
+  // 2: Modulation
+  // 3: Load/Unload
+  CT: 1,
+  // Existing efficiency of motor, %, int
+  ETAE: 85,
+  // Proposed efficiency of motor with VFD, %, int
+  ETAP: 85,
+  // Coincidence Factor, %, int
+  CF: 100,
+  // Cost of the new compressor with VFD, integer
+  VFD: 15000,
+  // Additional installation cost, integer
+  AIC: 10000,
 }

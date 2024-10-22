@@ -1,0 +1,26 @@
+{
+  // Recommendation No., integer
+  REC: 1,
+  // Rebate, boolean
+  REB: false,
+  // Electricity rebate rate, $/kwh.1yr, float
+  ERR: 0.075,
+  // Number of fans installing, integer
+  FAN: 10,
+  // Diameter of fans, ft.
+  DIA: 33,
+  // Percent of reduction in natural gas consumption, %
+  PR: 10,
+  // Annual  natural gas usage, MMBtu
+  NGU: 7000,
+  // Horsepower of proposed fans, hp
+  HP: 1,
+  // Hours of operation per day
+  HR: 8,
+  // Days of operation per week
+  DY: 5,
+  // Weeks of operation per year
+  WK: 26,
+  // Price per fan, $
+  COST: 4500,
+}
