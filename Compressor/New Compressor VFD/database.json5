@@ -10,30 +10,30 @@
   // Air Tank Price, int
   ATP: 5000,
   // Horsepower of current motor, integer
-  HPC: 100,
+  HPC: 200,
   // Horsepower of proposed motor, integer
-  HPP: 100,
+  HPP: 200,
   // hours per day, float (allows half hours)
-  HR: 18.0,
+  HR: 24,
   // days per week, float (allows half day on weekends)
-  DY: 6.0,
+  DY: 7.0,
   // weeks per year, int
   WK: 52,
   // Load Fraction, %, int
-  LF: 60,
+  LF: 80,
   // Control Type, int
   // 1: Blow Off
   // 2: Modulation
   // 3: Load/Unload
   CT: 1,
   // Existing efficiency of motor, %, int
-  ETAE: 85,
+  ETAE: 93,
   // Proposed efficiency of motor with VFD, %, int
-  ETAP: 85,
+  ETAP: 93,
   // Coincidence Factor, %, int
   CF: 100,
   // Cost of the new compressor with VFD, integer
-  VFD: 15000,
+  VFD: 30000,
   // Additional installation cost, integer
   AIC: 10000,
 }

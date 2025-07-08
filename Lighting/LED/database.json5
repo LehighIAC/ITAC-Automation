@@ -1,49 +1,56 @@
 {
-    // Recommendation No., integer
-    REC: 1,
-    // Rebate, boolean
-    REB: true,
-    // Electricity rebate rate, $/kwh.1yr, float
-    ERR: 0.05,
-    // Number of motion sensors, integer
-    MSN: 0,
-    // Part + labor per motion serson, $, integer
-    MSPL: 50,
+  // Recommendation No., integer
+  REC: 2,
+  // Rebate, boolean
+  REB: true,
+  // Electricity rebate rate, $/kwh.1yr, float
+  ERR: 0.05,
+  // Number of motion sensors, integer
+  MSN: 0,
+  // Part + labor per motion serson, $, integer
+  MSPL: 50,
 
-    // This template supports arbitraty number of areas.
-    // Number of areas, integer, should be consistent with length of lists.
-    N: 3,
-    // Area 1 name, list of strings
-    AREA: ['production area 1','production area 2','production area 3'],
-    // Previous bulb type, list of strings
-    PREV: ['T-8 bulbs','T-8 bulbs','metal halides'],
+  // This template supports arbitraty number of areas.
+  // Number of areas, integer, should be consistent with length of lists.
+  N: 6,
+  // Area 1 name, list of strings
+  AREA: ["exterior", "exterior", "exterior", "exterior", "exterior", "exterior"],
+  // Previous bulb type, list of strings
+  PREV: [
+    "sodium vapor",
+    "incandescent (11-EX-#)",
+    "incandescent (333-##-EX-#)",
+    "incandescent (335-##-EX-#)",
+    "incandescent (56-##-EX-#)",
+    "mercury vapor (72A-100-EX-#)",
+  ],
 
-    // Number of current bulbs, list of integers
-    CN: [36,24,12],
-    // Power rating of current bulbs W, list of floats
-    CPR: [32,32,250],
-    // Hours per day of current bulbs, list of floats
-    CHR: [8,8,12],
-    // Days per week of current bulbs, list of floats
-    CDY: [5,5,7],
-    // Weeks per year of current bulbs, list of floats
-    CWK: [52,52,52],
+  // Number of current bulbs, list of integers
+  CN: [646, 60, 48, 40, 26, 14],
+  // Power rating of current bulbs W, list of floats
+  CPR: [100, 100, 300, 300, 100, 100],
+  // Hours per day of current bulbs, list of floats
+  CHR: [24, 24, 24, 24, 24, 24],
+  // Days per week of current bulbs, list of floats
+  CDY: [7, 7, 7, 7, 7, 7],
+  // Weeks per year of current bulbs, list of floats
+  CWK: [52, 52, 52, 52, 52, 52],
 
-    // Number of proposed bulbs, list of integers
-    PN: [30,24,12],
-    // Power rating of proposed bulbs W, list of floats
-    PPR: [16,16,80],
-    // Hours per day of proposed bulbs, list of floats
-    PHR: [8,8,12],
-    // Days per week of proposed bulbs, list of floats
-    PDY: [5,5,7],
-    // Weeks per year of current bulbs, list of floats
-    PWK: [52,52,52],
+  // Number of proposed bulbs, list of integers
+  PN: [646, 60, 48, 40, 26, 14],
+  // Power rating of proposed bulbs W, list of floats
+  PPR: [25, 15, 80, 80, 15, 25],
+  // Hours per day of proposed bulbs, list of floats
+  PHR: [24, 24, 24, 24, 24, 24],
+  // Days per week of proposed bulbs, list of floats
+  PDY: [7, 7, 7, 7, 7, 7],
+  // Weeks per year of current bulbs, list of floats
+  PWK: [52, 52, 52, 52, 52, 52],
 
-    // Unit price of proposed bulbs $, float
-    BP: [10,10,60],
-    // Labor per bulb $, list of integers
-    BL: [20,20,100],
-    // Coincidence Factor, %, list of intergers, default 100
-    CF: [100,100,80],
+  // Unit price of proposed bulbs $, float
+  BP: [641, 485, 857, 857, 485, 641],
+  // Labor per bulb $, list of integers
+  BL: [40, 40, 40, 40, 40, 40],
+  // Coincidence Factor, %, list of intergers, default 100
+  CF: [100, 100, 100, 100, 100, 100],
 }

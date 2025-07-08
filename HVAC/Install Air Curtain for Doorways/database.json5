@@ -1,38 +1,44 @@
 {
   // Recommendation No. , int
-  REC: 1,
+  REC: 9,
   // Rebate, boolean
   REB: true,
   // Electricity rebate rate, $/kwh.1yr, float
-  ERR: 0.075,
+  ERR: 0.15,
+  // Natural gas rebate rate, $/MMBtu.1yr, float
+  NRR: 0,
   // Number of docking doors, int
-  AMT: 3,
+  AMT: 8,
   // Location of door, string
-  LOC: "Ice Storage",
+  LOC: "Dock",
   // Door width, int, ft
-  DW: 8,
+  DW: 16,
   // Door height, int, ft
-  DH: 9,
-  // Room temperature, int, farenheit
-  RT: 30,
+  DH: 18,
+  // room temperature, int, farenheit
+  RT: 74,
   // Average outside summer temperature, int, farenheit
-  OT: 75,
+  SOT: 77,
+  // Average outside winter temperature, int, farenheit
+  WOT: 42,
   // Temperature difference correction based on chart, int, farenheit
   TDC: 13,
   // Heat transfer factor per door, int, MMBtu/yr
-  HTF: 100,
+  HTF: 200,
   // Operating hours HVAC, int, hours/day
-  HRHV: 24,
+  HR: 24,
   // Operating hours Air curtain, int, hours/day
   HRAC: 2,
   // Operating days, int, days/year
   DY: 7,
   // Operating weeks, int, weeks/year
   WK: 26,
+  // Operating weeks Air curtain, int, weeks/year
+  WKAC: 52,
   // Efficiency of the air curtain, int, %
   EF: 80,
   // Efficiency of existing solution (strip curtains), int, %
-  EFES: 40,
+  EFES: 0,
   // Horsepower per door, int, hp
   HPF: 5,
   // Cost of air curtain, int, $
