@@ -6,11 +6,11 @@
   // Fuel Cost $/MMBtu, float
   FC: 2.95,
   // Natural Gas Cost(for compatibility) $/MMBtu, float, default 2.95
-  NGC: 3.28,
+  NGC: 4.29,
   // Electricity Cost $/kWh, float, default 0.081
-  EC: 0.068,
+  EC: 0.082,
   // Demand Cost $/kW, float, default 4.22
-  DC: 1.67,
+  DC: 2.55,
   // Labor Rate $/hour, integer
   LR: 40,
   // Start month, string

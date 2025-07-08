@@ -4,7 +4,7 @@
   // Rebate, boolean
   REB: true,
   // Electricity rebate rate, $/kwh.1yr, float
-  ERR: 0.07,
+  ERR: 0.075,
   // Air Tank, boolean
   TANK: false,
   // Air Tank Price, int
@@ -33,7 +33,7 @@
   // Coincidence Factor, %, int
   CF: 100,
   // Cost of the new compressor with VFD, integer
-  VFD: 26000,
+  VFD: 30000,
   // Additional installation cost, integer
   AIC: 10000,
 }

@@ -23,7 +23,7 @@ VFD = np.array([25, 28, 33, 38, 42, 47, 52, 57, 61, 65, 70, 75, 80, 85, 90, 95, 
 
 ## Calculations
 # Operating hours
-iac.OH = iac.HR * iac.DY * iac.WK
+iac.OH = 8760
 
 # Power Fraction without VFD
 # Blow Off

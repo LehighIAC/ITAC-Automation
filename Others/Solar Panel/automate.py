@@ -49,17 +49,21 @@ parameters = {
 'address': iac.ZIP,
 }
 
+solard_monthly = [2.49, 3.42, 4.24, 5.07, 5.73, 5.89, 6.30, 5.60, 4.72, 3.64, 2.96, 1.98]
+ac_monthly = [10762, 13137, 17398, 19346, 21770, 21224,23189, 20814, 17107, 14396, 11782,8576]
 try:
-    response = requests.request('GET', 'https://developer.nrel.gov/api/pvwatts/v8.json', params=parameters)
-    PVresults = response.json()
-    iac.ES = round(PVresults.get('outputs').get('ac_annual'))
-    # read solard_monthly and ac_monthly
-    solard_monthly = PVresults.get('outputs').get('solrad_monthly')
-    ac_monthly = PVresults.get('outputs').get('ac_monthly')
+  response = requests.request('GET', 'https://developer.nrel.gov/api/pvwatts/v8.json', params=parameters)
+  response.raise_for_status()
+  PVresults = response.json()
+  iac.ES = round(PVresults.get('outputs').get('ac_annual'))
+  # read solard_monthly and ac_monthly
+  solard_monthly = PVresults.get('outputs').get('solrad_monthly')
+  ac_monthly = PVresults.get('outputs').get('ac_monthly')
 except:
-    print('PVWatts API error. Please look up the annual energy savings manually on PVWatts website')
-    # input number
-    iac.ES = int(input('Manually input annual energy savings (kWh): '))
+  print(response.status_code)
+  print('PVWatts API error. Please look up the annual energy savings manually on PVWatts website')
+  # input number
+  iac.ES = int(input('Manually input annual energy savings (kWh): '))
 
 iac.ACSel = round(iac.ES * iac.EC)
 iac.credits = round(iac.ES / 1000)
