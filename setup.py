@@ -4,9 +4,10 @@ See:
 https://packaging.python.org/guides/distributing-packages-using-setuptools/
 https://github.com/pypa/sampleproject
 
-Local usage:
+Local/Dev usage:
 - (Optional) Create python virtual environment for this project via: python3 -m venv [venv name]
-- Using either the global pip or the virtual environment's pip, run: pip
+- Using either the global pip or the virtual environment's pip, run install command in the directory containing setup.py (include the period at the end!): [location_of_pip]/pip install .
+- (Dev usage) If more dependencies are required in the future, add them to the install_requires list below (and then re-run the install command before you launch the app again)
 """
 
 # Always prefer setuptools over distutils
@@ -134,6 +135,7 @@ setup(
     # For an analysis of "install_requires" vs pip's requirements files see:
     # https://packaging.python.org/discussions/install-requires-vs-requirements/
     install_requires=[
+        "Flask",
     ],  # Optional
     # List additional groups of dependencies here (e.g. development
     # dependencies). Users will be able to install these using the "extras"
