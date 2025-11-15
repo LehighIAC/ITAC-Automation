@@ -1,12 +1,12 @@
-from flask import Flask
+from flask import Flask, render_template
 
 # TODO: avoid using local dev server when deploying to production: https://flask.palletsprojects.com/en/stable/deploying/
 
 app = Flask(__name__)
 
 @app.route("/")
-def hello_world():
-    return "<p>Hello, World!</p>"
+def index():
+    return render_template("index.html")
 
 # Run the app only if this file is executed directly
 if __name__ == "__main__":
