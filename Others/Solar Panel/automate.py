@@ -93,8 +93,12 @@ doc = Document(template)
 # Replacing keys
 docx_replace(doc, **iac)
 
-# Set local to US
-locale.setlocale(locale.LC_ALL, 'en_US')
+# Set locale to US
+try:
+    locale.setlocale(locale.LC_ALL, "en_US")
+except: # Linux?
+    locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
+    
 # Fill in the second table
 table = doc.tables[1]
 for i in range(12):
