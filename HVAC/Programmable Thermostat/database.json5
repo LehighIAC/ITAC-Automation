@@ -2,56 +2,54 @@
   // Recommendation No., integer
   REC: 4,
   // City, State, string
-  TOWN: "Bethlehem, PA",
+  TOWN: "Princeton, NJ",
   // Area, string
-  AREA: "Office area",
+  AREA: "office area",
   // Price of thermostat, $, int
-  PT: 100,
+  PT: 0,
   // Number of thermostats, int
-  NT: 10,
+  NT: 0,
   // Installation time, hr, float
   IT: 1.5,
   // Labor rate is in Utility.json5
-  // current hours per day, float (allows half hours)
-  CHR: 24,
-  // current days per week, float (allows half day on weekends)
-  CDY: 5,
+  // Percentage of space dedicated for offices, %, int
+  PA: 44,
+  // current hours per week, float (allows half hours)
+  CHR: 168,
   // current weeks per year, int
   CWK: 52,
-  // proposed hours per day, float (allows half hours)
-  PHR: 9,
-  // proposed days per week, float (allows half day on weekends)
-  PDY: 5,
-  // proposed weeks per year, int
-  PWK: 52,
+  // Occupied hours per week, float (allows half hours)
+  OHR: 108,
+  // Occupied weeks per year, int
+  OWK: 52,
 
   // Cooling season, boolean
   COOL: true,
   // HVAC size, float
-  TON: 100,
+  TON: 500,
   // HVAC load factor, %, int
-  LF: 80,
+  LF: 40,
   // HVAC , BTU/hr/WEER, float
   EER: 16.0,
   // Cooling Set Temperature, degF, int
   CST: 70,
   // Modified Cooling Setback Temperature, degF, int
-  MCST: 72,
+  MCST: 73,
   // Cooling Degree Hours, deg.hr, int
-  CDH: 20000,
+  CDH: 657,
   // Modified Cooling Degree Hours, deg.hr, int
-  MCDH: 16036,
+  MCDH: 428,
 
   // Heating season, boolean
   HEAT: true,
   // Natural Gas Usage, MMBtu/yr, int
-  NGU: 41000,
+  NGU: 7757,
   // Heating Set Temperature, degF, int
-  HST: 72,
+  HST: 70,
   // Modified Heating Setback Temperature, degF, int
-  MHST: 66,
+  MHST: 67,
   // Heating Degree Hours, deg.hr, int
-  HDH: 20000,
+  HDH: 6289,
   // Modified Heating Degree Hours, deg.hr, int
-  MHDH: 14767,
+  MHDH: 5481,
 }
