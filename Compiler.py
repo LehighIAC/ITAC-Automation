@@ -61,7 +61,10 @@ columns = ["isAdditional", "File Name", "ARC No.", "Description", "Electricity (
 df = pd.DataFrame(columns=columns)
 
 # Set locale to en_US
-locale.setlocale(locale.LC_ALL, 'en_US')
+try:
+    locale.setlocale(locale.LC_ALL, "en_US")
+except: # Linux?
+    locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
 
 print("Reading recommendations...")
 # Get all .docx files in Recommendations/ directory and extract information

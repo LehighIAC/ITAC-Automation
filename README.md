@@ -6,49 +6,23 @@ This tutorial is designed for Mechanical Engineering people with zero programmin
 
 ## Required Software
 
-Of course, you need to install Microsoft Office. https://confluence.cc.lehigh.edu/display/LKB/Windows+or+macOS%3A++Download+and+Install+Office+365
+Install [VS code](https://code.visualstudio.com/download) and [Python](https://www.python.org/downloads/) if you do not already have them.
 
-### Windows
-
-Install [VS code](https://code.visualstudio.com/download) and [Anaconda](https://www.anaconda.com/download).
-
-### macOS
-
-Install [homebrew](https://brew.sh) then`brew install --cask visual-studio-code anaconda`
-
-### Linux
-
-LibreOffice compatibility is not guaranteed.
-
-## Setting up Python environment
-
-### Open Anaconda Prompt
-
-```
-conda create -n iac python=3.8
-conda activate iac
-```
-
-### Install the Following Packages
-
-```
-conda install json5 numpy pandas openpyxl requests
-conda install -c conda-forge python-docx docxcompose easydict latex2mathml num2words pgeocode
-pip install python-docx-replace meteostat
-```
-
-`conda` always has the highest priority. If not available, install packages from `conda-forge`. Don't install from `pip` unless you have to, otherwise there might be dependency issue.
+Of course, you will also need [Microsoft Office](https://lehigh.atlassian.net/wiki/spaces/LKB/pages/26679137/Windows+or+macOS+Download+and+Install+Office+365); LibreOffice compatibility is not guaranteed.
 
 ### Configure VS Code
 
 Go to `Extensions`(Ctrl+Shift+X), install `Python` (from Microsoft) and `JSON5 syntax` (from mrmlnc).
-Press Ctrl+Shift+P, search `Python: Select Interpreter` and select the `iac` environment you just created.
 
-### NOTE: IF YOU WISH TO REMOVE THIS ENVIRONMENT
+### Create Project Virtual Environment and Install Dependencies
 
-```
-conda remove --name iac --all
-```
+1. Using either VS Code's integrated terminal or a separate terminal window, point the terminal to the top-level directory of the project (the directory containing .gitignore, LICENSE, README, setup.py, etc.).
+2. Create a virtual environment for the project by running `python -m venv .venv` (or `python3 -m venv .venv`).
+3. Activate the virtual environment by running `.venv\\Scripts\\activate` on Windows or `source .venv/bin/activate` on macOS/Linux.
+4. With the virtual environment activated, install all of the project's dependencies (listed in setup.py) by running `pip install .` and you should see output as each package is installed.
+5. In VS Code, press Ctrl+Shift+P or click on the search bar at the top and select `Show and Run Commands`, search `Python: Select Interpreter` and select the `(.venv)` option corresponding to the virtual environment you just created.
+- Note: You can also install individual dependencies to this virtual environment by activating the environment and running the usual `pip install [package]` with any specific package name.
+- Note: If you ever need to remove the virtual environment for some reason, you can simply delete the `.venv` directory.
 
 ## Using templates
 
