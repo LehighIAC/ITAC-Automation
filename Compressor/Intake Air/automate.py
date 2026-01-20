@@ -1,7 +1,6 @@
 """
 This script is used to generate the IAC recommendation for Air Intake Compressors
 """
-
 import json5, sys, os
 from docx import Document
 from easydict import EasyDict
@@ -34,10 +33,12 @@ end = datetime(2022, 5, 31)
 point = Point(lat, lon)
 # Get monthly data
 data = Monthly(point, start, end)
-data.convert(units.imperial)
 df = data.fetch()
+
 # Extract average temperature
-df = df['tavg']
+df = df['tavg'].dropna()
+# Convert to degF
+df = df * 9/5 + 32
 df = df[df.index.month.isin([10,11,12,1,2,3,4,5])]
 iac.TO = round(df.mean())
 
