@@ -1,0 +1,55 @@
+{
+  // Recommendation No., integer
+  REC: 9,
+  // City, State, string
+  TOWN: "Berwick, PA",
+  // Area, string
+  AREA: "office area",
+  // Price of thermostat, $, int
+  PT: 0,
+  // Number of thermostats, int
+  NT: 0,
+  // Installation time, hr, float
+  IT: 1.5,
+  // Labor rate is in Utility.json5
+  // Percentage of space dedicated for offices, %, int
+  PA: 100,
+  // current hours per week, float (allows half hours)
+  CHR: 120,
+  // current weeks per year, int
+  CWK: 52,
+  // Occupied hours per week, float (allows half hours)
+  OHR: 50,
+  // Occupied weeks per year, int
+  OWK: 52,
+
+  // Cooling season, boolean
+  COOL: true,
+  // HVAC size, float
+  TON: 9.5,
+  // HVAC load factor, %, int
+  LF: 85,
+  // HVAC , BTU/hr/WEER, float
+  EER: 16.0,
+  // Cooling Set Temperature, degF, int
+  CST: 70,
+  // Modified Cooling Setback Temperature, degF, int
+  MCST: 76,
+  // Cooling Degree Hours, deg.hr, int
+  CDH: 454,
+  // Modified Cooling Degree Hours, deg.hr, int
+  MCDH: 165,
+
+  // Heating season, boolean
+  HEAT: true,
+  // Natural Gas Usage, MMBtu/yr, int
+  NGU: 12983,
+  // Heating Set Temperature, degF, int
+  HST: 70,
+  // Modified Heating Setback Temperature, degF, int
+  MHST: 67,
+  // Heating Degree Hours, deg.hr, int
+  HDH: 7465,
+  // Modified Heating Degree Hours, deg.hr, int
+  MHDH: 6598,
+}

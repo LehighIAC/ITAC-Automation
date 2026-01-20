@@ -1,0 +1,49 @@
+{
+  // Recommendation No., integer
+  REC: 1,
+  // Rebate, boolean
+  REB: true,
+  // Electricity rebate rate, $/kwh.1yr, float
+  ERR: 0.05,
+  // Number of motion sensors, integer
+  MSN: 12,
+  // Part + labor per motion serson, $, integer
+  MSPL: 100,
+
+  // This template supports arbitraty number of areas.
+  // Number of areas, integer, should be consistent with length of lists.
+  N: 6,
+  // Area 1 name, list of strings
+  AREA: ["Office", "Loading", "Freezer Storage", "restroom", "upstairs storage", "cooking rooms"],
+  // Previous bulb type, list of strings
+  PREV: ["T-8", "T-8", "T-8", "T-8", "T-8", "T-8"],
+
+  // Number of current bulbs, list of integers
+  CN: [40, 26, 8, 6, 20, 20],
+  // Power rating of current bulbs W, list of floats
+  CPR: [32, 32, 32, 32, 32, 32],
+  // Hours per day of current bulbs, list of floats
+  CHR: [24, 24, 24, 24, 24, 24],
+  // Days per week of current bulbs, list of floats
+  CDY: [5, 5, 5, 5, 5, 5],
+  // Weeks per year of current bulbs, list of floats
+  CWK: [52, 52, 52, 52, 52, 52],
+
+  // Number of proposed bulbs, list of integers
+  PN: [40, 26, 8, 6, 20, 20],
+  // Power rating of proposed bulbs W, list of floats
+  PPR: [15, 28, 28, 15, 15, 15],
+  // Hours per day of proposed bulbs, list of floats
+  PHR: [24, 24, 24, 24, 24, 24],
+  // Days per week of proposed bulbs, list of floats
+  PDY: [5, 5, 5, 5, 5, 5],
+  // Weeks per year of current bulbs, list of floats
+  PWK: [52, 52, 52, 52, 52, 52],
+
+  // Unit price of proposed bulbs $, float
+  BP: [5.42, 7.6, 7.6, 5.42, 5.42, 5.42],
+  // Labor per bulb $, list of integers
+  BL: [8, 8, 8, 8, 8, 8],
+  // Coincidence Factor, %, list of intergers, default 100
+  CF: [100, 100, 100, 100, 100, 100],
+}
