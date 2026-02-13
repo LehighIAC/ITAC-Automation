@@ -64,12 +64,6 @@ iac.AREAS = combine_words(iac.AREA)
 # Take an example of the previous area
 iac.PREV1 = iac.PREV[0]
 
-# Motion sensor
-if iac.MSN == 0:
-    MS = False
-else:
-    MS = True
-
 ## Format strings
 # set electricity cost / rebate to 3 digits accuracy
 iac = dollar(['EC', 'ERR'],iac,3)
@@ -114,8 +108,6 @@ for i in range(1,N):
 
 # Import ending template
 doc = Document('template 3.docx')
-# Motion sensors block
-docx_blocks(doc, ms = MS)
 # Rebate block
 docx_blocks(doc, REBATE = iac.REB)
 # Multi areas block
