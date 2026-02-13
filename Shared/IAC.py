@@ -27,6 +27,7 @@ def rebate(dic: dict) -> dict:
         dic.MIC = dic.IC
         
     dic.MPB = payback(dic.ACS, dic.MIC)
+    dic.PB = payback(dic.ACS, dic.IC)
     return dic
 
 def savefile(doc, rec: str, add=False):
