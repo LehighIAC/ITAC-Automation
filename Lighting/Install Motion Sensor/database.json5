@@ -29,4 +29,6 @@
   TIME: 1,
   // Cost of labor per hour, int, $
   LABOR: 40,
+  // Coincidence Factor, %, list of intergers, default 100
+  CF: [100, 100, 100, 100, 100],
 }

@@ -28,7 +28,7 @@ for i in iac:
 
 # Calculations
 # Covert to numpy array for element-wise operations
-nplist = ['CN', 'CPR',  'PN', 'PPR', 'HR', 'DY', 'WK', 'BP', 'BL', 'CF']
+nplist = ['CN', 'CPR', 'PN', 'PPR', 'HR', 'DY', 'WK', 'BP', 'BL', 'CF']
 for i in nplist:
     iac[i] = np.array(iac[i])
 
