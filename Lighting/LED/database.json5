@@ -5,10 +5,6 @@
   REB: true,
   // Electricity rebate rate, $/kwh.1yr, float
   ERR: 0.05,
-  // Number of motion sensors, integer
-  MSN: 12,
-  // Part + labor per motion serson, $, integer
-  MSPL: 100,
 
   // This template supports arbitraty number of areas.
   // Number of areas, integer, should be consistent with length of lists.
