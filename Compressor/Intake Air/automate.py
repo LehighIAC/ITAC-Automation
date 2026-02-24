@@ -39,22 +39,44 @@ df = data.fetch()
 df = df['tavg'].dropna()
 # Convert to degF
 df = df * 9/5 + 32
-df = df[df.index.month.isin([10,11,12,1,2,3,4,5])]
 iac.TO = round(df.mean())
+
+## VFD table
+Load = np.linspace(20, 100, num=17)
+VFD = np.array([25, 28, 33, 38, 42, 47, 52, 57, 61, 65, 70, 75, 80, 85, 90, 95, 105])
+
+# Power Fraction Caclulation
+# Blow Off
+if iac.CT == 1:
+    iac.FPC = 100
+    iac.CT = "blow off"
+# Modulation
+elif iac.CT == 2:
+    iac.FPC = round(0.3 * iac.LF + 70)
+    iac.CT = "modulation"
+# Load/Unload
+elif iac.CT == 3:
+    iac.FPC = round(0.5 * iac.LF + 50)
+    iac.CT = "load/unload"
+# VFD
+elif iac.CT == 4:
+    iac.FPC = round(np.interp(iac.LF, Load, VFD).item())
+else:
+    raise Exception("Wrong control type!")
 
 ## Calculations
 # Compressor Work Reduction
-iac.CWR = round((iac.TI - iac.TO)/(iac.TI + 460) * 100, 2)
+iac.CWR = round((iac.DT)/(iac.TI + 460) * 100, 2)
 # Operating hours
 iac.OH = iac.HR * iac.DY * iac.WK
 # Power Reduction
-iac.PR = round((iac.HP * 0.746 * (iac.FR/100) * (iac.CWR/100)) / (iac.ETA/100), 1)
+iac.PR = round((iac.HP * 0.746 * (iac.FPC/100) * (iac.CWR/100)) / (iac.ETA/100), 1)
 
 ## Savings
 # Electrcity Savings
 iac.ES = round(iac.PR * iac.OH)
 # Demand Savings
-iac.DS = round(iac.PR * (iac.CF/100) * iac.C2)
+iac.DS = round(iac.PR * (iac.CF/100) * 12)
 # Electrcicity Cost Savings
 iac.ECS = round(iac.ES * iac.EC) 
 # Demand Cost Savings
