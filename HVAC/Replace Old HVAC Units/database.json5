@@ -8,11 +8,11 @@
   // Frequent Maintenance, boolean
   FM: true,
   // HVAC size, tons, list of float
-  TON: [50, 50, 80],
+  TON: [20],
   // HVAC Location, list of string
-  AREA: ["Office", "Office", "Warehouse"],
+  AREA: ["Roof"],
   // HVAC Age, years, list of integers
-  AGE: [15, 15, 15],
+  AGE: [15],
   // Assumed Base EER, list of floats
   EERB: [11, 11, 11],
   // Proposed EER, list of floats

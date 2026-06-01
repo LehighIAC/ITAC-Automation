@@ -27,6 +27,7 @@ def rebate(dic: dict) -> dict:
         dic.MIC = dic.IC
         
     dic.MPB = payback(dic.ACS, dic.MIC)
+    dic.PB = payback(dic.ACS, dic.IC)
     return dic
 
 def savefile(doc, rec: str, add=False):
@@ -130,8 +131,13 @@ def grouping_num(dic: dict) -> dict:
     :return: Dictionary with keys in thousand separator
     """
     import locale, numpy
-    # set locale to US
-    locale.setlocale(locale.LC_ALL, 'en_US')
+    
+    # Set locale to US
+    try:
+        locale.setlocale(locale.LC_ALL, "en_US")
+    except: # Linux?
+        locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
+
     for key in dic.keys():
         if type(dic[key]) == int or type(dic[key]) == numpy.int64:
             dic[key] = locale.format_string('%d', dic[key], grouping=True)
@@ -171,8 +177,13 @@ def dollar(varlist: list, dic: dict, digits: int=0) -> str:
         raise Exception("Digits must be a natural number")
     if digits < 0:
         raise Exception("Digits must be a natural number")
-    # set locale to US
-    locale.setlocale(locale.LC_ALL, 'en_US')
+    
+    # Set locale to US
+    try:
+        locale.setlocale(locale.LC_ALL, "en_US")
+    except: # Linux?
+        locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
+    
     locale._override_localeconv={'frac_digits':digits}
     for var in varlist:
         dic[var] = locale.currency(dic[var], grouping=True)

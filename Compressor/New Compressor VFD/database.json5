@@ -18,7 +18,7 @@
   // days per week, float (allows half day on weekends)
   DY: 7.0,
   // weeks per year, int
-  WK: 52,
+  WK: 26,
   // Load Fraction, %, int
   LF: 80,
   // Control Type, int
@@ -27,9 +27,9 @@
   // 3: Load/Unload
   CT: 1,
   // Existing efficiency of motor, %, int
-  ETAE: 93,
+  ETAE: 85,
   // Proposed efficiency of motor with VFD, %, int
-  ETAP: 93,
+  ETAP: 85,
   // Coincidence Factor, %, int
   CF: 100,
   // Cost of the new compressor with VFD, integer

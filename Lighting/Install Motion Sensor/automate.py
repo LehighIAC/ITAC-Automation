@@ -33,7 +33,8 @@ for i in nplist:
 ## Constants
 # Conversion constant; W/kW
 C1 = 1000 
-
+# Convection constant; m/yr
+C2 = 12
 ## Calculations
 # Operating Hours
 iac.OH = iac.HR * iac.DY * iac.WK
@@ -41,10 +42,14 @@ iac.OH = iac.HR * iac.DY * iac.WK
 ## Savings
 # Annual electricity savings
 iac.ESi = np.rint((iac.LED * iac.CFW * iac.OH * (100/100 - iac.FR/100))/ C1)
+# Annual demand savings
+iac.DSi = np.rint(iac.LED * iac.CFW * (100/100 - iac.FR/100) * C2 / C1)
 # Total Energy Savings
 iac.ES = np.sum(iac.ESi)
+# Total Demand Savings
+iac.DS = np.sum(iac.DSi)
 # Annual cost savings
-iac.ACS = iac.ES * iac.EC
+iac.ACS = iac.ES * iac.EC + iac.DS * iac.DC
 
 ## Implementation cost Estimate
 # Total cost for all sensors
@@ -66,6 +71,8 @@ iac.NUM = num2words.num2words(N)
 ## Format strings
 # set to 3 digits accuracy
 iac = dollar(['EC','ERR'],iac,3)
+# set to 2 digits accuract
+iac = dollar(['DC'], iac, 2)
 # set the rest to integer
 varList = ['COST', 'LABOR', 'TCOST', 'TLABOR', 'ACS', 'IC', 'RB', 'MIC', 'MRB']
 iac = dollar(varList,iac,0)
@@ -99,6 +106,11 @@ iac.ESSum = iac.ESi[0] + ' kWh/yr'
 for i in range(1, N):
    iac.ESSum += ' + ' + iac.ESi[i] + ' kWh/yr'
 
+# Assemble ESSum
+iac.DSSum = iac.DSi[0] + ' kW/yr'
+for i in range(1, N):
+   iac.DSSum += ' + ' + iac.DSi[i] + ' kW/yr'
+   
 # Import ending template
 doc = Document('template 3.docx')
 # rebate block

@@ -4,11 +4,11 @@
   // State, "PA" or "NJ", string
   ST: "PA",
   // Zip Code of the plant, string
-  ZIP: "17756",
+  ZIP: "19006",
   // Roof space sqft, integer
-  RS: 23830,
+  RS: 77480,
   // Available space %, interger
-  ASR: 70,
+  ASR: 60,
   // Price per Watt $, float
   PPW: 2.0,
   // Federal Investament Tax Credit Rate %, integer
@@ -16,7 +16,7 @@
   // Average market value of NJ SuSI, interger, should be updatey annualy.
   AMVNJ: 85,
   // Average market value of PA SREC, interger, should be updatey annualy.
-  AMVPA: 34,
+  AMVPA: 25,
   // API Key for Solar Panel Calculator, string
   api: "RB0ThAIht7fKeN82hNhXMJVMeq8Nxsc7qjwuBPtE",
 }

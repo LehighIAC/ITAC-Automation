@@ -20,10 +20,10 @@ iac = EasyDict(jsonDict)
 C1 = 12000.0 # Conversion constant; 12,000 BTU/hr/ton
 C2 = 1000.0 # Conversion constant; kW/W
 # Calculations
-iac.PD = round(iac.TON * C1 * (iac.LF/100) / (iac.EER * C2))
-iac.OHE = iac.CHR * iac.CDY * iac.CWK
-iac.OHP = iac.PHR * iac.PDY * iac.PWK
-iac.ES = round(iac.PD * iac.OHE * (1 - iac.MCDH / iac.CDH))
+iac.PD = round(iac.TON * C1 * (iac.PA/100) * (iac.LF/100) / (iac.EER * C2))
+iac.OHE = iac.CHR * iac.CWK
+iac.OHO = iac.OHR * iac.OWK
+iac.ES = round(iac.PD * (iac.OHE - iac.OHO) * (1 - iac.MCDH / iac.CDH))
 iac.NGS = round(iac.NGU * (1 - iac.MHDH / iac.HDH))
 if iac.COOL == True:
     iac.ECS = round(iac.ES * iac.EC)

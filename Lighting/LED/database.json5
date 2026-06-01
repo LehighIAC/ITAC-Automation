@@ -1,56 +1,39 @@
 {
   // Recommendation No., integer
-  REC: 2,
+  REC: 1,
   // Rebate, boolean
   REB: true,
   // Electricity rebate rate, $/kwh.1yr, float
   ERR: 0.05,
-  // Number of motion sensors, integer
-  MSN: 0,
-  // Part + labor per motion serson, $, integer
-  MSPL: 50,
-
   // This template supports arbitraty number of areas.
   // Number of areas, integer, should be consistent with length of lists.
   N: 6,
   // Area 1 name, list of strings
-  AREA: ["exterior", "exterior", "exterior", "exterior", "exterior", "exterior"],
+  AREA: ["Office", "Loading", "Freezer Storage", "restroom", "upstairs storage", "cooking rooms"],
   // Previous bulb type, list of strings
-  PREV: [
-    "sodium vapor",
-    "incandescent (11-EX-#)",
-    "incandescent (333-##-EX-#)",
-    "incandescent (335-##-EX-#)",
-    "incandescent (56-##-EX-#)",
-    "mercury vapor (72A-100-EX-#)",
-  ],
+  PREV: ["T-8", "T-8", "T-8", "T-8", "T-8", "T-8"],
 
   // Number of current bulbs, list of integers
-  CN: [646, 60, 48, 40, 26, 14],
+  CN: [40, 26, 8, 6, 20, 20],
   // Power rating of current bulbs W, list of floats
-  CPR: [100, 100, 300, 300, 100, 100],
-  // Hours per day of current bulbs, list of floats
-  CHR: [24, 24, 24, 24, 24, 24],
-  // Days per week of current bulbs, list of floats
-  CDY: [7, 7, 7, 7, 7, 7],
-  // Weeks per year of current bulbs, list of floats
-  CWK: [52, 52, 52, 52, 52, 52],
+  CPR: [32, 32, 32, 32, 32, 32],
 
   // Number of proposed bulbs, list of integers
-  PN: [646, 60, 48, 40, 26, 14],
+  PN: [40, 26, 8, 6, 20, 20],
   // Power rating of proposed bulbs W, list of floats
-  PPR: [25, 15, 80, 80, 15, 25],
-  // Hours per day of proposed bulbs, list of floats
-  PHR: [24, 24, 24, 24, 24, 24],
-  // Days per week of proposed bulbs, list of floats
-  PDY: [7, 7, 7, 7, 7, 7],
-  // Weeks per year of current bulbs, list of floats
-  PWK: [52, 52, 52, 52, 52, 52],
+  PPR: [15, 28, 28, 15, 15, 15],
+
+  // Hours per day of bulbs, list of floats
+  HR: [24, 24, 24, 24, 24, 24],
+  // Days per week of bulbs, list of floats
+  DY: [5, 5, 5, 5, 5, 5],
+  // Weeks per year of bulbs, list of floats
+  WK: [52, 52, 52, 52, 52, 52],
 
   // Unit price of proposed bulbs $, float
-  BP: [641, 485, 857, 857, 485, 641],
+  BP: [5.42, 7.6, 7.6, 5.42, 5.42, 5.42],
   // Labor per bulb $, list of integers
-  BL: [40, 40, 40, 40, 40, 40],
+  BL: [8, 8, 8, 8, 8, 8],
   // Coincidence Factor, %, list of intergers, default 100
   CF: [100, 100, 100, 100, 100, 100],
 }

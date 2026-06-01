@@ -28,15 +28,14 @@ for i in iac:
 
 # Calculations
 # Covert to numpy array for element-wise operations
-nplist = ['CN', 'CPR', 'CHR', 'CDY', 'CWK', 'PN', 'PPR', 'PHR', 'PDY', 'PWK', 'BP', 'BL', 'CF']
+nplist = ['CN', 'CPR', 'PN', 'PPR', 'HR', 'DY', 'WK', 'BP', 'BL', 'CF']
 for i in nplist:
     iac[i] = np.array(iac[i])
 
 # Calculate operating hours
-iac.COH = iac.CHR * iac.CDY * iac.CWK
-iac.POH = iac.PHR * iac.PDY * iac.PWK
+iac.OH = iac.HR * iac.DY * iac.WK
 # Calculate electricity savings
-iac.ESi = np.rint((iac.CN * iac.CPR * iac.COH - iac.PN * iac.PPR * iac.POH) / 1000.0).astype(np.int64)
+iac.ESi = np.rint(((iac.CN * iac.CPR - iac.PN * iac.PPR) * iac.OH) / 1000.0).astype(np.int64)
 iac.ES = np.sum(iac.ESi)
 iac.ECS = np.rint(iac.ES * iac.EC).astype(np.int64)
 # Calculate demand savings
@@ -52,8 +51,7 @@ iac.LCi = np.rint(iac.CN * iac.BL).astype(np.int64)
 iac.LC = np.sum(iac.LCi)
 # Calculate implementation cost
 iac.LN = np.sum(iac.CN)
-iac.MSC = iac.MSN * iac.MSPL
-iac.IC = iac.MSC + iac.BC + iac.LC
+iac.IC = iac.BC + iac.LC
 iac.ACS = iac.ECS + iac.DCS
 
 # Rebate
@@ -64,19 +62,13 @@ iac.AREAS = combine_words(iac.AREA)
 # Take an example of the previous area
 iac.PREV1 = iac.PREV[0]
 
-# Motion sensor
-if iac.MSN == 0:
-    MS = False
-else:
-    MS = True
-
 ## Format strings
 # set electricity cost / rebate to 3 digits accuracy
 iac = dollar(['EC', 'ERR'],iac,3)
 # set the natural gas and demand to 2 digits accuracy
 iac = dollar(['NGC', 'DC'],iac,2)
 # set the rest to integer
-varList = ['LR', 'MSPL', 'ECS', 'DCS', 'ACS', 'MSC', 'BC', 'LC', 'IC', 'RB', 'MRB', 'MIC']
+varList = ['LR', 'ECS', 'DCS', 'ACS', 'BC', 'LC', 'IC', 'RB', 'MRB', 'MIC']
 iac = dollar(varList,iac,0)
 # Format all numbers to string with thousand separator
 iac = grouping_num(iac)
@@ -114,8 +106,6 @@ for i in range(1,N):
 
 # Import ending template
 doc = Document('template 3.docx')
-# Motion sensors block
-docx_blocks(doc, ms = MS)
 # Rebate block
 docx_blocks(doc, REBATE = iac.REB)
 # Multi areas block
@@ -144,9 +134,6 @@ for i in ind:
         tmpstr = tmpstr[0].capitalize() + tmpstr[1:]
     iac.INSTALL.append(tmpstr)
 iac.INSTALL = combine_words(iac.INSTALL)
-# change number of motion sensor to words
-iac.MSN = num2words.num2words(iac.MSN)
-iac.MSN = iac.MSN[0].capitalize() + iac.MSN[1:]
 # Replacing keys
 docx_replace(doc, **iac)
 # Save file as temp{N+1}.docx
