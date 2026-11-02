@@ -53,8 +53,8 @@ iac.ACS = iac.ES * iac.EC + iac.DS * iac.DC
 
 ## Implementation cost Estimate
 # Total cost for all sensors
-iac.TCOST = iac.COST * N
-iac.TLABOR = iac.LABOR * N
+iac.TCOST = iac.COST * iac.NUM
+iac.TLABOR = iac.LABOR * iac.NUM
 iac.IC = iac.TCOST + iac.TLABOR
 
 # Rebate
@@ -66,7 +66,7 @@ for i in range(N):
   iac.TLOC[i] = iac.LOC[i].title()
 
 # Number to words
-iac.NUM = num2words.num2words(N)
+iac.NUM = num2words.num2words(iac.NUM)
 
 ## Format strings
 # set to 3 digits accuracy
